@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain", "iDi.Plus
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Application", "iDi.Plus.Application\iDi.Plus.Application.csproj", "{CACE3DA4-ED8E-4219-9753-6A94452D160F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Blockchain.Core", "iDi.Blockchain.Core\iDi.Blockchain.Core.csproj", "{A3B298F0-15C2-42AA-B868-B3C9D101670E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Blockchain.Core", "iDi.Blockchain.Core\iDi.Blockchain.Core.csproj", "{A3B298F0-15C2-42AA-B868-B3C9D101670E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Protocol.iDiDirect", "iDi.Protocol.iDiDirect\iDi.Protocol.iDiDirect.csproj", "{25981963-D74B-4110-B13D-EC49007478EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +31,17 @@ Global
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25981963-D74B-4110-B13D-EC49007478EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25981963-D74B-4110-B13D-EC49007478EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25981963-D74B-4110-B13D-EC49007478EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25981963-D74B-4110-B13D-EC49007478EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A3B298F0-15C2-42AA-B868-B3C9D101670E} = {392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}
+		{25981963-D74B-4110-B13D-EC49007478EF} = {392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2184AF7C-0300-4B53-AF7C-50B871F41FA7}

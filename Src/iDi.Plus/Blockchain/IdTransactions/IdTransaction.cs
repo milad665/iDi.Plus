@@ -6,25 +6,28 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
     public abstract class IdTransaction : ITransaction
     {
-        protected IdTransaction()
+        protected IdTransaction(string subject)
         {
+            Subject = subject;
         }
 
-        protected IdTransaction(string transactionType, string issuerPublicKey, string holderPublicKey, string identifierKey, string signedData, string previousTransactionHash)
+        protected IdTransaction(TransactionTypes transactionType, string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, string previousTransactionHash)
         {
             TransactionType = transactionType;
-            IssuerPublicKey = issuerPublicKey;
-            HolderPublicKey = holderPublicKey;
+            IssuerAddress = issuerAddress;
+            HolderAddress = holderAddress;
             IdentifierKey = identifierKey;
             SignedData = signedData;
             PreviousTransactionHash = previousTransactionHash;
+            Subject = subject;
             Timestamp = DateTime.UtcNow;
         }
 
         public string TransactionHash { get; protected set; }
-        public string TransactionType { get; private set; }
-        public string IssuerPublicKey { get; private set; }
-        public string HolderPublicKey { get; private set; }
+        public TransactionTypes TransactionType { get; private set; }
+        public string IssuerAddress { get; private set; }
+        public string HolderAddress { get; private set; }
+        public string Subject { get; private set; }
         public string IdentifierKey { get; private set; }
         public string SignedData { get; private set; }
         public DateTime Timestamp { get; private set; }

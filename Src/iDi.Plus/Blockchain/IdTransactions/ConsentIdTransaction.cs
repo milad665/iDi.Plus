@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using iDi.Blockchain.Core;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
@@ -8,8 +9,8 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         private ConsentIdTransaction()
         {}
 
-        public ConsentIdTransaction(string issuerPublicKey, string holderPublicKey, string identifierKey, string signedData, string verifierPublicKey, string previousTransactionHash) 
-            : base(TransactionTypes.ConsentTransaction,issuerPublicKey, holderPublicKey, identifierKey, signedData, previousTransactionHash)
+        public ConsentIdTransaction(string issuerAddress, string holderAddress, string identifierKey, string signedData, string verifierPublicKey, string previousTransactionHash) 
+            : base(TransactionTypes.ConsentTransaction,issuerAddress, holderAddress, identifierKey, signedData, previousTransactionHash)
         {
             VerifierPublicKey = verifierPublicKey;
 
@@ -20,7 +21,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public override string ComputeHash()
         {
             var tx =
-                $"{TransactionType}:{IssuerPublicKey}:{HolderPublicKey}:{VerifierPublicKey}:{IdentifierKey}:{Timestamp:yyMMddHHmmss.FFFFFFF}:{SignedData}";
+                $"{TransactionType}:{IssuerAddress}:{HolderAddress}:{VerifierPublicKey}:{IdentifierKey}:{Timestamp:yyMMddHHmmss.FFFFFFF}:{SignedData}";
             var bytes = Encoding.UTF8.GetBytes(tx);
             using var sha256Hash = SHA256.Create();
             var hashedBytes = sha256Hash.ComputeHash(bytes);

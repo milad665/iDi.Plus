@@ -34,7 +34,7 @@ namespace iDi.Plus.Application
                 try
                 {
                     byte[] bytes = listener.Receive(ref groupEp);
-
+                    
                     Console.WriteLine($"{DateTime.UtcNow}: Packet Received from {groupEp}");
                     Console.WriteLine(BitConverter.ToString(bytes));
 
