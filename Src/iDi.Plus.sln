@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31605.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain", "iDi.Plus\iDi.Plus.Domain.csproj", "{A2BFE5CC-E6AD-4FF2-BF91-A4E89DB08CB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain", "iDi.Plus.Domain\iDi.Plus.Domain.csproj", "{A2BFE5CC-E6AD-4FF2-BF91-A4E89DB08CB2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Application", "iDi.Plus.Application\iDi.Plus.Application.csproj", "{CACE3DA4-ED8E-4219-9753-6A94452D160F}"
 EndProject
