@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using iDi.Blockchain.Core;
+using iDi.Blockchain.Core.Attributes;
 using iDi.Blockchain.Core.Messages;
 using iDi.Protocol.iDiDirect.Extensions;
 
@@ -44,12 +45,23 @@ namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
             return new BlockDataPayload(index, hash, previousHash, timestamp, transactions, nonce, lstBytes.ToArray());
         }
 
+        [BinaryMessageData(0)]
         public long Index { get; private set; }
+
+        [BinaryMessageHashData(1)]
         public string Hash { get; private set; }
+
+        [BinaryMessageHashData(2)]
         public string PreviousHash { get; private set; }
+
+        [BinaryMessageData(3)]
         public DateTime Timestamp { get; private set; }
-        public IReadOnlyCollection<TxDataPayload> Transactions { get; private set; }
+
+        [BinaryMessageData(4)]
         public long Nonce { get; private set; }
+        [BinaryMessageCollection(5)]
+        public IReadOnlyCollection<TxDataPayload> Transactions { get; private set; }
+        
 
         private void ExtractData(byte[] rawData)
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using iDi.Blockchain.Core.Messages;
-using iDi.Protocol.iDiDirect.Payloads;
 using iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1;
 
 namespace iDi.Protocol.iDiDirect
@@ -18,7 +17,9 @@ namespace iDi.Protocol.iDiDirect
         public static Message FromMessageData(ReadOnlySpan<byte> data)
         {
             var header = Header.FromPacketData(data);
+            var payload = GetPayload(header.MessageType, data.Slice(header.RawData.Length));
 
+            return new Message(header, payload, data.ToArray());
         }
 
         public static Message Create(Header header, IPayload payload)
@@ -34,7 +35,7 @@ namespace iDi.Protocol.iDiDirect
         public IPayload Payload { get; private set; }
         public byte[] RawData { get; }
 
-        private IPayload GetPayload(MessageTypes messageType, ReadOnlySpan<byte> messageData)
+        private static IPayload GetPayload(MessageTypes messageType, ReadOnlySpan<byte> messageData)
         {
             switch (messageType)
             {

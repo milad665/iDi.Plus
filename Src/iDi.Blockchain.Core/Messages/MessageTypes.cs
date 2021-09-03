@@ -4,15 +4,19 @@
     {
         Empty = 0,
         /// <summary>
-        /// Send list of new transaction hashes to other nodes
+        /// An issuer or holder asks a verifying node in the network to create a new transaction
+        /// </summary>
+        CreateTx,
+        /// <summary>
+        /// Send list of new verified transaction hashes to other nodes
         /// </summary>
         NewTxs,
         /// <summary>
-        /// Request a specific transaction data from a node
+        /// Request a specific verified transaction data from a node
         /// </summary>
         GetTx,
         /// <summary>
-        /// Send data of a specific transaction. (Normally in response to a "GetTx" command)
+        /// Send data of a specific verified transaction. (Normally in response to a "GetTx" command)
         /// </summary>
         TxData,
         /// <summary>

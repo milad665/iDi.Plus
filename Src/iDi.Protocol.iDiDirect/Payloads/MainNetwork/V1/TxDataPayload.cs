@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using iDi.Blockchain.Core;
+using iDi.Blockchain.Core.Attributes;
 using iDi.Blockchain.Core.Messages;
 using iDi.Protocol.iDiDirect.Exceptions;
 using iDi.Protocol.iDiDirect.Extensions;
@@ -73,18 +74,46 @@ namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
                 subject, identifierKey, timestamp, previousTransactionHash, signedData, lstBytes.ToArray());
         }
 
+        [BinaryMessageHashData(0)]
         public string TransactionHash { get; private set; }
+
+        [BinaryMessageData(1)]
         public TransactionTypes TransactionType { get; private set; }
+
+        [BinaryMessageData(2, Cryptography.WalletAddressByteLengthExcludingPrefix)]
+        public string IssuingAuthorityAddress { get; private set; }
+
+        [BinaryMessageCollection(3)]
+        public List<string> PrivilegeControllersAddresses { get; private set; }
+
+        [BinaryMessageCollection(4)]
+        public List<string> ControllersAddresses { get; private set; }
+
+        [BinaryMessageData(5, Cryptography.WalletAddressByteLengthExcludingPrefix)]
         public string IssuerAddress { get; private set; }
+
+        [BinaryMessageData(6, Cryptography.WalletAddressByteLengthExcludingPrefix)]
         public string HolderAddress { get; private set; }
+
         /// <summary>
         /// This property is only filled for consent transactions. The value will be null for issue transactions.
         /// </summary>
+        [BinaryMessageData(7, Cryptography.WalletAddressByteLengthExcludingPrefix)]
         public string VerifierAddress { get; private set; }
+
+        [BinaryMessageData(8)]
         public string Subject { get; private set; }
+
+        [BinaryMessageData(9)]
         public string IdentifierKey { get; private set; }
+
+        [BinaryMessageData(10)]
         public DateTime Timestamp { get; private set; }
+
+        [BinaryMessageData(11)]
         public string PreviousTransactionHash { get; private set; }
+
+        [BinaryRawMessageData(12)]
         public byte[] SignedData { get; private set; }
 
         private void ExtractData(byte[] rawData)
