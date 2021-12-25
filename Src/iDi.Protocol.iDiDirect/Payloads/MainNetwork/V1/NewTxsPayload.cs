@@ -7,7 +7,7 @@ using iDi.Protocol.iDiDirect.Exceptions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
 {
-    public class NewTxsPayload : PayloadBase
+    public class NewTxsPayload : MainNetworkV1PayloadBase
     {
         public NewTxsPayload(byte[] rawData) : base(rawData, MessageTypes.NewTxs)
         {

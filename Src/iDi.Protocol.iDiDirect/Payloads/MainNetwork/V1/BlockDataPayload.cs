@@ -8,7 +8,7 @@ using iDi.Protocol.iDiDirect.Extensions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
 {
-    public class BlockDataPayload : PayloadBase
+    public class BlockDataPayload : MainNetworkV1PayloadBase
     {
         public BlockDataPayload(byte[] rawData):base(rawData, MessageTypes.BlockData)
         {

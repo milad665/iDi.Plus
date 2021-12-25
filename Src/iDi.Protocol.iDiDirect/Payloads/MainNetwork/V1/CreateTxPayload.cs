@@ -6,7 +6,10 @@ using iDi.Protocol.iDiDirect.Extensions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
 {
-    public class CreateTxPayload : PayloadBase
+    /// <summary>
+    /// Payload of CreateTx (Create Transaction) command
+    /// </summary>
+    public class CreateTxPayload : MainNetworkV1PayloadBase
     {
         public CreateTxPayload(byte[] rawData) : base(rawData, MessageTypes.CreateTx)
         {

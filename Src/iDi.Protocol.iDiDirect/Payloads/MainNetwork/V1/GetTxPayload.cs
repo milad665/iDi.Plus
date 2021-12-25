@@ -5,7 +5,10 @@ using iDi.Protocol.iDiDirect.Exceptions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
 {
-    public class GetTxPayload : PayloadBase
+    /// <summary>
+    /// Payload of GetTx (Get Transaction) command
+    /// </summary>
+    public class GetTxPayload : MainNetworkV1PayloadBase
     {
         public GetTxPayload(byte[] rawData) : base(rawData, MessageTypes.GetTx)
         {

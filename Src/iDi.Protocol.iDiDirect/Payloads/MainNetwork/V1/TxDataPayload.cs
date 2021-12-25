@@ -9,7 +9,7 @@ using iDi.Protocol.iDiDirect.Extensions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
 {
-    public class TxDataPayload : PayloadBase
+    public class TxDataPayload : MainNetworkV1PayloadBase
     {
         private const int SubjectByteLength = 256;
         private const int IdentifierByteLength = 256;

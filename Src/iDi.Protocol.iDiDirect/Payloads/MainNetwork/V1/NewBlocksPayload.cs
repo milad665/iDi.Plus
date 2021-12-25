@@ -7,7 +7,7 @@ using iDi.Protocol.iDiDirect.Exceptions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1
 {
-    public class NewBlocksPayload : PayloadBase
+    public class NewBlocksPayload : MainNetworkV1PayloadBase
     {
         public NewBlocksPayload(byte[] rawData) : base(rawData, MessageTypes.NewBlocks)
         {
