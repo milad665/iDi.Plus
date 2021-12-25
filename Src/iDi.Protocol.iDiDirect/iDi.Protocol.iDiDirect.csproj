@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\iDi.Blockchain.Core\iDi.Blockchain.Core.csproj" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
+    <ProjectReference Include="..\iDi.Blockchain.Core\iDi.Blockchain.Core.csproj" />
   </ItemGroup>
 
 </Project>

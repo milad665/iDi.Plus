@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\iDi.Blockchain.Core\iDi.Blockchain.Core.csproj" />
+    <ProjectReference Include="..\iDi.Protocol.iDiDirect\iDi.Protocol.iDiDirect.csproj" />
   </ItemGroup>
 
   <ItemGroup>

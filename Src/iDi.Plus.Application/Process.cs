@@ -1,10 +1,9 @@
-﻿using iDi.Protocol.iDiDirect;
+﻿using iDi.Blockchain.Core.Execution;
+using iDi.Protocol.iDiDirect;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace iDi.Plus.Application
@@ -12,10 +11,12 @@ namespace iDi.Plus.Application
     public class Process
     {
         private readonly Settings _settings;
+        private readonly IPipeline _pipeline;
 
-        public Process(Settings settings)
+        public Process(Settings settings, IPipeline pipeline)
         {
             _settings = settings;
+            _pipeline = pipeline;
         }
 
         public void Run()
@@ -65,11 +66,9 @@ namespace iDi.Plus.Application
                 Console.WriteLine($"{DateTime.Now}: [{messageStream.Length}] bytes received.");
 
                 var message = Message.FromMessageData(messageStream.ToArray());
-                //Decode
-                //Act
-                //Respond
-                //  networkStream.Write();
-                //  networkStream.Close(); //To send data
+                var response = _pipeline.Execute(message);
+                networkStream.Write(response.RawData);
+                networkStream.Close(); // Send data
             }
             catch (Exception e)
             {
