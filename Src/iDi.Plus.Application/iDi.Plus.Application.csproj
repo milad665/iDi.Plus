@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +12,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\iDi.Blockchain.Core\iDi.Blockchain.Core.csproj" />
+    <ProjectReference Include="..\iDi.Plus.Domain\iDi.Plus.Domain.csproj" />
     <ProjectReference Include="..\iDi.Plus\iDi.Plus.Domain.csproj" />
+    <ProjectReference Include="..\iDi.Protocol.iDiDirect\iDi.Protocol.iDiDirect.csproj" />
   </ItemGroup>
 
   <ItemGroup>

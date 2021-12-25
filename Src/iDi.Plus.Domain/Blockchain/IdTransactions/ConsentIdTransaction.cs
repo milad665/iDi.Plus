@@ -6,11 +6,8 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
     public sealed class ConsentIdTransaction : IdTransaction
     {
-        private ConsentIdTransaction()
-        {}
-
-        public ConsentIdTransaction(string issuerAddress, string holderAddress, string identifierKey, string signedData, string verifierPublicKey, string previousTransactionHash) 
-            : base(TransactionTypes.ConsentTransaction,issuerAddress, holderAddress, identifierKey, signedData, previousTransactionHash)
+        public ConsentIdTransaction(string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, string verifierPublicKey, string previousTransactionHash) 
+            : base(TransactionTypes.ConsentTransaction,issuerAddress, holderAddress, subject, identifierKey, signedData, previousTransactionHash)
         {
             VerifierPublicKey = verifierPublicKey;
 

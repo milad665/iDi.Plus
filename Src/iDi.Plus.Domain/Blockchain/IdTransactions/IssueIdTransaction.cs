@@ -6,11 +6,8 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
     public sealed class IssueIdTransaction : IdTransaction
     {
-        private IssueIdTransaction()
-        {}
-
-        public IssueIdTransaction(string issuerAddress, string holderAddress, string identifierKey, string signedData, string previousTransactionHash) 
-            : base(TransactionTypes.IssueTransaction, issuerAddress, holderAddress, identifierKey, signedData, previousTransactionHash)
+        public IssueIdTransaction(string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, string previousTransactionHash) 
+            : base(TransactionTypes.IssueTransaction, issuerAddress, holderAddress, subject, identifierKey, signedData, previousTransactionHash)
         {
             
 

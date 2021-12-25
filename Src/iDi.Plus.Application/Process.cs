@@ -1,6 +1,11 @@
-﻿using System;
+﻿using iDi.Protocol.iDiDirect;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace iDi.Plus.Application
 {
@@ -25,58 +30,54 @@ namespace iDi.Plus.Application
 
         public void Listen(int port)
         {
-            var listener = new UdpClient(port);
-            var groupEp = new IPEndPoint(IPAddress.Any, port);
-            Console.WriteLine("Waiting for broadcast");
+            var serverEndpoint = new IPEndPoint(IPAddress.Any, port);
+            var listener = new TcpListener(serverEndpoint);
+            listener.Start();
 
             while (true)
             {
-                try
+                Console.WriteLine($"{DateTime.Now}: Waiting for connection...");
+                var client = listener.AcceptTcpClient();
+                Console.WriteLine($"{DateTime.Now}: {client.Client.RemoteEndPoint} Connected.");
+                Task.Run(() => HandleConnection(client));
+            }
+        }
+
+        private void HandleConnection(TcpClient client)
+        {
+            try
+            {
+                var buffer = new byte[client.ReceiveBufferSize];
+                var networkStream = client.GetStream();
+                networkStream.ReadTimeout = 500;
+                using var messageStream = new MemoryStream();
+
+                // Wait to receive some data
+                var readBytesCount = networkStream.Read(buffer, 0, buffer.Length);
+                messageStream.Write(buffer, 0, readBytesCount);
+
+                //continue to read if there is more data
+                while (networkStream.DataAvailable)
                 {
-                    byte[] bytes = listener.Receive(ref groupEp);
-                    
-                    Console.WriteLine($"{DateTime.UtcNow}: Packet Received from {groupEp}");
-                    Console.WriteLine(BitConverter.ToString(bytes));
-
-                    var packet = new LmDirectPacket(bytes);
-                    Console.WriteLine(
-                        $"{DateTime.UtcNow}: Packet Decoded.  MobileId:{Enum.GetName(typeof(MobileIdTypes), packet.OptionsHeader.MobileIdType)}: {packet.OptionsHeader.MobileId}");
-
-                    if (packet.MessageHeader.MessageType == MessageHeader.MessageTypes.EventReport)
-                    {
-                        var result = SendSensorData(packet);
-                        Console.WriteLine($"Packet Sent to Core. Result: {result}");
-                    }
-
-                    //Console.WriteLine(packet.ToString());
-
-                    if (packet.Content.GetType() == typeof(EventReportMessage))
-                    {
-                        var temperature = ((EventReportMessage)packet.Content).Accumulators[1]?.GetAnalogValue(0.0625);
-                        var humidity = ((EventReportMessage)packet.Content).Accumulators[2]?.GetAnalogValue(0.0625);
-
-                        Console.WriteLine($"\tTemperature C: {temperature}");
-                        Console.WriteLine($"\tTemperature F: {(temperature * 9 / 5) + 32}");
-                        Console.WriteLine($"\tHumidity: {humidity}");
-                    }
-
-
-                    var ack = packet.GetAcknowledge(true);
-
-                    if (ack != null)
-                    {
-                        listener.Send(ack.RawData, ack.RawData.Length, groupEp);
-                        Console.WriteLine($"{DateTime.UtcNow}: Ack Sent to {groupEp}");
-                    }
-
-                    SendForceCheckinRequest(listener, groupEp, packet);
-
-                    Console.WriteLine(string.Join('*', new string[70]));
+                    readBytesCount = networkStream.Read(buffer, 0, buffer.Length);
+                    messageStream.Write(buffer, 0, readBytesCount);
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                Console.WriteLine($"{DateTime.Now}: [{messageStream.Length}] bytes received.");
+
+                var message = Message.FromMessageData(messageStream.ToArray());
+                //Decode
+                //Act
+                //Respond
+                //  networkStream.Write();
+                //  networkStream.Close(); //To send data
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                client.Close();
             }
         }
     }

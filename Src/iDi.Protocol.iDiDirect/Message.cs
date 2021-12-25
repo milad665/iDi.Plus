@@ -51,6 +51,9 @@ namespace iDi.Protocol.iDiDirect
                     return new GetBlockPayload(messageData.ToArray());
                 case MessageTypes.BlockData:
                     return new BlockDataPayload(messageData.ToArray());
+                case MessageTypes.CreateTx:
+                    return new CreateTxPayload(messageData.ToArray());
+                case MessageTypes.Empty:
                 default:
                     throw new NotSupportedException("Message type not supported");
             }
