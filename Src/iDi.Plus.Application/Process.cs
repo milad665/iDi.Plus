@@ -1,4 +1,5 @@
-﻿using iDi.Blockchain.Core.Execution;
+﻿using iDi.Blockchain.Core;
+using iDi.Blockchain.Core.Execution;
 using iDi.Protocol.iDiDirect;
 using System;
 using System.IO;
@@ -63,9 +64,9 @@ namespace iDi.Plus.Application
                     messageStream.Write(buffer, 0, readBytesCount);
                 }
                 Console.WriteLine($"{DateTime.Now}: [{messageStream.Length}] bytes received.");
-
                 var message = Message.FromMessageData(messageStream.ToArray());
-                var response = _pipeline.Execute(message);
+                var request = new RequestContext(message, client.Client.LocalEndPoint, client.Client.RemoteEndPoint);
+                var response = _pipeline.Execute(request);
                 networkStream.Write(response.RawData);
                 networkStream.Close(); // Send data
             }

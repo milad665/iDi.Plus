@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using iDi.Blockchain.Core.Execution;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -31,6 +32,7 @@ namespace iDi.Plus.Application
             services.AddOptions();
             var config = configuration.GetSection("Settings").Get<Settings>();
             services.AddSingleton(config);
+            services.AddSingleton<IPipeline, Pipeline>();
 
             // add app
             services.AddTransient<Process>();

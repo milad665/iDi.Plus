@@ -13,10 +13,10 @@ namespace iDi.Blockchain.Core.Execution
         /// <param name="stage">Pipeline stage to add</param>
         void AddStage(IPipelineStage stage);
         /// <summary>
-        /// Execute the pipeline on a message
+        /// Execute the pipeline on a request
         /// </summary>
-        /// <param name="message">Received message</param>
+        /// <param name="request">Request</param>
         /// <returns>Response message</returns>
-        IMessage Execute(IMessage message);
+        IMessage Execute(RequestContext request);
     }
 }

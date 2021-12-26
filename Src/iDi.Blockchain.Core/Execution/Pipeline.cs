@@ -18,13 +18,13 @@ namespace iDi.Blockchain.Core.Execution
             _stages.Add(stage);
         }
 
-        public IMessage Execute(IMessage message)
+        public IMessage Execute(RequestContext request)
         {
             IMessage response = null;
 
             foreach (var stage in _stages)
             {
-                stage.Execute(message);
+                stage.Execute(request);
                 response = stage.Response;
                 if (response != null)
                     break;
