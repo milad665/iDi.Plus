@@ -26,7 +26,6 @@ namespace iDi.Plus.Application
             // Download/Update blockchain
             
             Listen(_settings.Port);
-            
         }
 
         public void Listen(int port)
