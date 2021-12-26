@@ -1,10 +1,10 @@
 # iDi+
 
-iDi+ is a hybrid distributed ledger working based on a three way encryption mechanism to provide a public Self Sovereign Identity platform
+iDi+ is a hybrid distributed ledger working based on a three way encryption mechanism to provide a public Self Sovereign Identity platform. iDi+ is **hybrid**, meaning that it can be accessed and used publicly but only selected nodes will be able to verify transactions.
 
-*This project is still under development...*
+***This project is still under development...***
 
-iDi+ is **hybrid**, meaning that it can be accessed and used publicly but only selected nodes will be able to verify transactions.
+
 
 # Glossary
 
