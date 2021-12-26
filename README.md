@@ -9,11 +9,17 @@ iDi+ is **hybrid**, meaning that it can be accessed and used publicly but only s
 # Glossary
 
 **Issuer**: An entity which issues and certifies a subset of a holder’s identity
+
 **Holder**: An entity whose identity is certified and/or verified by other entities
+
 **Verifier**: An entity which verifies a subset of a holder’s identifiers.
+
 **Identifier**: The granular piece of information which builds up a holder’s identity, i.e. claims. (e.g. Passport number, Name, email, postal address, driving license number, photo, etc.)
+
 **Subject**: The subject of each identifier. Each identifier belongs to a subject. (e.g. Passport subject may have the following identifiers: Passport number, photo, issue date, expiration date, etc.)
+
 **Issue transactions**: Transactions which are created by issuers to create or update a holder’s attribute
+
 **Consent transactions**: Transitions created by the holder to send an issued attribute to a specific verifier
 
 # How it works? (30k feet view)
