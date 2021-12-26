@@ -1,5 +1,5 @@
 ﻿using System;
-using iDi.Blockchain.Core;
+using iDi.Blockchain.Framework;
 using iDi.Plus.Domain.Exceptions;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions

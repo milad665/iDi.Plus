@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using iDi.Blockchain.Core;
+using iDi.Blockchain.Framework;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {

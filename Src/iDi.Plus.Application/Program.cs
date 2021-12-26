@@ -1,5 +1,6 @@
 ﻿using System.IO;
-using iDi.Blockchain.Core.Execution;
+using iDi.Blockchain.Framework.Execution;
+using iDi.Blockchain.Framework.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,6 +21,17 @@ namespace iDi.Plus.Application
             serviceProvider.GetService<Process>()?.Run();
         }
 
+        private static void ConfigureStages(PipelineFactory pipelineFactory)
+        {
+            if (pipelineFactory == null)
+                return;
+
+            //Add pipeline stage types here
+            //The order is important
+
+            //pipelineFactory.AddStage<SampleStage>();
+        }
+
         private static void ConfigureServices(IServiceCollection services)
         {
             // build config
@@ -32,7 +44,11 @@ namespace iDi.Plus.Application
             services.AddOptions();
             var config = configuration.GetSection("Settings").Get<Settings>();
             services.AddSingleton(config);
-            services.AddSingleton<IPipeline, Pipeline>();
+            services.AddIdiBlockchainServer()
+                .AddPipeline(ConfigureStages);
+
+            //Add pipeline stage classes to the IoC container here
+            //services.AddTransient<SampleStage>()
 
             // add app
             services.AddTransient<Process>();

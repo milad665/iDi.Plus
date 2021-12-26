@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\iDi.Blockchain.Core\iDi.Blockchain.Core.csproj" />
-    <ProjectReference Include="..\iDi.Protocol.iDiDirect\iDi.Protocol.iDiDirect.csproj" />
+    <ProjectReference Include="..\iDi.Blockchain.Framework\iDi.Blockchain.Framework.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="TransactionBlocks\" />
-    <Folder Include="Nodes\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
-using iDi.Blockchain.Core;
-using iDi.Blockchain.Core.Messages;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Messages;
 
 namespace iDi.Protocol.iDiDirect.Payloads
 {

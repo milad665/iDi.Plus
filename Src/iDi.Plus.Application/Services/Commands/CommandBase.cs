@@ -1,4 +1,4 @@
-﻿using iDi.Blockchain.Core.Commands;
+﻿using iDi.Blockchain.Framework.Commands;
 using System;
 using System.Net;
 

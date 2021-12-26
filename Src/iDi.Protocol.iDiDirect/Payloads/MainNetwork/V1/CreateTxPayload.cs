@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Core;
-using iDi.Blockchain.Core.Messages;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Messages;
 using iDi.Protocol.iDiDirect.Extensions;
 
 namespace iDi.Protocol.iDiDirect.Payloads.MainNetwork.V1

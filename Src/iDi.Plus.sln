@@ -1,21 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31605.320
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain", "iDi.Plus.Domain\iDi.Plus.Domain.csproj", "{A2BFE5CC-E6AD-4FF2-BF91-A4E89DB08CB2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Application", "iDi.Plus.Application\iDi.Plus.Application.csproj", "{CACE3DA4-ED8E-4219-9753-6A94452D160F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Blockchain.Core", "iDi.Blockchain.Core\iDi.Blockchain.Core.csproj", "{A3B298F0-15C2-42AA-B868-B3C9D101670E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Blockchain.Framework", "iDi.Blockchain.Framework\iDi.Blockchain.Framework.csproj", "{A3B298F0-15C2-42AA-B868-B3C9D101670E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Protocol.iDiDirect", "iDi.Protocol.iDiDirect\iDi.Protocol.iDiDirect.csproj", "{25981963-D74B-4110-B13D-EC49007478EF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{EF2AEB39-C4D9-4106-98B9-D4A6897C571D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Test.Client", "iDi.Plus.Test.Client\iDi.Plus.Test.Client.csproj", "{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Test.Client", "iDi.Plus.Test.Client\iDi.Plus.Test.Client.csproj", "{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{232FA218-4AB9-453F-A518-073F17FAC8F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,6 @@ Global
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{25981963-D74B-4110-B13D-EC49007478EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{25981963-D74B-4110-B13D-EC49007478EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{25981963-D74B-4110-B13D-EC49007478EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{25981963-D74B-4110-B13D-EC49007478EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,8 +44,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A2BFE5CC-E6AD-4FF2-BF91-A4E89DB08CB2} = {232FA218-4AB9-453F-A518-073F17FAC8F4}
+		{CACE3DA4-ED8E-4219-9753-6A94452D160F} = {232FA218-4AB9-453F-A518-073F17FAC8F4}
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E} = {392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}
-		{25981963-D74B-4110-B13D-EC49007478EF} = {392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E} = {EF2AEB39-C4D9-4106-98B9-D4A6897C571D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

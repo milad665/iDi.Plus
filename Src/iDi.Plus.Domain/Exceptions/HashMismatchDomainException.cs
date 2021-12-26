@@ -1,5 +1,5 @@
 ﻿using System;
-using iDi.Blockchain.Core.Exceptions;
+using iDi.Blockchain.Framework.Exceptions;
 
 namespace iDi.Plus.Domain.Exceptions
 {

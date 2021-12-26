@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using iDi.Blockchain.Core;
-using iDi.Blockchain.Core.Messages;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Messages;
 using iDi.Protocol.iDiDirect.Exceptions;
 using iDi.Protocol.iDiDirect.Extensions;
 

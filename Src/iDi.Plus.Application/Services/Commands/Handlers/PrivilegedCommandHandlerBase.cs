@@ -1,5 +1,5 @@
 ﻿using System;
-using iDi.Blockchain.Core.Commands;
+using iDi.Blockchain.Framework.Commands;
 
 namespace iDi.Plus.Application.Services.Commands.Handlers
 {

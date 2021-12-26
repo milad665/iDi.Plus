@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Core.Messages;
+using iDi.Blockchain.Framework.Messages;
 using iDi.Protocol.iDiDirect.Payloads;
 
 namespace iDi.Protocol.iDiDirect
