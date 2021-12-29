@@ -27,7 +27,7 @@ iDi+ is a hybrid distributed ledger working based on a three way encryption mech
 Each issuer, holder and verifier has a unique Public/Private key pair. Also a 24-byte wallet address is derived from the public key.
 
 **Step 1**
-When an issuer issues identifiers for a subject, it creates an **issue transaction** for each identifier, signs them by the holder's public key and then with its own private key and pushes them to the blockchain.
+When an issuer issues identifiers for a subject, it creates an **issue transaction** for each identifier, encrypts them by the holder's public key and then signs with its own private key and pushes them to the blockchain.
 
 **Step 2**
 When a verifier requests some identifiers of a holder the flow will be:
@@ -39,6 +39,6 @@ When a verifier requests some identifiers of a holder the flow will be:
 6. For each transaction, the holder decrypts the identifier data with its own private key (data still encrypted by issuer's private key), and encrypts it again with its own private key and then with the verifier's public key and creates a new **consent transaction** per identifier
 7. Verifier fetches the consent transactions from the blockchain, decrypts them with their own private key and then with the holder's public key and then the issuer's public key. If decrypted successfully, the issue transaction Id, holder public key, subject and the identifier key are verified. The verifier can then happily see and use the identifiers.
 
-> -   To prevent collusion between two holders, the Issue Transaction Id, Holder public key and Identifier key are also signed with the issuer along with the identifier value so that a holder can not compromise its identifier to another holder allowing it to sign fake data for a verifier.  
+> -   To prevent collusion between two holders, the Issue Transaction Id, Holder public key and Identifier key are also signed by the issuer along with the identifier value so that a holder can not compromise its identifier to another holder allowing it to sign fake data for a verifier.  
 >-   Signing the issue transaction Id by the issuer also guarantees that a holder can not sign another issue transaction data of itself for a verifier
 >- In addition to the blockchain there is another virtual chain between the transactions of the same id tuple (issuer, holder, identifier), so the history of changes of an identifier of a holder is maintained. This can be a good help when it comes to financial ecosystems and KYC concepts.

@@ -1,10 +1,10 @@
 ﻿using System;
-using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 
 namespace iDi.Plus.Domain.Blockchain
 {
-    public class IdBlockchain : Blockchain<IdTransaction>
+    public class IdBlockchain : BlockchainBase<IdTransaction>
     {
         public IdBlockchain()
         {

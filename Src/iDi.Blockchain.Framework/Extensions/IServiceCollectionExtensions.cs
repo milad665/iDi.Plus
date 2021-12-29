@@ -1,4 +1,5 @@
-﻿using iDi.Blockchain.Framework.Execution;
+﻿using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Server;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,7 +10,7 @@ namespace iDi.Blockchain.Framework.Extensions
     {
         public static IServiceCollection AddIdiBlockchainServer(this IServiceCollection services)
         {
-            services.AddScoped<IBlockchainNodeServer, DefaultBlockchainNodeServer>();
+            services.AddSingleton<IBlockchainNodeServer, DefaultBlockchainNodeServer>();
 
             return services;
         }
@@ -21,6 +22,13 @@ namespace iDi.Blockchain.Framework.Extensions
                 configure(pipelineFactory);
                 return pipelineFactory;
             });
+            return services;
+        }
+
+        public static IServiceCollection AddDefaultIdiPlusServices(this IServiceCollection services)
+        {
+            services.AddTransient<CryptoServiceProvider>();
+
             return services;
         }
 

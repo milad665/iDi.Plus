@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace iDi.Blockchain.Framework
+namespace iDi.Blockchain.Framework.Blockchain
 {
-    public abstract class Blockchain<TTransaction> where TTransaction: ITransaction
+    public abstract class BlockchainBase<TTransaction> where TTransaction: ITransaction
     {
         private readonly List<Block<TTransaction>> _blocks;
 
-        protected Blockchain()
+        protected BlockchainBase()
         {
             _blocks = new List<Block<TTransaction>> { Genesis() };
         }

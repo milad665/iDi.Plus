@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iDi.Blockchain.Framework.Cryptography;
+using System;
 
 namespace iDi.Blockchain.Framework.Attributes
 {
@@ -7,7 +8,7 @@ namespace iDi.Blockchain.Framework.Attributes
     {
         public BinaryMessageHashDataAttribute(int order) : base(order)
         {
-            ByteLength = Cryptography.HashAlgorithm.HashSize / 8;
+            ByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
         }
 
         public int ByteLength { get; }

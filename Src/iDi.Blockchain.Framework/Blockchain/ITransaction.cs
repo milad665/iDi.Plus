@@ -1,4 +1,4 @@
-﻿namespace iDi.Blockchain.Framework
+﻿namespace iDi.Blockchain.Framework.Blockchain
 {
     public interface ITransaction
     {

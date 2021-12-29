@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.iDiDirect.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
@@ -39,7 +40,7 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
 
         private void ExtractData(byte[] rawData)
         {
-            var txHashByteLength = Cryptography.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
 
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.iDiDirect.Exceptions;
 
 namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
@@ -21,7 +22,7 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
         {
             var span = new ReadOnlySpan<byte>(rawData);
 
-            var txHashByteLength = Cryptography.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
 
             if (span.Length % txHashByteLength != 0)
                 throw new InvalidDataException("Data length does not match the hash length.");

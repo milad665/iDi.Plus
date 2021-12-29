@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.iDiDirect.Exceptions;
 using iDi.Blockchain.Framework.Protocol.iDiDirect.Extensions;
 
@@ -50,7 +51,7 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
             lstBytes.AddRange(issuerAddress.HexStringToByteArray());
             lstBytes.AddRange(holderAddress.HexStringToByteArray());
             if (string.IsNullOrWhiteSpace(verifierAddress))
-                lstBytes.AddRange(new byte[Cryptography.WalletAddressByteLengthExcludingPrefix]);
+                lstBytes.AddRange(new byte[CryptographyConstants.WalletAddressByteLengthExcludingPrefix]);
             else
             {
                 if (IsValidAddress(verifierAddress))
@@ -102,7 +103,7 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
 
         private void ExtractData(byte[] rawData)
         {
-            var txHashByteLength = Cryptography.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
 
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;
@@ -110,15 +111,15 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
             index += txHashByteLength;
             TransactionType = (TransactionTypes) span.Slice(index, 1)[0];
             index++;
-            IssuerAddress = $"{Cryptography.WalletAddressPrefix}{span.Slice(index, Cryptography.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
-            index += Cryptography.WalletAddressByteLengthExcludingPrefix;
-            HolderAddress = $"{Cryptography.WalletAddressPrefix}{span.Slice(index, Cryptography.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
-            index += Cryptography.WalletAddressByteLengthExcludingPrefix;
-            var verifierAddressBytes = span.Slice(index, Cryptography.WalletAddressByteLengthExcludingPrefix).ToArray();
+            IssuerAddress = $"{CryptographyConstants.WalletAddressPrefix}{span.Slice(index, CryptographyConstants.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
+            index += CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
+            HolderAddress = $"{CryptographyConstants.WalletAddressPrefix}{span.Slice(index, CryptographyConstants.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
+            index += CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
+            var verifierAddressBytes = span.Slice(index, CryptographyConstants.WalletAddressByteLengthExcludingPrefix).ToArray();
             if (verifierAddressBytes.Any(b => b != 0)) //Verifier address memory-space contains a value
-                VerifierAddress = $"{Cryptography.WalletAddressPrefix}{verifierAddressBytes.ToHexString()}";
+                VerifierAddress = $"{CryptographyConstants.WalletAddressPrefix}{verifierAddressBytes.ToHexString()}";
             
-            index += Cryptography.WalletAddressByteLengthExcludingPrefix;
+            index += CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
             Subject = Encoding.Unicode.GetString(span.Slice(index, SubjectByteLength)).Trim();
             index += SubjectByteLength;
             IdentifierKey = Encoding.Unicode.GetString(span.Slice(index, IdentifierByteLength)).Trim();
@@ -133,12 +134,12 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
 
         private static bool IsValidAddress(string walletAddress)
         {
-            if (string.IsNullOrWhiteSpace(walletAddress) || !walletAddress.ToUpper().StartsWith(Cryptography.WalletAddressPrefix.ToUpper()))
+            if (string.IsNullOrWhiteSpace(walletAddress) || !walletAddress.ToUpper().StartsWith(CryptographyConstants.WalletAddressPrefix.ToUpper()))
                 return false;
 
             walletAddress = walletAddress.Substring(3);
 
-            return walletAddress.Length == 2 * Cryptography.WalletAddressByteLengthExcludingPrefix;
+            return walletAddress.Length == 2 * CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
         }
     }
 }

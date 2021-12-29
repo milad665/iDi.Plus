@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.iDiDirect.Exceptions;
 
 namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
@@ -17,7 +18,7 @@ namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
 
         private string GetTransactionHash(byte[] rawData)
         {
-            var txHashByteLength = Cryptography.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
 
             if (rawData.Length != txHashByteLength)
                 throw new InvalidDataException("Data length does not match the hash length.");

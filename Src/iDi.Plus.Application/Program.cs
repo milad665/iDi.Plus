@@ -45,7 +45,8 @@ namespace iDi.Plus.Application
             var config = configuration.GetSection("Settings").Get<Settings>();
             services.AddSingleton(config);
             services.AddIdiBlockchainServer()
-                .AddPipeline(ConfigureStages);
+                .AddPipeline(ConfigureStages)
+                .AddDefaultIdiPlusServices();
 
             //Add pipeline stage classes to the IoC container here
             //services.AddTransient<SampleStage>()

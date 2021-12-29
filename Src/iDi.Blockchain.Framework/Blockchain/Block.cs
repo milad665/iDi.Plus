@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace iDi.Blockchain.Framework
+namespace iDi.Blockchain.Framework.Blockchain
 {
     public class Block<TTransaction> where TTransaction : ITransaction
     {
