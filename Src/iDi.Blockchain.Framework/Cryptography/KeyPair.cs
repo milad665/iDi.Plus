@@ -26,10 +26,4 @@ public abstract class KeyPair
         var pkcs12Provider = new Pkcs12Provider();
         return pkcs12Provider.ToPkcs12Content(PrivateKey, PublicKey, l1Password, l2Password);
     }
-
-    public string PublicKeyToHexString()
-    {
-        var provider = new CryptoServiceProvider();
-        return provider.KeyToHexString(PublicKey);
-    }
 }

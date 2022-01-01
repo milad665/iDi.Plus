@@ -10,6 +10,6 @@ namespace iDi.Blockchain.Framework.Cryptography
 
         public static HashAlgorithm HashAlgorithm => Sha3.Sha3256();
         public static ECCurve EcDsaCurve = ECCurve.NamedCurves.nistP256;
-
+        public static int NodeIdByteLength => 91; //nistP256 public key length
     }
 }

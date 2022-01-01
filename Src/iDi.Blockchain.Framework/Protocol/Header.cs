@@ -1,4 +1,6 @@
 ﻿using System;
+using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol
 {
@@ -7,27 +9,26 @@ namespace iDi.Blockchain.Framework.Protocol
     /// </summary>
     public class Header : IByteData
     {
-        protected Header(Networks network, short version, Guid nodeId, MessageTypes messageType, int payloadLength, int payloadChecksum, byte[] rawData)
+        protected Header(Networks network, short version, string nodeId, MessageTypes messageType, int payloadLength, byte[] payloadSignature, byte[] rawData)
         {
             Network = network;
             Version = version;
             NodeId = nodeId;
             MessageType = messageType;
             PayloadLength = payloadLength;
-            PayloadChecksum = payloadChecksum;
+            PayloadSignature = payloadSignature;
             RawData = rawData;
         }
 
-        public static Header Create(Networks network, short version, Guid nodeId, MessageTypes messageType, IPayload payload)
+        public static Header Create(Networks network, short version, string nodeId, MessageTypes messageType, IPayload payload, byte[] payloadSignature)
         {
             var result = new byte[32];
 
             var networkBytes = BitConverter.GetBytes((int)network);
             var versionBytes = BitConverter.GetBytes(version);
-            var nodeIdBytes = nodeId.ToByteArray();
+            var nodeIdBytes = nodeId.HexStringToByteArray();
             var messageTypeBytes = BitConverter.GetBytes((int)messageType);
             var payloadLengthBytes = BitConverter.GetBytes(payload.RawData.Length);
-            var payloadChecksumBytes = BitConverter.GetBytes(payload.Checksum);
 
             var index = 0;
             Array.Copy(networkBytes, result, networkBytes.Length);
@@ -40,9 +41,9 @@ namespace iDi.Blockchain.Framework.Protocol
             index += messageTypeBytes.Length;
             Array.Copy(payloadLengthBytes, 0, result, index, payloadLengthBytes.Length);
             index += payloadLengthBytes.Length;
-            Array.Copy(payloadChecksumBytes, 0, result, index, payloadChecksumBytes.Length);
-
-            return new Header(network, version, nodeId, messageType, payload.RawData.Length, payload.Checksum, result);
+            Array.Copy(payloadSignature, 0, result, index, payloadSignature.Length);
+            
+            return new Header(network, version, nodeId, messageType, payload.RawData.Length, payloadSignature,result);
         }
 
         public static Header FromPacketData(ReadOnlySpan<byte> data)
@@ -54,23 +55,23 @@ namespace iDi.Blockchain.Framework.Protocol
             index += 4;
             var version = BitConverter.ToInt16(rawData.Slice(index, 2));
             index += 2;
-            var nodeId = new Guid(rawData.Slice(index, 16));
+            var nodeId = rawData.Slice(index, CryptographyConstants.NodeIdByteLength).ToHexString();
             index += 16;
             var messageType = (int)rawData.Slice(16, 1)[0];
             index++;
             var payloadLength = BitConverter.ToInt32(rawData.Slice(index, 4));
             index += 4;
-            var payloadChecksum = BitConverter.ToInt32(rawData.Slice(index, 4));
-            return new Header((Networks)network, version, nodeId, (MessageTypes) messageType, payloadLength, payloadChecksum,
-                rawData.ToArray());
+            var payloadSignature = rawData.Slice(index);
+            return new Header((Networks) network, version, nodeId, (MessageTypes) messageType, payloadLength,
+                payloadSignature.ToArray(), rawData.ToArray());
         }
 
         public Networks Network { get; }
         public short Version { get; }
-        public Guid NodeId { get; }
+        public string NodeId { get; }
         public MessageTypes MessageType { get; }
         public int PayloadLength { get; }
-        public int PayloadChecksum { get; }
+        public byte[] PayloadSignature { get; }
         public byte[] RawData { get; }
     }
 }

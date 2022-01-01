@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 {
@@ -31,7 +31,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 
             for (var i = 0; i < count; i++)
             {
-                var hash = Encoding.ASCII.GetString(span.Slice(i * txHashByteLength, txHashByteLength));
+                var hash = span.Slice(i * txHashByteLength, txHashByteLength).ToHexString();
                 result.Add(hash);
             }
 

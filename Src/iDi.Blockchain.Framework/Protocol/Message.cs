@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Protocol.Payloads;
 
 namespace iDi.Blockchain.Framework.Protocol
@@ -26,7 +27,9 @@ namespace iDi.Blockchain.Framework.Protocol
         {
             var header = Header.FromPacketData(data);
             var payloadFactory = new PayloadFactory();
-            var payload = payloadFactory.CreatePayload(header.Network, header.Version, header.MessageType, data.Slice(header.RawData.Length).ToArray());
+            var payload = payloadFactory.CreatePayload(header.Network, header.Version, header.MessageType,
+                data.Slice(header.RawData.Length).ToArray(), header.PayloadSignature,
+                header.NodeId.HexStringToByteArray());
 
             return new Message(header, payload, data.ToArray());
         }

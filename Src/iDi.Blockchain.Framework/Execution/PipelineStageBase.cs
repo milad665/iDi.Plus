@@ -11,9 +11,9 @@ namespace iDi.Blockchain.Framework.Execution
     {
         private RequestContext _requestContext;
 
-        protected PipelineStageBase(Dictionary<Guid, Node> dicNodes)
+        protected PipelineStageBase(Dictionary<string, Node> dicNodes)
         {
-            Nodes = new ReadOnlyDictionary<Guid, Node>(dicNodes);
+            Nodes = new ReadOnlyDictionary<string, Node>(dicNodes);
         }
 
         /// <summary>
@@ -40,19 +40,19 @@ namespace iDi.Blockchain.Framework.Execution
         /// </summary>
         /// <param name="nodeId">Id of the receiver node</param>
         /// <param name="message">Message to send</param>
-        protected void SendToNode(Guid nodeId, Message message)
+        protected void SendToNode(string nodeId, Message message)
         {
             SendMessage(nodeId, message);
         }
 
-        protected ReadOnlyDictionary<Guid, Node> Nodes { get; }
+        protected ReadOnlyDictionary<string, Node> Nodes { get; }
 
         /// <summary>
         /// Stage response, if not null, the pipeline will abort execution of next stages and returns the response.
         /// </summary>
         public abstract Message Response { get; protected set; }
 
-        private void SendMessage(Guid nodeId, Message message)
+        private void SendMessage(string nodeId, Message message)
         {
             var node = Nodes[nodeId];
             if (node == null)

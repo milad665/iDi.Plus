@@ -1,7 +1,6 @@
 ﻿using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Security;
-using System;
 using System.Security.Cryptography;
 
 namespace iDi.Blockchain.Framework.Cryptography
@@ -92,33 +91,12 @@ namespace iDi.Blockchain.Framework.Cryptography
         /// <param name="data">Data of which the origin is to be verified</param>
         /// <param name="signature">Digital signature of the data</param>
         /// <returns></returns>
-        public static bool Verify(byte[] publicKey, byte[] data, byte[] signature)
+        public bool Verify(byte[] publicKey, byte[] data, byte[] signature)
         {
             var ecdsa = ECDsa.Create(CryptographyConstants.EcDsaCurve);
 
             ecdsa.ImportSubjectPublicKeyInfo(publicKey, out _);
             return ecdsa.VerifyData(data, signature, HashAlgorithmName.SHA256);
-        }
-
-        /// <summary>
-        /// Converts byte array to Hex-String
-        /// </summary>
-        /// <param name="bytes"></param>
-        /// <returns></returns>
-        public string KeyToHexString(byte[] bytes)
-        {
-            return $"0x{Convert.ToHexString(bytes)}";
-        }
-
-        /// <summary>
-        /// Converts Hex-String to byte array
-        /// </summary>
-        /// <param name="hexString"></param>
-        /// <returns></returns>
-        public byte[] HexStringToKey(string hexString)
-        {
-            hexString = hexString.Replace("0x", "");
-            return Convert.FromHexString(hexString);
         }
     }
 }
