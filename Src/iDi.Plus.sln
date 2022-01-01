@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Test.Client", "iDi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{232FA218-4AB9-453F-A518-073F17FAC8F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Utility", "iDi.Plus.Utility\iDi.Plus.Utility.csproj", "{655FEB36-66B1-4591-A573-0CA8FE96D288}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{655FEB36-66B1-4591-A573-0CA8FE96D288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{655FEB36-66B1-4591-A573-0CA8FE96D288}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{655FEB36-66B1-4591-A573-0CA8FE96D288}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{655FEB36-66B1-4591-A573-0CA8FE96D288}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{CACE3DA4-ED8E-4219-9753-6A94452D160F} = {232FA218-4AB9-453F-A518-073F17FAC8F4}
 		{A3B298F0-15C2-42AA-B868-B3C9D101670E} = {392C6004-F3C1-4E3E-BEB5-8AECB109EEF0}
 		{1EE6A21A-63D3-42D8-800C-5EAA24EDE51E} = {EF2AEB39-C4D9-4106-98B9-D4A6897C571D}
+		{655FEB36-66B1-4591-A573-0CA8FE96D288} = {232FA218-4AB9-453F-A518-073F17FAC8F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2184AF7C-0300-4B53-AF7C-50B871F41FA7}
