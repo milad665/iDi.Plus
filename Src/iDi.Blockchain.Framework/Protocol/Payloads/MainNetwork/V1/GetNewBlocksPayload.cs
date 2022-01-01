@@ -1,6 +1,4 @@
-﻿using iDi.Blockchain.Framework.Protocol.iDiDirect;
-using iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1;
-using System;
+﻿using System;
 using System.IO;
 
 namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1

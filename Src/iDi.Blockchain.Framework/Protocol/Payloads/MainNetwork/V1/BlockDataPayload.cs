@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using iDi.Blockchain.Framework.Attributes;
 using iDi.Blockchain.Framework.Cryptography;
-using iDi.Blockchain.Framework.Protocol.iDiDirect.Extensions;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
+namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 {
     public class BlockDataPayload : MainNetworkV1PayloadBase
     {

@@ -1,5 +1,5 @@
-﻿using iDi.Blockchain.Framework.Protocol.iDiDirect;
-using System.Net;
+﻿using System.Net;
+using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework
 {

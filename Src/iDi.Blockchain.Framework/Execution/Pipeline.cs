@@ -1,6 +1,6 @@
 ﻿using iDi.Blockchain.Framework.Exceptions;
-using iDi.Blockchain.Framework.Protocol.iDiDirect;
 using System.Collections.Generic;
+using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Execution
 {

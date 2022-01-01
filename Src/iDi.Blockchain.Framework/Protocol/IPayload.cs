@@ -1,4 +1,4 @@
-﻿namespace iDi.Blockchain.Framework.Protocol.iDiDirect
+﻿namespace iDi.Blockchain.Framework.Protocol
 {
     public interface IPayload : IByteData
     {

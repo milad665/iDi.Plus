@@ -1,10 +1,10 @@
 ﻿using iDi.Blockchain.Framework.Execution;
-using iDi.Blockchain.Framework.Protocol.iDiDirect;
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Server
 {

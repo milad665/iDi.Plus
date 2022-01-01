@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads
+namespace iDi.Blockchain.Framework.Protocol.Payloads
 {
     public class PayloadFactory
     {

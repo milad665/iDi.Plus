@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads;
+using iDi.Blockchain.Framework.Protocol.Payloads;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect
+namespace iDi.Blockchain.Framework.Protocol
 {
     /// <summary>
     /// The object representation of a message transmitted between nodes over the network.

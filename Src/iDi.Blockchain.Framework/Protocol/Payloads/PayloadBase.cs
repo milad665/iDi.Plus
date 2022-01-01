@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads
+namespace iDi.Blockchain.Framework.Protocol.Payloads
 {
     public abstract class PayloadBase : IPayload
     {

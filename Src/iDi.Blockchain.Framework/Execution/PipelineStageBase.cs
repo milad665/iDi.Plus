@@ -1,9 +1,9 @@
 ﻿using iDi.Blockchain.Framework.Nodes;
-using iDi.Blockchain.Framework.Protocol.iDiDirect;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Sockets;
+using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Execution
 {

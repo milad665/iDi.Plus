@@ -1,7 +1,7 @@
 ﻿using System;
 using iDi.Blockchain.Framework.Exceptions;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Exceptions
+namespace iDi.Blockchain.Framework.Protocol.Exceptions
 {
     public class InvalidDataException : Exception, IIdPlusException
     {

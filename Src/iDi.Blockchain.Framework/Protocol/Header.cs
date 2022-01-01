@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect
+namespace iDi.Blockchain.Framework.Protocol
 {
     /// <summary>
     /// Contains data extracted from the 32-byte Packed Header

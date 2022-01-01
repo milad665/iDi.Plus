@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using iDi.Blockchain.Framework.Cryptography;
-using iDi.Blockchain.Framework.Protocol.iDiDirect.Exceptions;
+using iDi.Blockchain.Framework.Protocol.Exceptions;
 
-namespace iDi.Blockchain.Framework.Protocol.iDiDirect.Payloads.MainNetwork.V1
+namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 {
     public class NewBlocksPayload : MainNetworkV1PayloadBase
     {

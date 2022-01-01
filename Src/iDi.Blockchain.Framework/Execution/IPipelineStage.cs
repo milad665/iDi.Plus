@@ -1,4 +1,4 @@
-﻿using iDi.Blockchain.Framework.Protocol.iDiDirect;
+﻿using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Execution
 {
