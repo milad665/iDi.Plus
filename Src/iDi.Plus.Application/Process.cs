@@ -1,10 +1,11 @@
-﻿using iDi.Blockchain.Framework.Server;
-using iDi.Plus.Application.Context;
+﻿using iDi.Plus.Application.Context;
 using iDi.Plus.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using iDi.Blockchain.Framework.Communication;
 
 namespace iDi.Plus.Application
 {
@@ -13,9 +14,11 @@ namespace iDi.Plus.Application
         private readonly Settings _settings;
         private readonly IBlockchainNodeServer _blockchainNodeServer;
         private readonly IdPlusDbContext _context;
-
+        private readonly CancellationTokenSource _cancellationTokenSource;
         public Process(Settings settings, IBlockchainNodeServer blockchainNodeServer, IdPlusDbContext context)
         {
+            _cancellationTokenSource = new CancellationTokenSource();
+
             _settings = settings;
             _blockchainNodeServer = blockchainNodeServer;
             _context = context;
@@ -27,7 +30,7 @@ namespace iDi.Plus.Application
             LoadDnsNodes();
             UpdateBlockchain();
 
-            _blockchainNodeServer.Listen(_settings.Port);
+            _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
         }
 
         private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.TrustedIpAddress != null).ToList();

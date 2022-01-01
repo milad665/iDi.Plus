@@ -1,16 +1,17 @@
 ﻿using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Execution;
-using iDi.Blockchain.Framework.Server;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using iDi.Blockchain.Framework.Communication;
 
 namespace iDi.Blockchain.Framework.Extensions
 {
-    public static class IServiceCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddIdiBlockchainServer(this IServiceCollection services)
+        public static IServiceCollection AddIdiBlockchainCommunicationServices(this IServiceCollection services)
         {
             services.AddSingleton<IBlockchainNodeServer, DefaultBlockchainNodeServer>();
+            services.AddTransient<IBlockchainNodeClient, DefaultBlockchainNodeClient>();
 
             return services;
         }

@@ -48,7 +48,7 @@ namespace iDi.Plus.Application
 
             var config = configuration.GetSection("Settings").Get<Settings>();
             services.AddSingleton(config);
-            services.AddIdiBlockchainServer()
+            services.AddIdiBlockchainCommunicationServices()
                 .AddPipeline(ConfigureStages)
                 .AddDefaultIdiPlusServices();
 

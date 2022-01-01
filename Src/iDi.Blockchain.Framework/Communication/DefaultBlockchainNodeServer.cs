@@ -1,12 +1,13 @@
-﻿using iDi.Blockchain.Framework.Execution;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
+using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Protocol;
 
-namespace iDi.Blockchain.Framework.Server
+namespace iDi.Blockchain.Framework.Communication
 {
     public class DefaultBlockchainNodeServer : IBlockchainNodeServer
     {
@@ -17,20 +18,20 @@ namespace iDi.Blockchain.Framework.Server
             _pipelineFactory = pipelineFactory;
         }
 
-        public void Listen(int port)
+        public void Listen(int port, CancellationToken cancellationToken)
         {
             var serverEndpoint = new IPEndPoint(IPAddress.Any, port);
             var listener = new TcpListener(serverEndpoint);
             listener.Start();
 
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 var client = listener.AcceptTcpClient();
-                Task.Run(() => HandleConnection(client));
+                Task.Run(() => HandleConnection(client, cancellationToken), cancellationToken);
             }
         }
 
-        private void HandleConnection(TcpClient client)
+        private void HandleConnection(TcpClient client, CancellationToken cancellationToken)
         {
             try
             {
@@ -44,7 +45,7 @@ namespace iDi.Blockchain.Framework.Server
                 messageStream.Write(buffer, 0, readBytesCount);
 
                 //continue to read if there is more data
-                while (networkStream.DataAvailable)
+                while (networkStream.DataAvailable && !cancellationToken.IsCancellationRequested)
                 {
                     readBytesCount = networkStream.Read(buffer, 0, buffer.Length);
                     messageStream.Write(buffer, 0, readBytesCount);
