@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using iDi.Plus.Tool.Commands;
+using iDi.Plus.Utility.Commands;
 
 var commands = new List<ICommand>
 {
