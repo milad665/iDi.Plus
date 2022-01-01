@@ -2,7 +2,7 @@
 
 namespace iDi.Blockchain.Framework.Exceptions
 {
-    public class InvalidResponseException : Exception, IDomainException
+    public class InvalidResponseException : Exception, IIdPlusException
     {
         public InvalidResponseException(string message): base(message)
         {

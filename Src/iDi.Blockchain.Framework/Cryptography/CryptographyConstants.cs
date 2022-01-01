@@ -9,5 +9,7 @@ namespace iDi.Blockchain.Framework.Cryptography
         public const string WalletAddressPrefix = "IDI";
 
         public static HashAlgorithm HashAlgorithm => Sha3.Sha3256();
+        public static ECCurve EcDsaCurve = ECCurve.NamedCurves.nistP256;
+
     }
 }

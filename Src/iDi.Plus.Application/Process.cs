@@ -1,4 +1,10 @@
 ﻿using iDi.Blockchain.Framework.Server;
+using iDi.Plus.Application.Context;
+using iDi.Plus.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace iDi.Plus.Application
 {
@@ -6,19 +12,46 @@ namespace iDi.Plus.Application
     {
         private readonly Settings _settings;
         private readonly IBlockchainNodeServer _blockchainNodeServer;
-        public Process(Settings settings, IBlockchainNodeServer blockchainNodeServer)
+        private readonly IdPlusDbContext _context;
+
+        public Process(Settings settings, IBlockchainNodeServer blockchainNodeServer, IdPlusDbContext context)
         {
             _settings = settings;
             _blockchainNodeServer = blockchainNodeServer;
+            _context = context;
         }
 
         public void Run()
         {
-            // Load DNSs
-            // Update node addresses (Max 1000 random)
-            // Download/Update blockchain
+            _context.ApplyMigrations(Seed);
+            LoadDnsNodes();
+            UpdateBlockchain();
 
             _blockchainNodeServer.Listen(_settings.Port);
+        }
+
+        private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.TrustedIpAddress != null).ToList();
+
+        private void UpdateBlockchain()
+        {
+            var node = _context.Nodes
+                .OrderByDescending(n => n.LastHeartbeat)
+                .FirstOrDefault(n => n.IsVerifierNode && n.LastHeartbeat != null);
+
+            //Send update message to node (get new blocks)
+            //Busy-wait for response
+            //return after update
+            throw new NotImplementedException();
+        }
+
+        private void Seed(IdPlusDbContext context)
+        {
+            if (!context.Nodes.Any())
+            {
+                //context.Nodes.Add(new Node(Guid.Parse("d7849370-8ebf-4026-bd0a-011f9a72ed47"), true, true, IPAddress.Parse("127.0.0.1")));
+
+                context.SaveChanges();
+            }
         }
     }
 }

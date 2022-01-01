@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Extensions;
+using iDi.Plus.Application.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -42,6 +43,9 @@ namespace iDi.Plus.Application
                 .Build();
 
             services.AddOptions();
+
+            services.AddDbContext<IdPlusDbContext>();
+
             var config = configuration.GetSection("Settings").Get<Settings>();
             services.AddSingleton(config);
             services.AddIdiBlockchainServer()

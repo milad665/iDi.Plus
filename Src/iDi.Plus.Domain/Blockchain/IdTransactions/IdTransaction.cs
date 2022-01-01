@@ -40,7 +40,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public void Verify()
         {
             if (TransactionHash != ComputeHash())
-                throw new HashMismatchDomainException("Invalid transaction hash.");
+                throw new HashMismatchIdPlusException("Invalid transaction hash.");
         }
 
         public abstract string ComputeHash();

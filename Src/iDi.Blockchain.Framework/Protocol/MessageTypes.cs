@@ -20,6 +20,10 @@
         /// </summary>
         TxData,
         /// <summary>
+        /// Request the list of new blocks added after a specific timestamp to the blockchain
+        /// </summary>
+        GetNewBlocks,
+        /// <summary>
         /// Send list of new blocks to other nodes
         /// </summary>
         NewBlocks,
