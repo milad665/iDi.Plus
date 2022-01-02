@@ -51,7 +51,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             lstBytes.AddRange(issuerAddress.HexStringToByteArray());
             lstBytes.AddRange(holderAddress.HexStringToByteArray());
             if (string.IsNullOrWhiteSpace(verifierAddress))
-                lstBytes.AddRange(new byte[CryptographyConstants.WalletAddressByteLengthExcludingPrefix]);
+                lstBytes.AddRange(new byte[FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix]);
             else
             {
                 if (IsValidAddress(verifierAddress))
@@ -103,7 +103,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 
         private void ExtractData(byte[] rawData)
         {
-            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
 
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;
@@ -111,15 +111,15 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             index += txHashByteLength;
             TransactionType = (TransactionTypes) span.Slice(index, 1)[0];
             index++;
-            IssuerAddress = $"{CryptographyConstants.WalletAddressPrefix}{span.Slice(index, CryptographyConstants.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
-            index += CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
-            HolderAddress = $"{CryptographyConstants.WalletAddressPrefix}{span.Slice(index, CryptographyConstants.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
-            index += CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
-            var verifierAddressBytes = span.Slice(index, CryptographyConstants.WalletAddressByteLengthExcludingPrefix).ToArray();
+            IssuerAddress = $"{FrameworkEnvironment.WalletAddressPrefix}{span.Slice(index, FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
+            index += FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix;
+            HolderAddress = $"{FrameworkEnvironment.WalletAddressPrefix}{span.Slice(index, FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix).ToHexString()}";
+            index += FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix;
+            var verifierAddressBytes = span.Slice(index, FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix).ToArray();
             if (verifierAddressBytes.Any(b => b != 0)) //Verifier address memory-space contains a value
-                VerifierAddress = $"{CryptographyConstants.WalletAddressPrefix}{verifierAddressBytes.ToHexString()}";
+                VerifierAddress = $"{FrameworkEnvironment.WalletAddressPrefix}{verifierAddressBytes.ToHexString()}";
             
-            index += CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
+            index += FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix;
             Subject = Encoding.Unicode.GetString(span.Slice(index, SubjectByteLength)).Trim();
             index += SubjectByteLength;
             IdentifierKey = Encoding.Unicode.GetString(span.Slice(index, IdentifierByteLength)).Trim();
@@ -134,12 +134,12 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 
         private static bool IsValidAddress(string walletAddress)
         {
-            if (string.IsNullOrWhiteSpace(walletAddress) || !walletAddress.ToUpper().StartsWith(CryptographyConstants.WalletAddressPrefix.ToUpper()))
+            if (string.IsNullOrWhiteSpace(walletAddress) || !walletAddress.ToUpper().StartsWith(FrameworkEnvironment.WalletAddressPrefix.ToUpper()))
                 return false;
 
             walletAddress = walletAddress.Substring(3);
 
-            return walletAddress.Length == 2 * CryptographyConstants.WalletAddressByteLengthExcludingPrefix;
+            return walletAddress.Length == 2 * FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix;
         }
     }
 }

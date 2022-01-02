@@ -64,7 +64,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 
         private void ExtractData(byte[] rawData)
         {
-            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
 
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;

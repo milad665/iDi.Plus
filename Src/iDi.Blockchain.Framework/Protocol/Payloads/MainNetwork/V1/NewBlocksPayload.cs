@@ -22,7 +22,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
         {
             var span = new ReadOnlySpan<byte>(rawData);
 
-            var txHashByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
 
             if (span.Length % txHashByteLength != 0)
                 throw new InvalidDataException("Data length does not match the hash length.");

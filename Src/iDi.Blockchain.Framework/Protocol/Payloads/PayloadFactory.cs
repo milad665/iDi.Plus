@@ -45,6 +45,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads
                 case MessageTypes.CreateTx:
                     return new MainNetwork.V1.CreateTxPayload(messageData);
                 case MessageTypes.Empty:
+                    return null;
                 default:
                     throw new NotSupportedException("Message type not supported");
             }

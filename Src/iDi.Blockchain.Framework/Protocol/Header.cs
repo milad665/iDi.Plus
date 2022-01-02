@@ -20,7 +20,7 @@ namespace iDi.Blockchain.Framework.Protocol
             RawData = rawData;
         }
 
-        public static Header Create(Networks network, short version, string nodeId, MessageTypes messageType, IPayload payload, byte[] payloadSignature)
+        public static Header Create(Networks network, short version, string nodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
         {
             var result = new byte[32];
 
@@ -28,7 +28,7 @@ namespace iDi.Blockchain.Framework.Protocol
             var versionBytes = BitConverter.GetBytes(version);
             var nodeIdBytes = nodeId.HexStringToByteArray();
             var messageTypeBytes = BitConverter.GetBytes((int)messageType);
-            var payloadLengthBytes = BitConverter.GetBytes(payload.RawData.Length);
+            var payloadLengthBytes = BitConverter.GetBytes(payloadSize);
 
             var index = 0;
             Array.Copy(networkBytes, result, networkBytes.Length);
@@ -43,7 +43,7 @@ namespace iDi.Blockchain.Framework.Protocol
             index += payloadLengthBytes.Length;
             Array.Copy(payloadSignature, 0, result, index, payloadSignature.Length);
             
-            return new Header(network, version, nodeId, messageType, payload.RawData.Length, payloadSignature,result);
+            return new Header(network, version, nodeId, messageType, payloadSize, payloadSignature,result);
         }
 
         public static Header FromPacketData(ReadOnlySpan<byte> data)
@@ -55,7 +55,7 @@ namespace iDi.Blockchain.Framework.Protocol
             index += 4;
             var version = BitConverter.ToInt16(rawData.Slice(index, 2));
             index += 2;
-            var nodeId = rawData.Slice(index, CryptographyConstants.NodeIdByteLength).ToHexString();
+            var nodeId = rawData.Slice(index, FrameworkEnvironment.NodeIdByteLength).ToHexString();
             index += 16;
             var messageType = (int)rawData.Slice(16, 1)[0];
             index++;

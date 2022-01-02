@@ -63,7 +63,7 @@ namespace iDi.Blockchain.Framework.Cryptography
 
         private string GetAddressFromPublicKey(byte[] publicKey)
         {
-            var hash = CryptographyConstants.HashAlgorithm.ComputeHash(publicKey);
+            var hash = FrameworkEnvironment.HashAlgorithm.ComputeHash(publicKey);
             return $"IDI{Convert.ToHexString(hash.Take(21).ToArray())}";
         }
     }

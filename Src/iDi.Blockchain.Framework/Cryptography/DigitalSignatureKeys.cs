@@ -20,7 +20,7 @@ public class DigitalSignatureKeys : KeyPair
     /// <returns>DigitalSignatureKeys object</returns>
     public static DigitalSignatureKeys Generate()
     {
-        var ecdsa = ECDsa.Create(CryptographyConstants.EcDsaCurve);
+        var ecdsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
 
         var privateKey = ecdsa.ExportECPrivateKey();
         var publicKey = ecdsa.ExportSubjectPublicKeyInfo();

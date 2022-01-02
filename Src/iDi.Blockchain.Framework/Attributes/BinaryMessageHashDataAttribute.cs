@@ -8,7 +8,7 @@ namespace iDi.Blockchain.Framework.Attributes
     {
         public BinaryMessageHashDataAttribute(int order) : base(order)
         {
-            ByteLength = CryptographyConstants.HashAlgorithm.HashSize / 8;
+            ByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
         }
 
         public int ByteLength { get; }
