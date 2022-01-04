@@ -9,20 +9,20 @@ namespace iDi.Plus.Domain.Entities
         public Node()
         {}
 
-        public Node(string publicKey, bool isVerifierNode, bool isDns, IPAddress trustedIpAddress)
+        public Node(string publicKey, bool isVerifierNode, bool isDns, IPEndPoint ipEndpoint)
         {
             PublicKey = publicKey;
             IsVerifierNode = isVerifierNode;
             IsDns = isDns;
-            TrustedIpAddress = trustedIpAddress;
+            IpEndpoint = ipEndpoint;
         }
 
         public string PublicKey { get; private set; }
         public bool IsVerifierNode { get; private set; }
         public bool IsDns { get; private set; }
-        public IPAddress TrustedIpAddress { get; private set; }
+        public IPEndPoint IpEndpoint { get; private set; }
         public DateTime? LastHeartbeat { get; set; }
 
-        public bool IsOriginIpAcceptable(IPAddress currentIpAddress) => !IsVerifierNode || TrustedIpAddress.Equals(currentIpAddress);
+        public bool IsOriginIpAcceptable(IPAddress currentIpAddress) => !IsVerifierNode || IpEndpoint.Address.Equals(currentIpAddress);
     }
 }

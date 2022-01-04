@@ -95,13 +95,13 @@ namespace iDi.Plus.Application
             return keys;
         }
 
-        private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.TrustedIpAddress != null).ToList();
+        private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.IpEndpoint != null).ToList();
 
         private void UpdateBlockchain(byte[] nodePrivateKey)
         {
             var node = _context.Nodes
                 .OrderByDescending(n => n.LastHeartbeat)
-                .FirstOrDefault(n => n.IsVerifierNode && n.TrustedIpAddress != null && n.LastHeartbeat != null);
+                .FirstOrDefault(n => n.IsVerifierNode && n.IpEndpoint != null && n.LastHeartbeat != null);
 
             if (node == null)
                 throw new NotFoundException("No verifier nodes found in the database.");
@@ -110,7 +110,7 @@ namespace iDi.Plus.Application
             var header = Header.Create(Networks.Main, 1, node.PublicKey, MessageTypes.GetNewBlocks,
                 payload.RawData.Length, payload.Sign(nodePrivateKey));
             var updateMessage = Message.Create(header,payload);
-            var response = _blockchainNodeClient.Send(new IPEndPoint(node.TrustedIpAddress, FrameworkEnvironment.DefaultServerPort),
+            var responseMessage = _blockchainNodeClient.Send(node.IpEndpoint,
                 updateMessage);
 
             //update blockchain
@@ -122,7 +122,9 @@ namespace iDi.Plus.Application
         {
             if (!context.Nodes.Any())
             {
-                context.Nodes.Add(new Node("3059301306072A8648CE3D020106082A8648CE3D0301070342000417B99AED69CF040215D59769048CDC58E3C7B652EB5C4DFCD27CFEC6D2E3066F4A621902A7187838C1E25A2AABA79C370D4B4A804292B769B007BEDF04F18201", true, true, IPAddress.Parse("127.0.0.1")));
+                context.Nodes.Add(new Node(
+                    "3059301306072A8648CE3D020106082A8648CE3D0301070342000417B99AED69CF040215D59769048CDC58E3C7B652EB5C4DFCD27CFEC6D2E3066F4A621902A7187838C1E25A2AABA79C370D4B4A804292B769B007BEDF04F18201",
+                    true, true, new IPEndPoint(IPAddress.Loopback, FrameworkEnvironment.DefaultServerPort)));
 
                 context.SaveChanges();
             }

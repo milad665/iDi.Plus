@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\iDi.Blockchain.Framework\iDi.Blockchain.Framework.csproj" />
     <ProjectReference Include="..\iDi.Plus.Domain\iDi.Plus.Domain.csproj" />
+    <ProjectReference Include="..\iDi.Plus.Infrastructure\iDi.Plus.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

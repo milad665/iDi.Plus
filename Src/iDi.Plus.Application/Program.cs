@@ -2,6 +2,7 @@
 using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Extensions;
 using iDi.Plus.Application.Context;
+using iDi.Plus.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -50,7 +51,8 @@ namespace iDi.Plus.Application
             services.AddSingleton(config);
             services.AddIdiBlockchainCommunicationServices()
                 .AddPipeline(ConfigureStages)
-                .AddDefaultIdiPlusServices();
+                .AddDefaultIdiPlusServices()
+                .AddIdiInfrastructureServices(config.ConnectionString);
 
             //Add pipeline stage classes to the IoC container here
             //services.AddTransient<SampleStage>()
