@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using iDi.Blockchain.Framework.Blockchain;
 
 namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 {
@@ -35,6 +36,11 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
                 throw new InvalidDataException("Data length does not match length of DateTime type.");
 
             return DateTime.FromBinary(BitConverter.ToInt64(rawData));
+        }
+
+        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
+        {
+            throw new NotImplementedException();
         }
     }
 }

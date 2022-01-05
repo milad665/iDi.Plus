@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
@@ -51,6 +51,11 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             SignedData = span.Slice(index, signedDataLength).ToArray();
             index += signedDataLength;
             SenderPublicKey = span.Slice(index).ToArray();
+        }
+
+        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
+        {
+            throw new NotImplementedException();
         }
     }
 }

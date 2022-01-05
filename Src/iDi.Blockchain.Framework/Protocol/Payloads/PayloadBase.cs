@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Cryptography;
+using iDi.Blockchain.Framework.Blockchain;
 
 namespace iDi.Blockchain.Framework.Protocol.Payloads
 {
@@ -17,6 +18,8 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads
 
         public byte[] RawData { get; }
         public int Checksum { get; }
+        public abstract (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository);
+
         public MessageTypes MessageType { get; }
         public short Version { get; }
         public Networks Network { get; }

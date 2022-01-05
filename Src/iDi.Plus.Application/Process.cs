@@ -41,12 +41,13 @@ namespace iDi.Plus.Application
         public void Run()
         {
             var nodeKeys = LoadNodeKeys();
+            var nodeId = nodeKeys.PublicKey.ToHexString();
 
             _context.ApplyMigrations(Seed);
             LoadDnsNodes();
-            UpdateBlockchain(nodeKeys.PrivateKey);
+            UpdateBlockchain(nodeId, nodeKeys.PrivateKey);
 
-            _blockchainNodeServer.Listen(FrameworkEnvironment.DefaultServerPort, _cancellationTokenSource.Token);
+            _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
         }
 
         private KeyPair LoadNodeKeys()
@@ -97,7 +98,7 @@ namespace iDi.Plus.Application
 
         private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.IpEndpoint != null).ToList();
 
-        private void UpdateBlockchain(byte[] nodePrivateKey)
+        private void UpdateBlockchain(string nodeId, byte[] nodePrivateKey)
         {
             var node = _context.Nodes
                 .OrderByDescending(n => n.LastHeartbeat)
@@ -109,12 +110,10 @@ namespace iDi.Plus.Application
             var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockTimestamp());
             var header = Header.Create(Networks.Main, 1, node.PublicKey, MessageTypes.GetNewBlocks,
                 payload.RawData.Length, payload.Sign(nodePrivateKey));
-            var updateMessage = Message.Create(header,payload);
-            var responseMessage = _blockchainNodeClient.Send(node.IpEndpoint,
-                updateMessage);
-
-            //update blockchain
-            //return after update
+            var updateMessage = Message.Create(header, payload);
+            var responseMessage = _blockchainNodeClient.Send(node.IpEndpoint, updateMessage);
+            //use pipeline stage to process return data
+            //var result = responseMessage.Process(nodeId, nodePrivateKey, _blockchainRepository);
             throw new NotImplementedException();
         }
 

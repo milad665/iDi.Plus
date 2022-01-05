@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using iDi.Blockchain.Framework.Attributes;
-using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
 {
+    /// <summary>
+    /// Payload of BlockData command
+    /// </summary>
     public class BlockDataPayload : MainNetworkV1PayloadBase
     {
         public BlockDataPayload(byte[] rawData):base(rawData, MessageTypes.BlockData)
@@ -44,21 +46,15 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             return new BlockDataPayload(index, hash, previousHash, timestamp, transactions, nonce, lstBytes.ToArray());
         }
 
-        [BinaryMessageData(0)]
         public long Index { get; private set; }
 
-        [BinaryMessageHashData(1)]
         public string Hash { get; private set; }
 
-        [BinaryMessageHashData(2)]
         public string PreviousHash { get; private set; }
 
-        [BinaryMessageData(3)]
         public DateTime Timestamp { get; private set; }
 
-        [BinaryMessageData(4)]
         public long Nonce { get; private set; }
-        [BinaryMessageCollection(5)]
         public IReadOnlyCollection<TxDataPayload> Transactions { get; private set; }
         
 
@@ -95,6 +91,11 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             }
 
             Transactions = new ReadOnlyCollection<TxDataPayload>(lstTransactions);
+        }
+
+        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
+        {
+            throw new NotImplementedException();
         }
     }
 }

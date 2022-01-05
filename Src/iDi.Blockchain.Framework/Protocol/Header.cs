@@ -1,11 +1,11 @@
 ﻿using System;
-using iDi.Blockchain.Framework.Cryptography;
+using System.Collections.Generic;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol
 {
     /// <summary>
-    /// Contains data extracted from the 32-byte Packed Header
+    /// Contains data extracted from the Packed Header
     /// </summary>
     public class Header : IByteData
     {
@@ -22,7 +22,7 @@ namespace iDi.Blockchain.Framework.Protocol
 
         public static Header Create(Networks network, short version, string nodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
         {
-            var result = new byte[32];
+            var bytes = new List<byte>();
 
             var networkBytes = BitConverter.GetBytes((int)network);
             var versionBytes = BitConverter.GetBytes(version);
@@ -30,25 +30,25 @@ namespace iDi.Blockchain.Framework.Protocol
             var messageTypeBytes = BitConverter.GetBytes((int)messageType);
             var payloadLengthBytes = BitConverter.GetBytes(payloadSize);
 
-            var index = 0;
-            Array.Copy(networkBytes, result, networkBytes.Length);
-            index += networkBytes.Length;
-            Array.Copy(versionBytes,0, result, index, versionBytes.Length);
-            index += versionBytes.Length;
-            Array.Copy(nodeIdBytes, 0, result, index, nodeIdBytes.Length);
-            index += nodeIdBytes.Length;
-            Array.Copy(messageTypeBytes, 0, result, index, messageTypeBytes.Length);
-            index += messageTypeBytes.Length;
-            Array.Copy(payloadLengthBytes, 0, result, index, payloadLengthBytes.Length);
-            index += payloadLengthBytes.Length;
-            Array.Copy(payloadSignature, 0, result, index, payloadSignature.Length);
-            
-            return new Header(network, version, nodeId, messageType, payloadSize, payloadSignature,result);
+            bytes.AddRange(networkBytes);
+            bytes.AddRange(versionBytes);
+            bytes.AddRange(nodeIdBytes);
+            bytes.AddRange(messageTypeBytes);
+            bytes.AddRange(payloadLengthBytes);
+            bytes.AddRange(payloadSignature);
+            var headerLengthBytes = BitConverter.GetBytes(bytes.Count);
+            var result = new List<byte>();
+            result.AddRange(headerLengthBytes);
+            result.AddRange(bytes);
+
+            return new Header(network, version, nodeId, messageType, payloadSize, payloadSignature,result.ToArray());
         }
 
         public static Header FromPacketData(ReadOnlySpan<byte> data)
         {
-            var rawData = data.Slice(0, 32);
+            var length = BitConverter.ToInt32(data.Slice(4));
+
+            var rawData = data.Slice(4, length);
             var index = 0;
 
             var network = BitConverter.ToInt32(rawData.Slice(index, 4));
