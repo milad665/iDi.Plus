@@ -1,4 +1,7 @@
-﻿using System.Threading;
+﻿using System.Collections.ObjectModel;
+using System.Threading;
+using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Communication
 {
@@ -12,6 +15,8 @@ namespace iDi.Blockchain.Framework.Communication
         /// </summary>
         /// <param name="port"></param>
         /// <param name="cancellationToken"></param>
-        void Listen(int port, CancellationToken cancellationToken);
+        /// <param name="nodesList">List of distributed blockchain nodes</param>
+        /// <param name="localKeys">Public/Private key pair of the local node</param>
+        void Listen(int port, CancellationToken cancellationToken, ReadOnlyDictionary<string, BlockchainNode> nodesList, KeyPair localKeys);
     }
 }

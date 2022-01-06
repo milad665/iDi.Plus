@@ -2,9 +2,9 @@
 
 namespace iDi.Blockchain.Framework.Entities
 {
-    public abstract class EntityBase
+    public abstract class EntityBase : IEntity
     {
-        public EntityBase()
+        protected EntityBase()
         {
             TimeStamp = DateTime.UtcNow;
         }

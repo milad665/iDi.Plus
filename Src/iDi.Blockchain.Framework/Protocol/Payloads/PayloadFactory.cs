@@ -26,7 +26,7 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads
                 throw new NotSupportedException("Network or version not supported");
 
             if (!cryptoServiceProvider.Verify(nodeId, messageData, messageSignature))
-                throw new UnauthorizedAccessException("Unable to verify message signature. Node Id (node public key) does not match its real origin.");
+                throw new UnauthorizedAccessException("Unable to verify message signature. BlockchainNode Id (node public key) does not match its real origin.");
 
             switch (messageType)
             {

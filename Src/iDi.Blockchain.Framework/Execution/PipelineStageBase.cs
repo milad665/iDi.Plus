@@ -1,8 +1,6 @@
-﻿using iDi.Blockchain.Framework.Nodes;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Net.Sockets;
+using iDi.Blockchain.Framework.Communication;
 using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Execution
@@ -10,27 +8,39 @@ namespace iDi.Blockchain.Framework.Execution
     public abstract class PipelineStageBase : IPipelineStage
     {
         private RequestContext _requestContext;
+        protected readonly IBlockchainNodeClient BlockchainNodeClient;
 
-        protected PipelineStageBase(Dictionary<string, Node> dicNodes)
+        protected PipelineStageBase(IBlockchainNodeClient blockchainNodeClient)
         {
-            Nodes = new ReadOnlyDictionary<string, Node>(dicNodes);
+            BlockchainNodeClient = blockchainNodeClient;
         }
 
         /// <summary>
         /// Executes the stage on the request
         /// </summary>
         /// <param name="request"></param>
-        public abstract void Execute(RequestContext request);
+        public void Execute(RequestContext request)
+        {
+            _requestContext = request;
+            HandleExecute(_requestContext);
+        }
 
         /// <summary>
-        /// Send message to all, except the one that the message was received from
+        /// When implemented, this method handles the execution logic of the pipeline stage.
+        /// </summary>
+        /// <param name="request">Incoming request</param>
+        public abstract void HandleExecute(RequestContext request);
+
+        /// <summary>
+        /// Send message to all other nodes
         /// </summary>
         /// <param name="message">Message to send</param>
-        protected void ForwardToAll(Message message)
+        /// <param name="forward">Determines if the message should only be forwarded to next nodes or not. If true, the message will not be sent to the node sending the current request.</param>
+        protected void Broadcast(Message message, bool forward)
         {
             foreach (var nodeId in Nodes.Keys)
             {
-                if (nodeId != _requestContext.Message.Header.NodeId)
+                if (!forward || nodeId != _requestContext.Message.Header.NodeId)
                     SendMessage(nodeId, message);
             }
         }
@@ -40,33 +50,29 @@ namespace iDi.Blockchain.Framework.Execution
         /// </summary>
         /// <param name="nodeId">Id of the receiver node</param>
         /// <param name="message">Message to send</param>
-        protected void SendToNode(string nodeId, Message message)
+        /// <returns>Response Message</returns>
+        protected Message SendToNode(string nodeId, Message message)
         {
-            SendMessage(nodeId, message);
+            return SendMessage(nodeId, message);
         }
 
-        protected ReadOnlyDictionary<string, Node> Nodes { get; }
+        /// <summary>
+        /// Blockchain nodes list
+        /// </summary>
+        public ReadOnlyDictionary<string, BlockchainNode> Nodes { get; set; }
 
         /// <summary>
         /// Stage response, if not null, the pipeline will abort execution of next stages and returns the response.
         /// </summary>
         public abstract Message Response { get; protected set; }
 
-        private void SendMessage(string nodeId, Message message)
+        private Message SendMessage(string nodeId, Message message)
         {
             var node = Nodes[nodeId];
             if (node == null)
-                return;
+                return null;
 
-            var tcpClient = new TcpClient();
-            
-            //TODO: Fallback to VerifiedEndpoint2 must be implemented
-            tcpClient.Connect(node.VerifiedEndpoint1);
-
-            var stream = tcpClient.GetStream();
-            stream.Write(message.RawData);
-            stream.Close();
-            tcpClient.Close();
+            return BlockchainNodeClient.Send(node.VerifiedEndpoint1, message);
         }
     }
 }

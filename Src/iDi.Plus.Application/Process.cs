@@ -2,6 +2,7 @@
 using iDi.Plus.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -14,6 +15,7 @@ using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1;
+using iDi.Plus.Domain.Pipeline;
 
 namespace iDi.Plus.Application
 {
@@ -41,13 +43,12 @@ namespace iDi.Plus.Application
         public void Run()
         {
             var nodeKeys = LoadNodeKeys();
-            var nodeId = nodeKeys.PublicKey.ToHexString();
 
             _context.ApplyMigrations(Seed);
             LoadDnsNodes();
-            UpdateBlockchain(nodeId, nodeKeys.PrivateKey);
+            UpdateBlockchain(nodeKeys);
 
-            _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
+            _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token, GetNodes(),nodeKeys);
         }
 
         private KeyPair LoadNodeKeys()
@@ -89,32 +90,42 @@ namespace iDi.Plus.Application
             fileStream.Read(buffer);
 
             var keys = DigitalSignatureKeys.FromPkcs12(buffer, l1Password, l2Password);
-            Console.WriteLine("Node Keys Retrieved.");
+            Console.WriteLine("BlockchainNode Keys Retrieved.");
             Console.WriteLine("Public Key:");
             Console.WriteLine(keys.PublicKey.ToHexString());
             Console.WriteLine();
             return keys;
         }
 
-        private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.IpEndpoint != null).ToList();
+        private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.VerifiedEndpoint1 != null).ToList();
 
-        private void UpdateBlockchain(string nodeId, byte[] nodePrivateKey)
+        private ReadOnlyDictionary<string, BlockchainNode> GetNodes()
+        {
+            var total = 1000;
+            var verifiers = _context.Nodes.Where(n => n.IsVerifierNode).ToList();
+            var nonVerifiers = _context.Nodes.Where(n => !n.IsVerifierNode).Take(total - verifiers.Count).ToList();
+            return new ReadOnlyDictionary<string, BlockchainNode>(verifiers.Union(nonVerifiers).Cast<BlockchainNode>()
+                .ToDictionary(n => n.NodeId));
+        }
+
+        private void UpdateBlockchain(KeyPair localNodeKeyPair)
         {
             var node = _context.Nodes
-                .OrderByDescending(n => n.LastHeartbeat)
-                .FirstOrDefault(n => n.IsVerifierNode && n.IpEndpoint != null && n.LastHeartbeat != null);
+                .OrderByDescending(n => n.LastHeartbeatUtcTime)
+                .FirstOrDefault(n => n.IsVerifierNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
 
             if (node == null)
                 throw new NotFoundException("No verifier nodes found in the database.");
 
             var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockTimestamp());
-            var header = Header.Create(Networks.Main, 1, node.PublicKey, MessageTypes.GetNewBlocks,
-                payload.RawData.Length, payload.Sign(nodePrivateKey));
+            var header = Header.Create(Networks.Main, 1, node.NodeId, MessageTypes.GetNewBlocks,
+                payload.RawData.Length, payload.Sign(localNodeKeyPair.PrivateKey));
             var updateMessage = Message.Create(header, payload);
-            var responseMessage = _blockchainNodeClient.Send(node.IpEndpoint, updateMessage);
-            //use pipeline stage to process return data
-            //var result = responseMessage.Process(nodeId, nodePrivateKey, _blockchainRepository);
-            throw new NotImplementedException();
+            
+            //TODO: fallback to verifiedEP2
+            var responseMessage = _blockchainNodeClient.Send(node.VerifiedEndpoint1, updateMessage);
+            var logicController = new LogicControllerStage(_blockchainNodeClient, _blockchainRepository);
+            logicController.HandleExecute(new RequestContext(responseMessage, null, node.VerifiedEndpoint1, localNodeKeyPair));
         }
 
         private void Seed(IdPlusDbContext context)
@@ -123,7 +134,8 @@ namespace iDi.Plus.Application
             {
                 context.Nodes.Add(new Node(
                     "3059301306072A8648CE3D020106082A8648CE3D0301070342000417B99AED69CF040215D59769048CDC58E3C7B652EB5C4DFCD27CFEC6D2E3066F4A621902A7187838C1E25A2AABA79C370D4B4A804292B769B007BEDF04F18201",
-                    true, true, new IPEndPoint(IPAddress.Loopback, FrameworkEnvironment.DefaultServerPort)));
+                    true, new IPEndPoint(IPAddress.Loopback, FrameworkEnvironment.DefaultServerPort), null, null,
+                    true));
 
                 context.SaveChanges();
             }

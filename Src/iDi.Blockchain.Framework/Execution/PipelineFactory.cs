@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using iDi.Blockchain.Framework.Protocol;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace iDi.Blockchain.Framework.Execution
 {
@@ -31,11 +34,20 @@ namespace iDi.Blockchain.Framework.Execution
         /// Creates a new pipeline instance
         /// </summary>
         /// <returns></returns>
-        public Pipeline Create()
+        public Pipeline Create(ReadOnlyDictionary<string, BlockchainNode> nodesList)
         {
             var stageInstances = new List<IPipelineStage>();
+            using var scope = _serviceProvider.CreateScope();
+
             foreach (var typ in _stages)
-                stageInstances.Add((IPipelineStage) _serviceProvider.GetService(typ));
+            {
+                var pipelineStage = (IPipelineStage) scope.ServiceProvider.GetService(typ);
+                if (pipelineStage == null)
+                    throw new Exception($"Unable to create pipeline stage instance of type '{typ}'");
+
+                pipelineStage.Nodes = nodesList;
+                stageInstances.Add(pipelineStage);
+            }
 
             return new Pipeline(stageInstances);
         }

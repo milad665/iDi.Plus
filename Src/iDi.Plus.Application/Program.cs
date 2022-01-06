@@ -20,7 +20,8 @@ namespace iDi.Plus.Application
             var serviceProvider = services.BuildServiceProvider();
 
             // entry to run app
-            serviceProvider.GetService<Process>()?.Run();
+            using var scope = serviceProvider.CreateScope();
+            scope.ServiceProvider.GetService<Process>()?.Run();
         }
 
         private static void ConfigureStages(PipelineFactory pipelineFactory)
@@ -58,7 +59,7 @@ namespace iDi.Plus.Application
             //services.AddTransient<SampleStage>()
 
             // add app
-            services.AddTransient<Process>();
+            services.AddSingleton<Process>();
         }
     }
 }

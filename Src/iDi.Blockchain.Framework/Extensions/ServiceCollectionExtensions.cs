@@ -11,7 +11,7 @@ namespace iDi.Blockchain.Framework.Extensions
         public static IServiceCollection AddIdiBlockchainCommunicationServices(this IServiceCollection services)
         {
             services.AddSingleton<IBlockchainNodeServer, DefaultBlockchainNodeServer>();
-            services.AddTransient<IBlockchainNodeClient, DefaultBlockchainNodeClient>();
+            services.AddScoped<IBlockchainNodeClient, DefaultBlockchainNodeClient>();
 
             return services;
         }
@@ -28,7 +28,7 @@ namespace iDi.Blockchain.Framework.Extensions
 
         public static IServiceCollection AddDefaultIdiPlusServices(this IServiceCollection services)
         {
-            services.AddTransient<CryptoServiceProvider>();
+            services.AddScoped<CryptoServiceProvider>();
 
             return services;
         }
