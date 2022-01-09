@@ -2,20 +2,17 @@
 using iDi.Plus.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using iDi.Blockchain.Framework;
-using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Communication;
 using iDi.Blockchain.Framework.Cryptography;
-using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
-using iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1;
-using iDi.Plus.Domain.Pipeline;
+using iDi.Blockchain.Framework.Providers;
+using iDi.Plus.Domain.Services;
 
 namespace iDi.Plus.Application
 {
@@ -23,32 +20,37 @@ namespace iDi.Plus.Application
     {
         private readonly Settings _settings;
         private readonly IBlockchainNodeServer _blockchainNodeServer;
-        private readonly IBlockchainNodeClient _blockchainNodeClient;
-        private readonly IBlockchainRepository _blockchainRepository;
+        private readonly BlockchainNodesProvider _blockchainNodesProvider;
+        private readonly LocalNodeContextProvider _localNodeContextProvider;
+        private readonly IBlockchainUpdateService _blockchainUpdateService;
+
         private readonly IdPlusDbContext _context;
         private readonly CancellationTokenSource _cancellationTokenSource;
 
         public Process(Settings settings, IBlockchainNodeServer blockchainNodeServer, IdPlusDbContext context, 
-            IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository blockchainRepository)
+            BlockchainNodesProvider blockchainNodesProvider, LocalNodeContextProvider localNodeContextProvider, 
+            IBlockchainUpdateService blockchainUpdateService)
         {
             _cancellationTokenSource = new CancellationTokenSource();
 
             _settings = settings;
             _blockchainNodeServer = blockchainNodeServer;
             _context = context;
-            _blockchainNodeClient = blockchainNodeClient;
-            _blockchainRepository = blockchainRepository;
+            _blockchainNodesProvider = blockchainNodesProvider;
+            _localNodeContextProvider = localNodeContextProvider;
+            _blockchainUpdateService = blockchainUpdateService;
         }
 
         public void Run()
         {
-            var nodeKeys = LoadNodeKeys();
+            _localNodeContextProvider.LocalKeys = LoadNodeKeys();
 
             _context.ApplyMigrations(Seed);
-            LoadDnsNodes();
-            UpdateBlockchain(nodeKeys);
+            var dnsNodes = LoadDnsNodes();
+            _blockchainNodesProvider.AddOrUpdateNodeRange(GetNodes());
+            _blockchainUpdateService.Update(_settings.Port);
 
-            _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token, GetNodes(),nodeKeys);
+            _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
         }
 
         private KeyPair LoadNodeKeys()
@@ -99,34 +101,14 @@ namespace iDi.Plus.Application
 
         private List<Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.VerifiedEndpoint1 != null).ToList();
 
-        private ReadOnlyDictionary<string, BlockchainNode> GetNodes()
+        private List<BlockchainNode> GetNodes()
         {
             var total = 1000;
             var verifiers = _context.Nodes.Where(n => n.IsVerifierNode).ToList();
             var nonVerifiers = _context.Nodes.Where(n => !n.IsVerifierNode).Take(total - verifiers.Count).ToList();
-            return new ReadOnlyDictionary<string, BlockchainNode>(verifiers.Union(nonVerifiers).Cast<BlockchainNode>()
-                .ToDictionary(n => n.NodeId));
+            return verifiers.Union(nonVerifiers).Cast<BlockchainNode>().ToList();
         }
 
-        private void UpdateBlockchain(KeyPair localNodeKeyPair)
-        {
-            var node = _context.Nodes
-                .OrderByDescending(n => n.LastHeartbeatUtcTime)
-                .FirstOrDefault(n => n.IsVerifierNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
-
-            if (node == null)
-                throw new NotFoundException("No verifier nodes found in the database.");
-
-            var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockTimestamp());
-            var header = Header.Create(Networks.Main, 1, node.NodeId, MessageTypes.GetNewBlocks,
-                payload.RawData.Length, payload.Sign(localNodeKeyPair.PrivateKey));
-            var updateMessage = Message.Create(header, payload);
-            
-            //TODO: fallback to verifiedEP2
-            var responseMessage = _blockchainNodeClient.Send(node.VerifiedEndpoint1, updateMessage);
-            var logicController = new LogicControllerStage(_blockchainNodeClient, _blockchainRepository);
-            logicController.HandleExecute(new RequestContext(responseMessage, null, node.VerifiedEndpoint1, localNodeKeyPair));
-        }
 
         private void Seed(IdPlusDbContext context)
         {

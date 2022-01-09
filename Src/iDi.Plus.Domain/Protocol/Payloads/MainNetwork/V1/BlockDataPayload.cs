@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
-namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
+namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
     /// <summary>
     /// Payload of BlockData command
@@ -91,11 +92,6 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             }
 
             Transactions = new ReadOnlyCollection<TxDataPayload>(lstTransactions);
-        }
-
-        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
-        {
-            throw new NotImplementedException();
         }
     }
 }

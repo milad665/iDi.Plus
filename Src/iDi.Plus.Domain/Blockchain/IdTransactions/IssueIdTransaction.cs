@@ -1,6 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Protocol.Exceptions;
+using iDi.Blockchain.Framework.Protocol.Extensions;
+using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
@@ -12,6 +15,15 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             
 
             TransactionHash = ComputeHash();
+        }
+
+        public static IssueIdTransaction FromTxDataPayload(TxDataPayload payload)
+        {
+            if (payload.TransactionType != TransactionTypes.IssueTransaction)
+                throw new InvalidDataException("Transaction type does not match.");
+
+            return new IssueIdTransaction(payload.IssuerAddress, payload.HolderAddress, payload.Subject,
+                payload.IdentifierKey, payload.SignedData.ToHexString(), payload.PreviousTransactionHash);
         }
 
         public override string ComputeHash()

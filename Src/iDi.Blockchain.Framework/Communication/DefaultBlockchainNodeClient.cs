@@ -12,8 +12,8 @@ public class DefaultBlockchainNodeClient : IBlockchainNodeClient
     /// </summary>
     /// <param name="remoteEndpoint">Remote node endpoint</param>
     /// <param name="messageToSend"></param>
-    /// <returns>Response message</returns>
-    public Message Send(IPEndPoint remoteEndpoint, Message messageToSend)
+    /// <returns>Success status</returns>
+    public bool Send(IPEndPoint remoteEndpoint, Message messageToSend)
     {
         var tcpClient = new TcpClient();
         tcpClient.Connect(remoteEndpoint.Address, remoteEndpoint.Port);
@@ -36,6 +36,6 @@ public class DefaultBlockchainNodeClient : IBlockchainNodeClient
         }
 
         tcpClient.Close();
-        return Message.FromMessageData(messageStream.ToArray());
+        return true;
     }
 }

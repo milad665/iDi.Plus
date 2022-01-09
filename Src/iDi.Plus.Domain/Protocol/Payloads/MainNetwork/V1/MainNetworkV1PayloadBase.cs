@@ -1,4 +1,6 @@
-﻿namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
+﻿using iDi.Blockchain.Framework.Protocol;
+
+namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
     public abstract class MainNetworkV1PayloadBase : PayloadBase
     {

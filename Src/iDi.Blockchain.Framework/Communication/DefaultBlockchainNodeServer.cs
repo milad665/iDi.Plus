@@ -1,26 +1,32 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Protocol;
+using iDi.Blockchain.Framework.Providers;
 
 namespace iDi.Blockchain.Framework.Communication
 {
     public class DefaultBlockchainNodeServer : IBlockchainNodeServer
     {
         private readonly PipelineFactory _pipelineFactory;
+        private readonly LocalNodeContextProvider _localNodeContextProvider;
+        private readonly BlockchainNodesProvider _blockchainNodesProvider;
+        private readonly IMessageFactory _messageFactory;
 
-        public DefaultBlockchainNodeServer(PipelineFactory pipelineFactory)
+        public DefaultBlockchainNodeServer(PipelineFactory pipelineFactory, LocalNodeContextProvider localNodeContextProvider, 
+            BlockchainNodesProvider blockchainNodesProvider, IMessageFactory messageFactory)
         {
             _pipelineFactory = pipelineFactory;
+            _localNodeContextProvider = localNodeContextProvider;
+            _blockchainNodesProvider = blockchainNodesProvider;
+            _messageFactory = messageFactory;
         }
 
-        public void Listen(int port, CancellationToken cancellationToken, ReadOnlyDictionary<string, BlockchainNode> nodesList, KeyPair localKeys)
+        public void Listen(int port, CancellationToken cancellationToken)
         {
             var serverEndpoint = new IPEndPoint(IPAddress.Any, port);
             var listener = new TcpListener(serverEndpoint);
@@ -29,11 +35,12 @@ namespace iDi.Blockchain.Framework.Communication
             while (!cancellationToken.IsCancellationRequested)
             {
                 var client = listener.AcceptTcpClient();
-                Task.Run(() => HandleConnection(client, cancellationToken, nodesList, localKeys), cancellationToken);
+                Task.Run(() => HandleConnection(client, cancellationToken), cancellationToken);
             }
+            listener.Stop();
         }
 
-        private void HandleConnection(TcpClient client, CancellationToken cancellationToken, ReadOnlyDictionary<string, BlockchainNode> nodesList, KeyPair localKeys)
+        private void HandleConnection(TcpClient client, CancellationToken cancellationToken)
         {
             try
             {
@@ -53,9 +60,9 @@ namespace iDi.Blockchain.Framework.Communication
                     messageStream.Write(buffer, 0, readBytesCount);
                 }
                 
-                var message = Message.FromMessageData(messageStream.ToArray());
-                var request = new RequestContext(message, client.Client.LocalEndPoint, client.Client.RemoteEndPoint, localKeys);
-                var pipeline = _pipelineFactory.Create(nodesList);
+                var message = _messageFactory.CreateMessage(messageStream.ToArray());
+                var request = new RequestContext(message, client.Client.LocalEndPoint, client.Client.RemoteEndPoint, _localNodeContextProvider.LocalKeys);
+                var pipeline = _pipelineFactory.Create();
                 var response = pipeline.Execute(request);
                 networkStream.Write(response.RawData);
                 networkStream.Close(); // Send data

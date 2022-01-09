@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
-namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
+namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
     /// <summary>
     /// Payload of CreateTx (Create Transaction) command
@@ -51,11 +52,6 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             SignedData = span.Slice(index, signedDataLength).ToArray();
             index += signedDataLength;
             SenderPublicKey = span.Slice(index).ToArray();
-        }
-
-        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
-        {
-            throw new NotImplementedException();
         }
     }
 }

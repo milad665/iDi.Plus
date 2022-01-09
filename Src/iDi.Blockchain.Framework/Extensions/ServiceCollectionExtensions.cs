@@ -3,6 +3,7 @@ using iDi.Blockchain.Framework.Execution;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using iDi.Blockchain.Framework.Communication;
+using iDi.Blockchain.Framework.Providers;
 
 namespace iDi.Blockchain.Framework.Extensions
 {
@@ -26,12 +27,13 @@ namespace iDi.Blockchain.Framework.Extensions
             return services;
         }
 
-        public static IServiceCollection AddDefaultIdiPlusServices(this IServiceCollection services)
+        public static IServiceCollection AddIdiPlusCoreServices(this IServiceCollection services)
         {
             services.AddScoped<CryptoServiceProvider>();
+            services.AddSingleton<BlockchainNodesProvider>();
+            services.AddSingleton<LocalNodeContextProvider>();
 
             return services;
         }
-
     }
 }

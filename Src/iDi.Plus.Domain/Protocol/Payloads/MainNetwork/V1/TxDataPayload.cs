@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
-namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
+namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
     public class TxDataPayload : MainNetworkV1PayloadBase
     {
@@ -140,11 +141,6 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             walletAddress = walletAddress.Substring(3);
 
             return walletAddress.Length == 2 * FrameworkEnvironment.WalletAddressByteLengthExcludingPrefix;
-        }
-
-        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using iDi.Blockchain.Framework.Blockchain;
-using iDi.Blockchain.Framework.Cryptography;
-using iDi.Blockchain.Framework.Protocol.Extensions;
-using iDi.Blockchain.Framework.Protocol.Payloads;
+﻿using System.Collections.Generic;
 
 namespace iDi.Blockchain.Framework.Protocol
 {
@@ -12,28 +7,11 @@ namespace iDi.Blockchain.Framework.Protocol
     /// </summary>
     public class Message
     {
-        protected Message(Header header, IPayload payload, byte[] rawData)
+        public Message(Header header, IPayload payload, byte[] rawData)
         {
             Header = header;
             Payload = payload;
             RawData = rawData;
-        }
-
-        /// <summary>
-        /// Creates a new message instance from input byte data.
-        /// This method is mainly used to reconstruct the message object from the data received over the network.
-        /// </summary>
-        /// <param name="data">Raw byte data</param>
-        /// <returns>Message instance</returns>
-        public static Message FromMessageData(ReadOnlySpan<byte> data)
-        {
-            var header = Header.FromPacketData(data);
-            var payloadFactory = new PayloadFactory();
-            var payload = payloadFactory.CreatePayload(header.Network, header.Version, header.MessageType,
-                data.Slice(header.RawData.Length).ToArray(), header.PayloadSignature,
-                header.NodeId.HexStringToByteArray());
-
-            return new Message(header, payload, data.ToArray());
         }
 
         /// <summary>
@@ -64,21 +42,5 @@ namespace iDi.Blockchain.Framework.Protocol
         /// Raw byte data of the whole message
         /// </summary>
         public byte[] RawData { get; }
-
-        /// <summary>
-        /// Processes current message
-        /// </summary>
-        /// <param name="nodeId">Current node id</param>
-        /// <param name="nodePrivateKey">Current node private key</param>
-        /// <param name="blockchainRepository">Blockchain repository</param>
-        /// <returns></returns>
-        public (Message MessageToSend, MessageTransmissionTypes TransmissionType) Process(string nodeId, byte[] nodePrivateKey, IBlockchainRepository blockchainRepository)
-        {
-            var cryptoService = new CryptoServiceProvider();
-            var signature = cryptoService.Sign(nodePrivateKey, Payload.RawData);
-            var result = Payload.Process(blockchainRepository);
-            var header = Header.Create(result.PayloadToSend.Network, result.PayloadToSend.Version, nodeId, result.PayloadToSend.MessageType, result.PayloadToSend.RawData.Length, signature);
-            return (Create(header, result.PayloadToSend), result.TransmissionType);
-        }
     }
 }

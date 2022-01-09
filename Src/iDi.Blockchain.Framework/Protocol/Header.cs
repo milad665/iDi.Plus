@@ -66,6 +66,11 @@ namespace iDi.Blockchain.Framework.Protocol
                 payloadSignature.ToArray(), rawData.ToArray());
         }
 
+        public Header ToResponseHeader(string senderNodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
+        {
+            return Create(Network, Version, senderNodeId, messageType, payloadSize, payloadSignature);
+        }
+
         public Networks Network { get; }
         public short Version { get; }
         public string NodeId { get; }

@@ -2,6 +2,7 @@
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Security;
 using System.Security.Cryptography;
+using Org.BouncyCastle.Asn1.Crmf;
 
 namespace iDi.Blockchain.Framework.Cryptography
 {
@@ -78,6 +79,9 @@ namespace iDi.Blockchain.Framework.Cryptography
         /// <returns></returns>
         public byte[] Sign(byte[] privateKey, byte[] dataToSign)
         {
+            if (dataToSign == null)
+                return null;
+
             var ecdsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
             ecdsa.ImportECPrivateKey(privateKey, out _);
 

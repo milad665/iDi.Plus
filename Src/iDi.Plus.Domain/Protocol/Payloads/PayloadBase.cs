@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
-using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Protocol;
 
-namespace iDi.Blockchain.Framework.Protocol.Payloads
+namespace iDi.Plus.Domain.Protocol.Payloads
 {
     public abstract class PayloadBase : IPayload
     {
@@ -16,12 +16,16 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads
             Checksum = ComputeChecksum(rawData);
         }
 
+        /// <inheritdoc/>
         public byte[] RawData { get; }
+        /// <inheritdoc/>
         public int Checksum { get; }
-        public abstract (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository);
 
+        /// <inheritdoc/>
         public MessageTypes MessageType { get; }
+        /// <inheritdoc/>
         public short Version { get; }
+        /// <inheritdoc/>
         public Networks Network { get; }
 
         private int ComputeChecksum(byte[] rawData)

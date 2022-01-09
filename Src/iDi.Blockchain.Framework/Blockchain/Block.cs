@@ -20,12 +20,19 @@ namespace iDi.Blockchain.Framework.Blockchain
             Nonce = 0;
         }
 
+        public static Block<TTransaction> Genesis()
+        {
+            return new Block<TTransaction>(0, "", DateTime.UtcNow, null);
+        }
+
         public long Index { get; private set; }
         public string Hash { get; private set; }
         public string PreviousHash { get; private set; }
         public DateTime Timestamp { get; private set; }
         public List<TTransaction> Transactions { get; private set; }
         public long Nonce { get; private set; }
+
+        public bool IsGenesis() => Index == 0 && PreviousHash == "" && Transactions == null;
 
         public void NextNonce()
         {

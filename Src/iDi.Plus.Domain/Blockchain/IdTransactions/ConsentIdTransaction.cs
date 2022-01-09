@@ -1,6 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Protocol.Exceptions;
+using iDi.Blockchain.Framework.Protocol.Extensions;
+using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
@@ -12,6 +15,16 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             VerifierPublicKey = verifierPublicKey;
 
             TransactionHash = ComputeHash();
+        }
+
+        public static ConsentIdTransaction FromTxDataPayload(TxDataPayload payload)
+        {
+            if (payload.TransactionType != TransactionTypes.ConsentTransaction)
+                throw new InvalidDataException("Transaction type does not match.");
+
+            return new ConsentIdTransaction(payload.IssuerAddress, payload.HolderAddress, payload.Subject,
+                payload.IdentifierKey, payload.SignedData.ToHexString(), payload.VerifierAddress,
+                payload.PreviousTransactionHash);
         }
 
         public string VerifierPublicKey { get; set; }

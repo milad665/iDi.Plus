@@ -5,5 +5,5 @@ namespace iDi.Blockchain.Framework.Communication;
 
 public interface IBlockchainNodeClient
 {
-    Message Send(IPEndPoint remoteEndpoint, Message messageToSend);
+    bool Send(IPEndPoint remoteEndpoint, Message messageToSend);
 }

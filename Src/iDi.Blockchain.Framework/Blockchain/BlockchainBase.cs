@@ -10,15 +10,10 @@ namespace iDi.Blockchain.Framework.Blockchain
 
         protected BlockchainBase()
         {
-            _blocks = new List<Block<TTransaction>> { Genesis() };
+            _blocks = new List<Block<TTransaction>> { Block<TTransaction>.Genesis() };
         }
 
         public IReadOnlyCollection<Block<TTransaction>> Blocks => _blocks;
-
-        public Block<TTransaction> Genesis()
-        {
-            return new Block<TTransaction>(0, "", DateTime.UtcNow, null);
-        }
 
         public void Add(List<TTransaction> transactions)
         {

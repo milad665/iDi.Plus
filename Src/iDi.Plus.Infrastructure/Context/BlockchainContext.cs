@@ -15,10 +15,12 @@ public class BlockchainContext : IBlockchainContext
         Blocks = Database.GetCollection<Block<IdTransaction>>(nameof(Blocks));
 
         var transactionHashIndexKeysDefinition = Builders<Block<IdTransaction>>.IndexKeys.Ascending("Transactions.TransactionHash");
-        var blockTimestampIndexKeysDefinition = Builders<Block<IdTransaction>>.IndexKeys.Ascending(b => b.Timestamp);
+        var blockIndexIndexKeysDefinition = Builders<Block<IdTransaction>>.IndexKeys.Ascending(b => b.Index);
+        var blockHashIndexKeysDefinition = Builders<Block<IdTransaction>>.IndexKeys.Ascending(b => b.Hash);
 
         Blocks.Indexes.CreateOne(new CreateIndexModel<Block<IdTransaction>>(transactionHashIndexKeysDefinition));
-        Blocks.Indexes.CreateOne(new CreateIndexModel<Block<IdTransaction>>(blockTimestampIndexKeysDefinition));
+        Blocks.Indexes.CreateOne(new CreateIndexModel<Block<IdTransaction>>(blockIndexIndexKeysDefinition));
+        Blocks.Indexes.CreateOne(new CreateIndexModel<Block<IdTransaction>>(blockHashIndexKeysDefinition));
         
         BsonClassMap.RegisterClassMap<IdTransaction>(cm => {
             cm.AutoMap();

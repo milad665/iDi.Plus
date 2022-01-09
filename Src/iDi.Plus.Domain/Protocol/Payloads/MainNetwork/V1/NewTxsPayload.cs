@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
-namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
+namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
-    public class NewBlocksPayload : MainNetworkV1PayloadBase
+    public class NewTxsPayload : MainNetworkV1PayloadBase
     {
-        public NewBlocksPayload(byte[] rawData) : base(rawData, MessageTypes.NewBlocks)
+        public NewTxsPayload(byte[] rawData) : base(rawData, MessageTypes.NewTxs)
         {
-            Blocks = GetBlocks(rawData);
+            Transactions = GetTransactions(rawData);
         }
 
         /// <summary>
-        /// List of block hashes.
+        /// List of transaction hashes.
         /// </summary>
-        public List<string> Blocks { get; set; }
+        public List<string> Transactions { get; set; }
 
-        private List<string> GetBlocks(byte[] rawData)
+        private List<string> GetTransactions(byte[] rawData)
         {
             var span = new ReadOnlySpan<byte>(rawData);
 
@@ -36,11 +37,6 @@ namespace iDi.Blockchain.Framework.Protocol.Payloads.MainNetwork.V1
             }
 
             return result;
-        }
-
-        public override (IPayload PayloadToSend, MessageTransmissionTypes TransmissionType) Process(IBlockchainRepository blockchainRepository)
-        {
-            throw new NotImplementedException();
         }
     }
 }
