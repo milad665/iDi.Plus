@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace iDi.Blockchain.Framework.Blockchain
 {
@@ -26,6 +27,7 @@ namespace iDi.Blockchain.Framework.Blockchain
         }
 
         public long Index { get; private set; }
+        [JsonIgnore]
         public string Hash { get; private set; }
         public string PreviousHash { get; private set; }
         public DateTime Timestamp { get; private set; }
@@ -38,8 +40,8 @@ namespace iDi.Blockchain.Framework.Blockchain
         {
             Nonce++;
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(this));
-            using var sha256Hash = SHA256.Create();
-            var hashedBytes = sha256Hash.ComputeHash(bytes);
+            using var algorithm = FrameworkEnvironment.HashAlgorithm;
+            var hashedBytes = algorithm.ComputeHash(bytes);
             Hash = Encoding.UTF8.GetString(hashedBytes);
         }
     }

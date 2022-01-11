@@ -1,7 +1,6 @@
 ﻿using System;
-using iDi.Blockchain.Framework.Exceptions;
 
-namespace iDi.Plus.Domain.Exceptions
+namespace iDi.Blockchain.Framework.Exceptions
 {
     public class HashMismatchIdPlusException :Exception, IIdPlusException
     {
