@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Extensions;
-using iDi.Plus.Application.Context;
 using iDi.Plus.Domain.Extensions;
 using iDi.Plus.Infrastructure.Extensions;
+using iDi.Plus.Node.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace iDi.Plus.Application
+namespace iDi.Plus.Node
 {
     class Program
     {

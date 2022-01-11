@@ -1,4 +1,4 @@
-﻿namespace iDi.Plus.Application
+﻿namespace iDi.Plus.Node
 {
     public class Settings
     {

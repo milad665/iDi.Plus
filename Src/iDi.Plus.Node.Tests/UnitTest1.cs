@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace iDi.Plus.Application.Tests
+namespace iDi.Plus.Node.Tests
 {
     public class UnitTest1
     {

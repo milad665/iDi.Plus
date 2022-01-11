@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain", "iDi.Plus.Domain\iDi.Plus.Domain.csproj", "{A2BFE5CC-E6AD-4FF2-BF91-A4E89DB08CB2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Application", "iDi.Plus.Application\iDi.Plus.Application.csproj", "{CACE3DA4-ED8E-4219-9753-6A94452D160F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Node", "iDi.Plus.Node\iDi.Plus.Node.csproj", "{CACE3DA4-ED8E-4219-9753-6A94452D160F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Blockchain.Framework", "iDi.Blockchain.Framework\iDi.Blockchain.Framework.csproj", "{A3B298F0-15C2-42AA-B868-B3C9D101670E}"
 EndProject
@@ -19,15 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Utility", "iDi.Plus.Utility\iDi.Plus.Utility.csproj", "{655FEB36-66B1-4591-A573-0CA8FE96D288}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Infrastructure", "iDi.Plus.Infrastructure\iDi.Plus.Infrastructure.csproj", "{AAE121D6-D560-41E5-8EDE-0B396BF9A222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Infrastructure", "iDi.Plus.Infrastructure\iDi.Plus.Infrastructure.csproj", "{AAE121D6-D560-41E5-8EDE-0B396BF9A222}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Blockchain.Framework.Tests", "iDi.Blockchain.Framework.Tests\iDi.Blockchain.Framework.Tests.csproj", "{ECECBB50-56BD-439B-86E0-03813FAEE917}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Blockchain.Framework.Tests", "iDi.Blockchain.Framework.Tests\iDi.Blockchain.Framework.Tests.csproj", "{ECECBB50-56BD-439B-86E0-03813FAEE917}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Infrastructure.Tests", "iDi.Plus.Infrastructure.Tests\iDi.Plus.Infrastructure.Tests.csproj", "{0ECF1C5E-DA3F-4D83-94DC-FE25E3E05DBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Infrastructure.Tests", "iDi.Plus.Infrastructure.Tests\iDi.Plus.Infrastructure.Tests.csproj", "{0ECF1C5E-DA3F-4D83-94DC-FE25E3E05DBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Domain.Tests", "iDi.Plus.Domain.Tests\iDi.Plus.Domain.Tests.csproj", "{47B7D01A-C2AE-44A8-86AF-46DFE2D336CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain.Tests", "iDi.Plus.Domain.Tests\iDi.Plus.Domain.Tests.csproj", "{47B7D01A-C2AE-44A8-86AF-46DFE2D336CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Application.Tests", "iDi.Plus.Application.Tests\iDi.Plus.Application.Tests.csproj", "{DEB53965-DEA2-49CD-B482-1F9C6E927D8A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Node.Tests", "iDi.Plus.Node.Tests\iDi.Plus.Node.Tests.csproj", "{DEB53965-DEA2-49CD-B482-1F9C6E927D8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

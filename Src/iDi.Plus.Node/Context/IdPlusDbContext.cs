@@ -1,17 +1,17 @@
-﻿using iDi.Plus.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using iDi.Plus.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
-namespace iDi.Plus.Application.Context
+namespace iDi.Plus.Node.Context
 {
     public class IdPlusDbContext : DbContext
     {
         private readonly string _dbPath;
 
-        public DbSet<Node> Nodes { get; set; }
+        public DbSet<Domain.Entities.Node> Nodes { get; set; }
         public DbSet<KeyChange> KeyChangeList { get; set; }
         public DbSet<HotPoolRecord> HotPool { get; set; }
 
