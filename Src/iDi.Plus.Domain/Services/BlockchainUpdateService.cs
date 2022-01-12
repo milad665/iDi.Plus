@@ -20,13 +20,13 @@ public class BlockchainUpdateService : IBlockchainUpdateService
 {
     private readonly IBlockchainUpdateServer _blockchainUpdateServer;
     private readonly IBlockchainNodeClient _blockchainNodeClient;
-    private readonly LocalNodeContextProvider _localNodeContextProvider;
+    private readonly ILocalNodeContextProvider _localNodeContextProvider;
     private readonly IBlockchainRepository<IdTransaction> _blockchainRepository;
     private readonly BlockchainNodesProvider _blockchainNodesProvider;
     private readonly List<Block<IdTransaction>> _blocks;
 
     public BlockchainUpdateService(IBlockchainUpdateServer blockchainUpdateServer, IBlockchainNodeClient blockchainNodeClient, 
-        LocalNodeContextProvider localNodeContextProvider, IBlockchainRepository<IdTransaction> blockchainRepository, 
+        ILocalNodeContextProvider localNodeContextProvider, IBlockchainRepository<IdTransaction> blockchainRepository, 
         BlockchainNodesProvider blockchainNodesProvider)
     {
         _blockchainUpdateServer = blockchainUpdateServer;

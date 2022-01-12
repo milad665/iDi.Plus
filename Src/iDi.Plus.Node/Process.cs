@@ -20,14 +20,14 @@ public class Process
     private readonly Settings _settings;
     private readonly IBlockchainNodeServer _blockchainNodeServer;
     private readonly BlockchainNodesProvider _blockchainNodesProvider;
-    private readonly LocalNodeContextProvider _localNodeContextProvider;
+    private readonly ILocalNodeContextProvider _localNodeContextProvider;
     private readonly IBlockchainUpdateService _blockchainUpdateService;
 
     private readonly IdPlusDbContext _context;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
     public Process(Settings settings, IBlockchainNodeServer blockchainNodeServer, IdPlusDbContext context, 
-        BlockchainNodesProvider blockchainNodesProvider, LocalNodeContextProvider localNodeContextProvider, 
+        BlockchainNodesProvider blockchainNodesProvider, ILocalNodeContextProvider localNodeContextProvider, 
         IBlockchainUpdateService blockchainUpdateService)
     {
         _cancellationTokenSource = new CancellationTokenSource();

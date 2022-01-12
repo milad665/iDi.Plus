@@ -2,6 +2,7 @@
 using iDi.Blockchain.Framework.Execution;
 using iDi.Blockchain.Framework.Extensions;
 using iDi.Plus.Domain.Extensions;
+using iDi.Plus.Domain.Pipeline;
 using iDi.Plus.Infrastructure.Extensions;
 using iDi.Plus.Node.Context;
 using Microsoft.Extensions.Configuration;
@@ -25,15 +26,12 @@ namespace iDi.Plus.Node
             scope.ServiceProvider.GetService<Process>()?.Run();
         }
 
-        private static void ConfigureStages(PipelineFactory pipelineFactory)
+        private static void ConfigureStages(IPipelineFactory pipelineFactory)
         {
-            if (pipelineFactory == null)
-                return;
-
             //Add pipeline stage types here
             //The order is important
 
-            //pipelineFactory.AddStage<SampleStage>();
+            pipelineFactory?.AddStage<LogicControllerStage>();
         }
 
         private static void ConfigureServices(IServiceCollection services)

@@ -13,6 +13,7 @@ namespace iDi.Blockchain.Framework.Execution
             _stages = stages;
         }
 
+        /// <inheritdoc />
         public Message Execute(RequestContext request)
         {
             Message response = null;

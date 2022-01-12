@@ -12,17 +12,14 @@ namespace iDi.Blockchain.Framework.Communication
 {
     public class DefaultBlockchainNodeServer : IBlockchainNodeServer
     {
-        private readonly PipelineFactory _pipelineFactory;
-        private readonly LocalNodeContextProvider _localNodeContextProvider;
-        private readonly BlockchainNodesProvider _blockchainNodesProvider;
+        private readonly IPipelineFactory _pipelineFactory;
+        private readonly ILocalNodeContextProvider _localNodeContextProvider;
         private readonly IMessageFactory _messageFactory;
 
-        public DefaultBlockchainNodeServer(PipelineFactory pipelineFactory, LocalNodeContextProvider localNodeContextProvider, 
-            BlockchainNodesProvider blockchainNodesProvider, IMessageFactory messageFactory)
+        public DefaultBlockchainNodeServer(IPipelineFactory pipelineFactory, ILocalNodeContextProvider localNodeContextProvider, IMessageFactory messageFactory)
         {
             _pipelineFactory = pipelineFactory;
             _localNodeContextProvider = localNodeContextProvider;
-            _blockchainNodesProvider = blockchainNodesProvider;
             _messageFactory = messageFactory;
         }
 

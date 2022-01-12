@@ -17,9 +17,9 @@ namespace iDi.Blockchain.Framework.Extensions
             return services;
         }
 
-        public static IServiceCollection AddPipeline(this IServiceCollection services, Action<PipelineFactory> configure)
+        public static IServiceCollection AddPipeline(this IServiceCollection services, Action<IPipelineFactory> configure)
         {
-            services.AddSingleton<PipelineFactory>((ctx) => {
+            services.AddSingleton<IPipelineFactory>(ctx => {
                 var pipelineFactory = new PipelineFactory(ctx);
                 configure(pipelineFactory);
                 return pipelineFactory;
@@ -31,7 +31,7 @@ namespace iDi.Blockchain.Framework.Extensions
         {
             services.AddScoped<CryptoServiceProvider>();
             services.AddSingleton<BlockchainNodesProvider>();
-            services.AddSingleton<LocalNodeContextProvider>();
+            services.AddSingleton<ILocalNodeContextProvider, LocalNodeContextProvider>();
 
             return services;
         }

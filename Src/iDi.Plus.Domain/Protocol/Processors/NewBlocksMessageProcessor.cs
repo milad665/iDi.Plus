@@ -12,7 +12,7 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 public class NewBlocksMessageProcessor : MessageProcessorBase
 {
     public NewBlocksMessageProcessor(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, 
-        LocalNodeContextProvider localNodeContextProvider, BlockchainNodesProvider blockchainNodesProvider) 
+        ILocalNodeContextProvider localNodeContextProvider, BlockchainNodesProvider blockchainNodesProvider) 
         : base(blockchainNodeClient, blockchainRepository, localNodeContextProvider, blockchainNodesProvider)
     {
     }

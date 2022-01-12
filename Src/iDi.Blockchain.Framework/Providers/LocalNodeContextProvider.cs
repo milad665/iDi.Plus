@@ -3,7 +3,7 @@ using iDi.Blockchain.Framework.Protocol.Exceptions;
 
 namespace iDi.Blockchain.Framework.Providers;
 
-public class LocalNodeContextProvider
+public class LocalNodeContextProvider : ILocalNodeContextProvider
 {
     private KeyPair _localKeyPair;
 
