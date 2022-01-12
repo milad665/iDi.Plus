@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Blockchain\" />
+    <Folder Include="Cryptography\" />
   </ItemGroup>
 
   <ItemGroup>

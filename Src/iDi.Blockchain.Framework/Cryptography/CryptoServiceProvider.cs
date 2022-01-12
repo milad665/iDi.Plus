@@ -2,7 +2,6 @@
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Security;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Asn1.Crmf;
 
 namespace iDi.Blockchain.Framework.Cryptography
 {
@@ -12,37 +11,37 @@ namespace iDi.Blockchain.Framework.Cryptography
     public class CryptoServiceProvider
     {
         /// <summary>
-        /// Signs the data. This mean the data is encrypted with private key
+        /// Encrypts the data with private key using RSA algorithm. (Signs the data)
         /// </summary>
-        /// <param name="bytesToSign"></param>
+        /// <param name="bytesToEncrypt"></param>
         /// <param name="privateKey">RSA Private Key</param>
         /// <returns></returns>
-        public byte[] EncryptByPrivateKey(byte[] bytesToSign, byte[] privateKey)
+        public byte[] EncryptByPrivateKey(byte[] bytesToEncrypt, byte[] privateKey)
         {
             var encryptEngine = new Pkcs1Encoding(new RsaEngine());
             var keyParameter = PrivateKeyFactory.CreateKey(privateKey);
             encryptEngine.Init(true, keyParameter);
 
-            return encryptEngine.ProcessBlock(bytesToSign, 0, bytesToSign.Length);
+            return encryptEngine.ProcessBlock(bytesToEncrypt, 0, bytesToEncrypt.Length);
         }
 
         /// <summary>
-        /// Verifies signed data. This means the data previously encrypted with private key will be decrypted with the public key
+        /// Data previously encrypted with private key will be decrypted with the public key using RSA algorithm. (Verifies signed data)
         /// </summary>
-        /// <param name="bytesToVerify"></param>
+        /// <param name="bytesToDecrypt"></param>
         /// <param name="publicKey">RSA Public Key</param>
         /// <returns></returns>
-        public byte[] DecryptByPublicKey(byte[] bytesToVerify, byte[] publicKey)
+        public byte[] DecryptByPublicKey(byte[] bytesToDecrypt, byte[] publicKey)
         {
             var decryptEngine = new Pkcs1Encoding(new RsaEngine());
             var keyParameter = PublicKeyFactory.CreateKey(publicKey);
             decryptEngine.Init(false, keyParameter);
             
-            return decryptEngine.ProcessBlock(bytesToVerify, 0, bytesToVerify.Length);
+            return decryptEngine.ProcessBlock(bytesToDecrypt, 0, bytesToDecrypt.Length);
         }
 
         /// <summary>
-        /// Encrypts the data with public key
+        /// Encrypts the data with public key using RSA algorithm.
         /// </summary>
         /// <param name="bytesToEncrypt"></param>
         /// <param name="publicKey">RSA Public Key</param>
@@ -57,7 +56,7 @@ namespace iDi.Blockchain.Framework.Cryptography
         }
 
         /// <summary>
-        /// Decrypts the encrypted data with private key
+        /// Decrypts previously encrypted data with private key using RSA algorithm.
         /// </summary>
         /// <param name="bytesToDecrypt"></param>
         /// <param name="privateKey">RSA Private Key</param>
@@ -72,9 +71,9 @@ namespace iDi.Blockchain.Framework.Cryptography
         }
 
         /// <summary>
-        /// Signs the data, so it's origin can later be verified.
+        /// Signs the data using ECDSa, so it's origin can later be verified.
         /// </summary>
-        /// <param name="privateKey">ECDSA private key of the origin</param>
+        /// <param name="privateKey">ECDSa private key of the origin</param>
         /// <param name="dataToSign"></param>
         /// <returns></returns>
         public byte[] Sign(byte[] privateKey, byte[] dataToSign)
@@ -89,18 +88,18 @@ namespace iDi.Blockchain.Framework.Cryptography
         }
 
         /// <summary>
-        /// Verifies the data against its signature to validate its origin
+        /// Verifies the data using ECDSa against its signature to validate its origin
         /// </summary>
-        /// <param name="publicKey">ECDSA public key of the origin</param>
+        /// <param name="publicKey">ECDSa public key of the origin</param>
         /// <param name="data">Data of which the origin is to be verified</param>
         /// <param name="signature">Digital signature of the data</param>
         /// <returns></returns>
         public bool Verify(byte[] publicKey, byte[] data, byte[] signature)
         {
-            var ecdsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
+            var ecDsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
 
-            ecdsa.ImportSubjectPublicKeyInfo(publicKey, out _);
-            return ecdsa.VerifyData(data, signature, HashAlgorithmName.SHA256);
+            ecDsa.ImportSubjectPublicKeyInfo(publicKey, out _);
+            return ecDsa.VerifyData(data, signature, HashAlgorithmName.SHA256);
         }
     }
 }
