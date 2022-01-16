@@ -53,7 +53,7 @@ public class SampleDataProvider
         {
             foreach (var tx in blockTestData.Transactions)
             {
-                var txData = CreateSampleTransactionData(tx);
+                var txData = TransactionDataPayloadBytes(tx);
                 payloadBytes.AddRange(BitConverter.GetBytes(txData.Length));
                 payloadBytes.AddRange(txData);
             }
@@ -114,15 +114,7 @@ public class SampleDataProvider
         new IssueIdTransaction(IdCard3.Address, IdCard2.Address, "DrivingLicense", "Tickets", "DATA", null),
     };
 
-    private List<byte[]> GetSampleTxDataPayloadBytes() => new()
-    {
-        CreateSampleTransactionData(Transaction1),
-        CreateSampleTransactionData(Transaction2),
-        CreateSampleTransactionData(Transaction3),
-        CreateSampleTransactionData(Transaction4)
-    };
-
-    public byte[] CreateSampleTransactionData(TransactionTestData transactionTestData)
+    public byte[] TransactionDataPayloadBytes(TransactionTestData transactionTestData)
     {
         var lstBytes = new List<byte>();
         lstBytes.AddRange(transactionTestData.TransactionHash.HexStringToByteArray());

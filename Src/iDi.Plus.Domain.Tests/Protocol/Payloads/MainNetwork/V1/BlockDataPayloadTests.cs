@@ -9,7 +9,7 @@ using Xunit;
 
 namespace iDi.Plus.Domain.Tests.Protocol.Payloads.MainNetwork.V1;
 
-public class BlockDataPayloadTests : ProtocolsTestBase
+public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
 {
     [Fact]
     public void MessageCreatedSuccessfullyFromByteArray()
