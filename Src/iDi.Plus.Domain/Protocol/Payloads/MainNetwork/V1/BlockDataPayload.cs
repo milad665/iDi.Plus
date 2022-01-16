@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Protocol;
+using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
@@ -12,6 +13,8 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
     /// </summary>
     public class BlockDataPayload : MainNetworkV1PayloadBase
     {
+        private static readonly int TxHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
+
         public BlockDataPayload(byte[] rawData):base(rawData, MessageTypes.BlockData)
         {
             ExtractData(rawData);
@@ -29,18 +32,28 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public static BlockDataPayload Create(long index, string hash, string previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce)
         {
+            var hashBytes = hash.HexStringToByteArray();
+            if (hashBytes.Length != TxHashByteLength)
+                throw new InvalidDataException($"Invalid hash length. 'Hash'");
+
+            var prevHashBytes = previousHash.HexStringToByteArray();
+            if (prevHashBytes.Length != TxHashByteLength)
+                throw new InvalidDataException($"Invalid hash length. 'PreviousHash'");
+
             var lstBytes = new List<byte>();
             lstBytes.AddRange(BitConverter.GetBytes(index));
-            lstBytes.AddRange(hash.HexStringToByteArray());
-            lstBytes.AddRange(previousHash.HexStringToByteArray());
+            lstBytes.AddRange(hashBytes);
+            lstBytes.AddRange(prevHashBytes);
             lstBytes.AddRange(BitConverter.GetBytes(timestamp.Ticks));
             lstBytes.AddRange(BitConverter.GetBytes(nonce));
-            foreach (var tx in transactions)
+            if (transactions is {Count: > 0})
             {
-                lstBytes.AddRange(BitConverter.GetBytes(tx.RawData.Length));
-                lstBytes.AddRange(tx.RawData);
+                foreach (var tx in transactions)
+                {
+                    lstBytes.AddRange(BitConverter.GetBytes(tx.RawData.Length));
+                    lstBytes.AddRange(tx.RawData);
+                }
             }
-
             //Last 4 Bytes must be zeros
             lstBytes.AddRange(BitConverter.GetBytes((int)0));
 

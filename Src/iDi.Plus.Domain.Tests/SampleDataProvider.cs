@@ -49,12 +49,16 @@ public class SampleDataProvider
         payloadBytes.AddRange( blockTestData.PreviousHash.HexStringToByteArray());
         payloadBytes.AddRange(BitConverter.GetBytes(blockTestData.TimeStamp.Ticks));
         payloadBytes.AddRange(BitConverter.GetBytes(blockTestData.Nonce));
-        foreach (var tx in blockTestData.Transactions)
+        if (blockTestData.Transactions != null)
         {
-            var txData = CreateSampleTransactionData(tx);
-            payloadBytes.AddRange(BitConverter.GetBytes(txData.Length));
-            payloadBytes.AddRange(txData);
+            foreach (var tx in blockTestData.Transactions)
+            {
+                var txData = CreateSampleTransactionData(tx);
+                payloadBytes.AddRange(BitConverter.GetBytes(txData.Length));
+                payloadBytes.AddRange(txData);
+            }
         }
+
         //Last 4 Bytes of this payload must be zeros
         payloadBytes.AddRange(BitConverter.GetBytes((int)0));
         return payloadBytes.ToArray();
