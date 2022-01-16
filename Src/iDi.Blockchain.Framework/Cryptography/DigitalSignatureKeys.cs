@@ -7,6 +7,9 @@ namespace iDi.Blockchain.Framework.Cryptography;
 /// </summary>
 public class DigitalSignatureKeys : KeyPair
 {
+    public static ECCurve EcDsaCurve = ECCurve.NamedCurves.nistP256;
+    public const int NodeIdByteLength = 91; //nistP256 public key length
+
     protected DigitalSignatureKeys()
     {}
 
@@ -20,7 +23,7 @@ public class DigitalSignatureKeys : KeyPair
     /// <returns>DigitalSignatureKeys object</returns>
     public static DigitalSignatureKeys Generate()
     {
-        var ecdsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
+        var ecdsa = ECDsa.Create(EcDsaCurve);
 
         var privateKey = ecdsa.ExportECPrivateKey();
         var publicKey = ecdsa.ExportSubjectPublicKeyInfo();

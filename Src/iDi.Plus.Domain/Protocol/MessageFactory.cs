@@ -17,32 +17,32 @@ namespace iDi.Plus.Domain.Protocol
             return new Message(header, payload, messageData.ToArray());
         }
 
-        private IPayload CreatePayload(Networks network, short version, MessageTypes messageType, byte[] messageData, byte[] messageSignature, byte[] nodeId)
+        private IPayload CreatePayload(Networks network, short version, MessageTypes messageType, byte[] payloadData, byte[] messageSignature, byte[] nodeId)
         {
             var cryptoServiceProvider = new CryptoServiceProvider();
 
             if (network != Networks.Main || version != 1)
                 throw new NotSupportedException("Network or version not supported");
 
-            if (!cryptoServiceProvider.Verify(nodeId, messageData, messageSignature))
+            if (!cryptoServiceProvider.Verify(nodeId, payloadData, messageSignature))
                 throw new UnauthorizedAccessException("Unable to verify message signature. BlockchainNode Id (node public key) does not match its real origin.");
 
             switch (messageType)
             {
                 case MessageTypes.NewTxs:
-                    return new Payloads.MainNetwork.V1.NewTxsPayload(messageData);
+                    return new Payloads.MainNetwork.V1.NewTxsPayload(payloadData);
                 case MessageTypes.GetTx:
-                    return new Payloads.MainNetwork.V1.GetTxPayload(messageData);
+                    return new Payloads.MainNetwork.V1.GetTxPayload(payloadData);
                 case MessageTypes.TxData:
-                    return new Payloads.MainNetwork.V1.TxDataPayload(messageData);
+                    return new Payloads.MainNetwork.V1.TxDataPayload(payloadData);
                 case MessageTypes.NewBlocks:
-                    return new Payloads.MainNetwork.V1.NewBlocksPayload(messageData);
+                    return new Payloads.MainNetwork.V1.NewBlocksPayload(payloadData);
                 case MessageTypes.GetBlock:
-                    return new Payloads.MainNetwork.V1.GetBlockPayload(messageData);
+                    return new Payloads.MainNetwork.V1.GetBlockPayload(payloadData);
                 case MessageTypes.BlockData:
-                    return new Payloads.MainNetwork.V1.BlockDataPayload(messageData);
+                    return new Payloads.MainNetwork.V1.BlockDataPayload(payloadData);
                 case MessageTypes.CreateTx:
-                    return new Payloads.MainNetwork.V1.CreateTxPayload(messageData);
+                    return new Payloads.MainNetwork.V1.CreateTxPayload(payloadData);
                 case MessageTypes.Empty:
                     return null;
                 default:

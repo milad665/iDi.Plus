@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol
@@ -27,13 +28,12 @@ namespace iDi.Blockchain.Framework.Protocol
             var networkBytes = BitConverter.GetBytes((int)network);
             var versionBytes = BitConverter.GetBytes(version);
             var nodeIdBytes = nodeId.HexStringToByteArray();
-            var messageTypeBytes = BitConverter.GetBytes((int)messageType);
             var payloadLengthBytes = BitConverter.GetBytes(payloadSize);
 
             bytes.AddRange(networkBytes);
             bytes.AddRange(versionBytes);
             bytes.AddRange(nodeIdBytes);
-            bytes.AddRange(messageTypeBytes);
+            bytes.Add((byte)messageType);
             bytes.AddRange(payloadLengthBytes);
             bytes.AddRange(payloadSignature);
             var headerLengthBytes = BitConverter.GetBytes(bytes.Count);
@@ -46,18 +46,18 @@ namespace iDi.Blockchain.Framework.Protocol
 
         public static Header FromPacketData(ReadOnlySpan<byte> data)
         {
-            var length = BitConverter.ToInt32(data.Slice(4));
+            var length = BitConverter.ToInt32(data.Slice(0,4));
 
-            var rawData = data.Slice(4, length);
-            var index = 0;
+            var rawData = data.Slice(0, length + 4);
+            var index = 4;
 
             var network = BitConverter.ToInt32(rawData.Slice(index, 4));
             index += 4;
             var version = BitConverter.ToInt16(rawData.Slice(index, 2));
             index += 2;
-            var nodeId = rawData.Slice(index, FrameworkEnvironment.NodeIdByteLength).ToHexString();
-            index += 16;
-            var messageType = (int)rawData.Slice(16, 1)[0];
+            var nodeId = rawData.Slice(index, DigitalSignatureKeys.NodeIdByteLength).ToHexString();
+            index += DigitalSignatureKeys.NodeIdByteLength;
+            var messageType = rawData.Slice(index, 1)[0];
             index++;
             var payloadLength = BitConverter.ToInt32(rawData.Slice(index, 4));
             index += 4;

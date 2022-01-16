@@ -1,6 +1,6 @@
 ﻿namespace iDi.Blockchain.Framework.Protocol
 {
-    public enum MessageTypes
+    public enum MessageTypes : byte
     {
         Empty = 0,
         /// <summary>

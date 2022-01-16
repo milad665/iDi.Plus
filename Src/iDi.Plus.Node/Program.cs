@@ -28,7 +28,7 @@ namespace iDi.Plus.Node
 
         private static void ConfigureStages(IPipelineFactory pipelineFactory)
         {
-            //Add pipeline stage types here
+            //AddBlock pipeline stage types here
             //The order is important
 
             pipelineFactory?.AddStage<LogicControllerStage>();
@@ -56,7 +56,7 @@ namespace iDi.Plus.Node
                 .AddUpdateService()
                 .AddDomainServices();
 
-            //Add pipeline stage classes to the IoC container here
+            //AddBlock pipeline stage classes to the IoC container here
             //services.AddTransient<SampleStage>()
 
             // add app

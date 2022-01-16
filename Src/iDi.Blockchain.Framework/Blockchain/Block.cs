@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Blockchain
 {
@@ -18,6 +19,7 @@ namespace iDi.Blockchain.Framework.Blockchain
             Timestamp = timestamp;
             Transactions = transactions;
             Nonce = 0;
+            Hash = GetHash();
         }
 
         public static Block<TTransaction> Genesis()
@@ -38,10 +40,15 @@ namespace iDi.Blockchain.Framework.Blockchain
         public void NextNonce()
         {
             Nonce++;
+            Hash = GetHash();
+        }
+
+        private string GetHash()
+        {
             var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(this));
             using var algorithm = FrameworkEnvironment.HashAlgorithm;
             var hashedBytes = algorithm.ComputeHash(bytes);
-            Hash = Encoding.UTF8.GetString(hashedBytes);
+            return hashedBytes.ToHexString();
         }
     }
 }

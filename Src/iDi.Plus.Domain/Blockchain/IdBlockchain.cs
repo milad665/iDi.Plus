@@ -6,15 +6,19 @@ namespace iDi.Plus.Domain.Blockchain
 {
     public class IdBlockchain : BlockchainBase<IdTransaction>
     {
+        private const int MaxDifficulty = 20;
+
         public IdBlockchain()
         {
         }
 
-        public override void ProofOfWork(Block<IdTransaction> block)
+        protected override void ProofOfWork(Block<IdTransaction> block)
         {
-            var difficulty = (int)Math.Round(Math.Log(Blocks.Count, 500000)) + 1;
-            while (!block.Hash.EndsWith(new string('0', difficulty)) || !block.Hash.Contains($"1{new string('5', difficulty)}"))
+            Difficulty = Math.Min(Blocks.Count / 1000000 + 4, MaxDifficulty);
+            while (!block.Hash.EndsWith(new string('0', Difficulty)))
                 block.NextNonce();
         }
+
+        public override int Difficulty { get; protected set; }
     }
 }

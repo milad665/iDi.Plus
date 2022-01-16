@@ -1,10 +1,10 @@
-﻿using Org.BouncyCastle.Crypto;
+﻿using System;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
-using System;
-using System.Linq;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Cryptography
 {
@@ -13,6 +13,14 @@ namespace iDi.Blockchain.Framework.Cryptography
     /// </summary>
     public class IdCard : KeyPair
     {
+        //public const int IdiCardAddressByteLengthExcludingPrefix = 21;
+        //public const string IdCardAddressPrefix = "IDI";
+
+        public const int PrivateKeyByteLength = 1793;
+        public const int PublicKeyByteLength = 422;
+        public const int RsaKeyStrength = 3072;
+
+
         protected IdCard()
         {}
 
@@ -29,7 +37,7 @@ namespace iDi.Blockchain.Framework.Cryptography
         {
             var gen = new RsaKeyPairGenerator();
             var secureRandom = new SecureRandom();
-            var keyGenParam = new KeyGenerationParameters(secureRandom, 3072);
+            var keyGenParam = new KeyGenerationParameters(secureRandom, RsaKeyStrength);
             gen.Init(keyGenParam);
 
             var keys = gen.GenerateKeyPair();
@@ -61,10 +69,28 @@ namespace iDi.Blockchain.Framework.Cryptography
         /// </summary>
         public string Address { get; private set; }
 
+        public static bool IsValidAddress(string walletAddress)
+        {
+            if (string.IsNullOrWhiteSpace(walletAddress))
+                return false;
+
+            try
+            {
+                var bytes = walletAddress.HexStringToByteArray();
+                return bytes.Length == PublicKeyByteLength;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private string GetAddressFromPublicKey(byte[] publicKey)
         {
-            var hash = FrameworkEnvironment.HashAlgorithm.ComputeHash(publicKey);
-            return $"IDI{Convert.ToHexString(hash.Take(21).ToArray())}";
+            //var hash = FrameworkEnvironment.HashAlgorithm.ComputeHash(publicKey);
+            //return $"{IdCardAddressPrefix}{Convert.ToHexString(hash.Take(IdiCardAddressByteLengthExcludingPrefix).ToArray())}";
+
+            return publicKey.ToHexString();
         }
     }
 }

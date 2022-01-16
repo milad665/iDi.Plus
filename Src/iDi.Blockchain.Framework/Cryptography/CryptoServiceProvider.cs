@@ -81,7 +81,7 @@ namespace iDi.Blockchain.Framework.Cryptography
             if (dataToSign == null)
                 return null;
 
-            var ecdsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
+            var ecdsa = ECDsa.Create(DigitalSignatureKeys.EcDsaCurve);
             ecdsa.ImportECPrivateKey(privateKey, out _);
 
             return ecdsa.SignData(dataToSign, HashAlgorithmName.SHA256);
@@ -96,7 +96,7 @@ namespace iDi.Blockchain.Framework.Cryptography
         /// <returns></returns>
         public bool Verify(byte[] publicKey, byte[] data, byte[] signature)
         {
-            var ecDsa = ECDsa.Create(FrameworkEnvironment.EcDsaCurve);
+            var ecDsa = ECDsa.Create(DigitalSignatureKeys.EcDsaCurve);
 
             ecDsa.ImportSubjectPublicKeyInfo(publicKey, out _);
             return ecDsa.VerifyData(data, signature, HashAlgorithmName.SHA256);

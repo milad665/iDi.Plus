@@ -20,4 +20,12 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Blockchain\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\iDi.Plus.Domain\iDi.Plus.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

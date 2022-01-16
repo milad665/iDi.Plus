@@ -15,13 +15,14 @@ namespace iDi.Blockchain.Framework.Blockchain
 
         public IReadOnlyCollection<Block<TTransaction>> Blocks => _blocks;
 
-        public void Add(List<TTransaction> transactions)
+        public void AddBlock(List<TTransaction> transactions)
         {
             var block = new Block<TTransaction>(_blocks.Count, _blocks.Last().Hash, DateTime.UtcNow, transactions);
             ProofOfWork(block);
             _blocks.Add(block);
         }
 
-        public abstract void ProofOfWork(Block<TTransaction> block);
+        protected abstract void ProofOfWork(Block<TTransaction> block);
+        public abstract int Difficulty { get; protected set; }
     }
 }
