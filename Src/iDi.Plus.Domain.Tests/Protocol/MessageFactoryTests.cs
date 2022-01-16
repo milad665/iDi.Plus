@@ -5,21 +5,14 @@ using Xunit;
 
 namespace iDi.Plus.Domain.Tests.Protocol;
 
-public class MessageFactoryTests
+public class MessageFactoryTests : ProtocolsTestBase
 {
-    private readonly SampleDataProvider _smSampleDataProvider;
-
-    public MessageFactoryTests()
-    {
-        _smSampleDataProvider = new SampleDataProvider();
-    }
-
     [Fact]
     public void MessageCreatedSuccessfullyFromByteArray()
     {
         var target = new MessageFactory();
 
-        var message = target.CreateMessage(_smSampleDataProvider.BlockDataMessageBytes(true, Networks.Main, 1));
+        var message = target.CreateMessage(SampleDataProvider.BlockDataMessageBytes(true, Networks.Main, 1));
         Assert.Equal(MessageTypes.BlockData, message.Header.MessageType);
     }
 
@@ -28,7 +21,7 @@ public class MessageFactoryTests
     {
         var target = new MessageFactory();
 
-        Assert.Throws<UnauthorizedAccessException>(() => target.CreateMessage(_smSampleDataProvider.BlockDataMessageBytes(false, Networks.Main, 1)));
+        Assert.Throws<UnauthorizedAccessException>(() => target.CreateMessage(SampleDataProvider.BlockDataMessageBytes(false, Networks.Main, 1)));
     }
 
     [Fact]
@@ -36,7 +29,7 @@ public class MessageFactoryTests
     {
         var target = new MessageFactory();
 
-        Assert.Throws<NotSupportedException>(() => target.CreateMessage(_smSampleDataProvider.BlockDataMessageBytes(false, Networks.TestNet1, 1)));
+        Assert.Throws<NotSupportedException>(() => target.CreateMessage(SampleDataProvider.BlockDataMessageBytes(false, Networks.TestNet1, 1)));
     }
 
     [Fact]
@@ -44,6 +37,6 @@ public class MessageFactoryTests
     {
         var target = new MessageFactory();
 
-        Assert.Throws<NotSupportedException>(() => target.CreateMessage(_smSampleDataProvider.BlockDataMessageBytes(false, Networks.Main, 2)));
+        Assert.Throws<NotSupportedException>(() => target.CreateMessage(SampleDataProvider.BlockDataMessageBytes(false, Networks.Main, 2)));
     }
 }

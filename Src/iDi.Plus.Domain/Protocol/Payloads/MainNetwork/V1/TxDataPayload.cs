@@ -38,9 +38,9 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public static TxDataPayload Create(string transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, string previousTransactionHash, byte[] signedData)
         {
-            if (IdCard.IsValidAddress(issuerAddress))
+            if (!IdCard.IsValidAddress(issuerAddress))
                 throw new InvalidDataException("Invalid IssuerAddress.");
-            if (IdCard.IsValidAddress(holderAddress))
+            if (!IdCard.IsValidAddress(holderAddress))
                 throw new InvalidDataException("Invalid HolderAddress.");
 
             if (subject.Length > SubjectByteLength)
@@ -70,7 +70,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
                 lstBytes.AddRange(new byte[IdCard.PublicKeyByteLength]);
             else
             {
-                if (IdCard.IsValidAddress(verifierAddress))
+                if (!IdCard.IsValidAddress(verifierAddress))
                     throw new InvalidDataException("Invalid VerifierAddress.");
 
                 lstBytes.AddRange(verifierAddress.HexStringToByteArray());

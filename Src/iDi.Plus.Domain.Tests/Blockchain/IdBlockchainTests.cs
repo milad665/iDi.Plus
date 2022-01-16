@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using iDi.Plus.Domain.Blockchain;
-using iDi.Plus.Domain.Tests.Protocol;
 using Xunit;
 
 namespace iDi.Plus.Domain.Tests.Blockchain;

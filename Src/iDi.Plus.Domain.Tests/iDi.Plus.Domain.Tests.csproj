@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -22,6 +20,8 @@
 
   <ItemGroup>
     <Folder Include="Blockchain\" />
+    <Folder Include="Protocol\TestData\" />
+    <Folder Include="Protocol\Payloads\MainNetwork\V1\" />
   </ItemGroup>
 
   <ItemGroup>
