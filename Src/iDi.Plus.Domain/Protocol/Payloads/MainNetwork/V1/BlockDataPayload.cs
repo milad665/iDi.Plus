@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -13,14 +12,12 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
     /// </summary>
     public class BlockDataPayload : MainNetworkV1PayloadBase
     {
-        private static readonly int TxHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
-
         public BlockDataPayload(byte[] rawData):base(rawData, MessageTypes.BlockData)
         {
             ExtractData(rawData);
         }
 
-        protected BlockDataPayload(long index, string hash, string previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce, byte[] rawData) : base(rawData, MessageTypes.BlockData)
+        protected BlockDataPayload(long index, HashValue hash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce, byte[] rawData) : base(rawData, MessageTypes.BlockData)
         {
             Index = index;
             Hash = hash;
@@ -30,20 +27,18 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             Nonce = nonce;
         }
 
-        public static BlockDataPayload Create(long index, string hash, string previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce)
+        public static BlockDataPayload Create(long index, HashValue blockHash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce)
         {
-            var hashBytes = hash.HexStringToByteArray();
-            if (hashBytes.Length != TxHashByteLength)
-                throw new InvalidDataException($"Invalid hash length. 'Hash'");
+            if (previousHash == null)
+                previousHash = HashValue.Empty;
 
-            var prevHashBytes = previousHash.HexStringToByteArray();
-            if (prevHashBytes.Length != TxHashByteLength)
-                throw new InvalidDataException($"Invalid hash length. 'PreviousHash'");
+            if (previousHash.IsEmpty() && (index != 0 || transactions != null))
+                throw new InvalidDataException("Previous transaction is empty but the block is not genesis.");
 
             var lstBytes = new List<byte>();
             lstBytes.AddRange(BitConverter.GetBytes(index));
-            lstBytes.AddRange(hashBytes);
-            lstBytes.AddRange(prevHashBytes);
+            lstBytes.AddRange(blockHash.Bytes);
+            lstBytes.AddRange(previousHash.Bytes);
             lstBytes.AddRange(BitConverter.GetBytes(timestamp.Ticks));
             lstBytes.AddRange(BitConverter.GetBytes(nonce));
             if (transactions is {Count: > 0})
@@ -57,33 +52,27 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             //Last 4 Bytes must be zeros
             lstBytes.AddRange(BitConverter.GetBytes((int)0));
 
-            return new BlockDataPayload(index, hash, previousHash, timestamp, transactions, nonce, lstBytes.ToArray());
+            return new BlockDataPayload(index, blockHash, previousHash, timestamp, transactions, nonce, lstBytes.ToArray());
         }
 
         public long Index { get; private set; }
-
-        public string Hash { get; private set; }
-
-        public string PreviousHash { get; private set; }
-
+        public HashValue Hash { get; private set; }
+        public HashValue PreviousHash { get; private set; }
         public DateTime Timestamp { get; private set; }
-
         public long Nonce { get; private set; }
         public IReadOnlyCollection<TxDataPayload> Transactions { get; private set; }
         
 
         private void ExtractData(byte[] rawData)
         {
-            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
-
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;
             Index = BitConverter.ToInt64(span.Slice(index, 8));
             index += 8;
-            Hash = span.Slice(index, txHashByteLength).ToHexString();
-            index += txHashByteLength;
-            PreviousHash = span.Slice(index, txHashByteLength).ToHexString();
-            index += txHashByteLength;
+            Hash = new HashValue(span.Slice(index, HashValue.HashByteLength).ToArray());
+            index += HashValue.HashByteLength;
+            PreviousHash = new HashValue(span.Slice(index, HashValue.HashByteLength).ToArray());
+            index += HashValue.HashByteLength;
             Timestamp = DateTime.FromBinary(BitConverter.ToInt64(span.Slice(index, 8)));
             index += 8;
             Nonce = BitConverter.ToInt64(span.Slice(index, 8));

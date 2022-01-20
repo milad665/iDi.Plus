@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using iDi.Blockchain.Framework.Protocol.Extensions;
+using iDi.Blockchain.Framework.Cryptography;
 
 namespace iDi.Blockchain.Framework.Blockchain
 {
@@ -12,7 +10,7 @@ namespace iDi.Blockchain.Framework.Blockchain
         private Block()
         {}
 
-        public Block(long index, string previousHash, DateTime timestamp, List<TTransaction> transactions)
+        public Block(long index, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions)
         {
             Index = index;
             PreviousHash = previousHash;
@@ -24,18 +22,18 @@ namespace iDi.Blockchain.Framework.Blockchain
 
         public static Block<TTransaction> Genesis()
         {
-            return new Block<TTransaction>(0, "", DateTime.UtcNow, null);
+            return new Block<TTransaction>(0, HashValue.Empty, DateTime.UtcNow, null);
         }
 
         public long Index { get; private set; }
         [JsonIgnore]
-        public string Hash { get; private set; }
-        public string PreviousHash { get; private set; }
+        public HashValue Hash { get; private set; }
+        public HashValue PreviousHash { get; private set; }
         public DateTime Timestamp { get; private set; }
         public List<TTransaction> Transactions { get; private set; }
         public long Nonce { get; private set; }
 
-        public bool IsGenesis() => Index == 0 && PreviousHash == "" && Transactions == null;
+        public bool IsGenesis() => Index == 0 && PreviousHash.IsEmpty() && Transactions == null;
 
         public void NextNonce()
         {
@@ -43,12 +41,9 @@ namespace iDi.Blockchain.Framework.Blockchain
             Hash = GetHash();
         }
 
-        private string GetHash()
+        private HashValue GetHash()
         {
-            var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(this));
-            using var algorithm = FrameworkEnvironment.HashAlgorithm;
-            var hashedBytes = algorithm.ComputeHash(bytes);
-            return hashedBytes.ToHexString();
+            return HashValue.ComputeHash(this);
         }
     }
 }

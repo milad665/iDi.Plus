@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
@@ -14,24 +14,16 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             Blocks = GetBlocks(rawData);
         }
 
-        protected NewBlocksPayload(byte[] rawData, List<string> blocks) : base(rawData, MessageTypes.NewBlocks)
+        protected NewBlocksPayload(byte[] rawData, List<HashValue> blocks) : base(rawData, MessageTypes.NewBlocks)
         {
             Blocks = blocks;
         }
 
-        public static NewBlocksPayload Create(List<string> newBlocksHashes)
+        public static NewBlocksPayload Create(List<HashValue> newBlocksHashes)
         {
             var bytes = new List<byte>();
-            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
-
             foreach (var hash in newBlocksHashes)
-            {
-                var hashBytes = hash.HexStringToByteArray();
-                if (hashBytes.Length != txHashByteLength)
-                    throw new InvalidDataException("Block hash size does not match the hashing algorithm.");
-
-                bytes.AddRange(hashBytes);
-            }
+                bytes.AddRange(hash.Bytes);
 
             return new NewBlocksPayload(bytes.ToArray(), newBlocksHashes);
         }
@@ -39,24 +31,21 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         /// <summary>
         /// List of block hashes.
         /// </summary>
-        public List<string> Blocks { get; set; }
+        public List<HashValue> Blocks { get; set; }
 
-        private List<string> GetBlocks(byte[] rawData)
+        private List<HashValue> GetBlocks(byte[] rawData)
         {
             var span = new ReadOnlySpan<byte>(rawData);
 
-            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
+            var txHashByteLength = HashValue.HashByteLength;
 
             if (span.Length % txHashByteLength != 0)
                 throw new InvalidDataException("Data length does not match the hash length.");
             var count = span.Length / txHashByteLength;
-            var result = new List<string>();
+            var result = new List<HashValue>();
 
             for (var i = 0; i < count; i++)
-            {
-                var hash = span.Slice(i * txHashByteLength, txHashByteLength).ToHexString();
-                result.Add(hash);
-            }
+                result.Add(new HashValue(span.Slice(i * txHashByteLength, txHashByteLength).ToArray()));
 
             return result;
         }

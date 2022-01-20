@@ -69,7 +69,7 @@ public class BlockchainUpdateServer : IBlockchainUpdateServer
 
             networkStream.Close(); // Send data
         }
-        catch (Exception e)
+        catch (Exception)
         {
             //Console.WriteLine(e);
         }

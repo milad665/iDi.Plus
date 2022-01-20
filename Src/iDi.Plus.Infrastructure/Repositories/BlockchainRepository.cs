@@ -1,4 +1,5 @@
 ﻿using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Infrastructure.Context;
@@ -27,16 +28,16 @@ public class BlockchainRepository : IBlockchainRepository<IdTransaction>
         return block;
     }
 
-    public List<string> GetHashesOfBlocksCreatedAfter(long blockIndex)
+    public List<HashValue> GetHashesOfBlocksCreatedAfter(long blockIndex)
     {
         return _context.Blocks.FindSync(b => b.Index > blockIndex).ToList().Select(b => b.Hash).ToList();
     }
 
-    public List<string> GetHashesOfBlocksCreatedAfter(string blockHash)
+    public List<HashValue> GetHashesOfBlocksCreatedAfter(string blockHash)
     {
         var block = _context.Blocks.AsQueryable().FirstOrDefault(b => b.Hash.Equals(blockHash));
         if (block == null)
-            return new List<string>();
+            return new List<HashValue>();
 
         return GetHashesOfBlocksCreatedAfter(block.Index);
     }

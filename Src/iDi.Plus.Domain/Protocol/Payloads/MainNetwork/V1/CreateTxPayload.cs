@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -16,7 +15,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        protected CreateTxPayload(string transactionHash, byte[] signedData, byte[] senderPublicKey, byte[] rawData) : base(rawData, MessageTypes.CreateTx)
+        protected CreateTxPayload(HashValue transactionHash, byte[] signedData, byte[] senderPublicKey, byte[] rawData) : base(rawData, MessageTypes.CreateTx)
         {
             TransactionHash = transactionHash;
             SignedData = signedData;
@@ -26,27 +25,26 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         public static CreateTxPayload Create(string transactionHash, byte[] signedData, byte[] senderPublicKey)
         {
             var lstBytes = new List<byte>();
-            lstBytes.AddRange(transactionHash.HexStringToByteArray());
+            var hash = new HashValue(transactionHash);
+            lstBytes.AddRange(hash.Bytes);
             lstBytes.AddRange(BitConverter.GetBytes(signedData.Length));
             lstBytes.AddRange(signedData);
             lstBytes.AddRange(senderPublicKey);
 
-            return new CreateTxPayload(transactionHash, signedData, senderPublicKey, lstBytes.ToArray());
+            return new CreateTxPayload(hash, signedData, senderPublicKey, lstBytes.ToArray());
         }
 
-        public string TransactionHash { get; private set; }
+        public HashValue TransactionHash { get; private set; }
         public byte[] SignedData { get; private set; }
         public byte[] SenderPublicKey { get; private set; }
 
 
         private void ExtractData(byte[] rawData)
         {
-            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
-
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;
-            TransactionHash = span.Slice(index, txHashByteLength).ToHexString();
-            index += txHashByteLength;
+            TransactionHash = new HashValue(span.Slice(index, HashValue.HashByteLength).ToArray());
+            index += HashValue.HashByteLength;
             var signedDataLength = BitConverter.ToInt32(span.Slice(index, 4));
             index += 4;
             SignedData = span.Slice(index, signedDataLength).ToArray();

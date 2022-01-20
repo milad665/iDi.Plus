@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Exceptions;
 
 namespace iDi.Blockchain.Framework.Tests;
@@ -14,7 +15,7 @@ public class TestTransaction : ITransaction
         TransactionHash = ComputeHash();
     }
 
-    public string TransactionHash { get; private set; }
+    public HashValue TransactionHash { get; private set; }
     public TransactionTypes TransactionType { get; }
     public string SomeValue { get; }
 
@@ -24,13 +25,13 @@ public class TestTransaction : ITransaction
             throw new HashMismatchIdPlusException("Invalid transaction hash.");
     }
 
-    public string ComputeHash()
+    public HashValue ComputeHash()
     {
         var tx =
             $"{TransactionType}:{SomeValue}";
         var bytes = Encoding.UTF8.GetBytes(tx);
         using var sha256Hash = SHA256.Create();
         var hashedBytes = sha256Hash.ComputeHash(bytes);
-        return Encoding.UTF8.GetString(hashedBytes);
+        return new HashValue(hashedBytes);
     }
 }

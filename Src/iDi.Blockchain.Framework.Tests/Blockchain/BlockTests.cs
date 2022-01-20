@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Cryptography;
 using Xunit;
 
 namespace iDi.Blockchain.Framework.Tests.Blockchain;
@@ -16,7 +14,7 @@ public class BlockTests
         var genesis = Block<TestTransaction>.Genesis();
 
         Assert.Equal(0, genesis.Index);
-        Assert.Equal("", genesis.PreviousHash);
+        Assert.Equal(HashValue.Empty, genesis.PreviousHash);
         Assert.Null(genesis.Transactions);
     }
 
@@ -34,11 +32,8 @@ public class BlockTests
         Assert.Equal(hash, block.Hash);
     }
 
-    private string ComputeHash(Block<TestTransaction> data)
+    private HashValue ComputeHash(Block<TestTransaction> data)
     {
-        var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data));
-        using var algorithm = FrameworkEnvironment.HashAlgorithm;
-        var hashedBytes = algorithm.ComputeHash(bytes);
-        return Encoding.UTF8.GetString(hashedBytes);
+        return HashValue.ComputeHash(data);
     }
 }

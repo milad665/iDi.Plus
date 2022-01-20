@@ -1,6 +1,7 @@
 ﻿using System;
 using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Exceptions;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions
@@ -12,7 +13,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             Subject = subject;
         }
 
-        protected IdTransaction(TransactionTypes transactionType, string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, string previousTransactionHash)
+        protected IdTransaction(TransactionTypes transactionType, string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, HashValue previousTransactionHash)
         {
             TransactionType = transactionType;
             IssuerAddress = issuerAddress;
@@ -24,7 +25,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             Timestamp = DateTime.UtcNow;
         }
 
-        public string TransactionHash { get; protected set; }
+        public HashValue TransactionHash { get; protected set; }
         public TransactionTypes TransactionType { get; private set; }
         public string IssuerAddress { get; private set; }
         public string HolderAddress { get; private set; }
@@ -32,7 +33,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public string IdentifierKey { get; private set; }
         public string SignedData { get; private set; }
         public DateTime Timestamp { get; private set; }
-        public string PreviousTransactionHash { get; private set; }
+        public HashValue PreviousTransactionHash { get; private set; }
 
         /// <summary>
         /// Controls whether the transaction data is properly transmitted
@@ -43,6 +44,6 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
                 throw new HashMismatchIdPlusException("Invalid transaction hash.");
         }
 
-        public abstract string ComputeHash();
+        public abstract HashValue ComputeHash();
     }
 }

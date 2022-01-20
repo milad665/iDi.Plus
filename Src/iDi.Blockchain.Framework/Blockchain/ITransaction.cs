@@ -1,11 +1,13 @@
-﻿namespace iDi.Blockchain.Framework.Blockchain
+﻿using iDi.Blockchain.Framework.Cryptography;
+
+namespace iDi.Blockchain.Framework.Blockchain
 {
     public interface ITransaction
     {
-        string TransactionHash { get;}
+        HashValue TransactionHash { get;}
         TransactionTypes TransactionType { get;  }
 
         void Verify();
-        string ComputeHash();
+        HashValue ComputeHash();
     }
 }

@@ -12,11 +12,11 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
     public void MessageCreatedSuccessfullyFromByteArray()
     {
         var txData = SampleDataProvider.Transaction1;
-        var transactionBytes = SampleDataProvider.TransactionDataPayloadBytes(txData);
+        var transactionBytes = SampleDataProvider.TxDataPayloadBytes(txData);
         var target = new TxDataPayload(transactionBytes);
 
-        Assert.Equal(txData.TransactionHash, target.TransactionHash, true);
-        Assert.Equal(txData.PreviousTransactionHash, target.PreviousTransactionHash, true);
+        Assert.Equal(txData.TransactionHash, target.TransactionHash);
+        Assert.Equal(txData.PreviousTransactionHash, target.PreviousTransactionHash);
         Assert.Equal(txData.Timestamp, target.Timestamp);
         Assert.Equal(txData.Subject, target.Subject);
         Assert.Equal(txData.SignedData, target.SignedData);
@@ -30,7 +30,7 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
     public void RawDataCreatedSuccessfully()
     {
         var txData = SampleDataProvider.Transaction1;
-        var transactionBytes = SampleDataProvider.TransactionDataPayloadBytes(txData);
+        var transactionBytes = SampleDataProvider.TxDataPayloadBytes(txData);
         var target = TxDataPayload.Create(txData.TransactionHash, TransactionTypes.IssueTransaction,
             txData.Issuer.Address, txData.Holder.Address, txData.Verifier?.Address, txData.Subject, txData.Identifier,
             txData.Timestamp, txData.PreviousTransactionHash, txData.SignedData);

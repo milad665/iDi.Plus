@@ -19,6 +19,6 @@ public class IdBlockchainTests
         var target = new IdBlockchain();
         target.AddBlock(_sampleDataProvider.GetSampleIdTransactions());
         var block = target.Blocks.Last();
-        Assert.EndsWith(new string('0', target.Difficulty), block.Hash);
+        Assert.EndsWith(new string('0', target.Difficulty), block.Hash.HexString);
     }
 }

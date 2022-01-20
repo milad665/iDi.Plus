@@ -1,5 +1,5 @@
-﻿using iDi.Blockchain.Framework.Protocol;
-using iDi.Blockchain.Framework.Protocol.Extensions;
+﻿using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -10,20 +10,19 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
     {
         public GetBlockPayload(byte[] rawData) : base(rawData, MessageTypes.GetBlock)
         {
-            BlockHash = rawData.ToHexString();
+            BlockHash = new HashValue(rawData);
         }
 
-        public GetBlockPayload(byte[] rawData, string blockHash) : base(rawData, MessageTypes.GetBlock)
+        public GetBlockPayload(byte[] rawData, HashValue blockHash) : base(rawData, MessageTypes.GetBlock)
         {
             BlockHash = blockHash;
         }
 
-        public static GetBlockPayload Create(string blockHash)
+        public static GetBlockPayload Create(HashValue blockHash)
         {
-            var bytes = blockHash.HexStringToByteArray();
-            return new GetBlockPayload(bytes, blockHash);
+            return new GetBlockPayload(blockHash.Bytes, blockHash);
         }
 
-        public string BlockHash { get; set; }
+        public HashValue BlockHash { get; set; }
     }
 }

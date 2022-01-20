@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -23,17 +22,16 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         {
             var span = new ReadOnlySpan<byte>(rawData);
 
-            var txHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
-
-            if (span.Length % txHashByteLength != 0)
+            if (span.Length % HashValue.HashByteLength != 0)
                 throw new InvalidDataException("Data length does not match the hash length.");
-            var count = span.Length / txHashByteLength;
+
+            var count = span.Length / HashValue.HashByteLength;
             var result = new List<string>();
 
             for (var i = 0; i < count; i++)
             {
-                var hash = span.Slice(i * txHashByteLength, txHashByteLength).ToHexString();
-                result.Add(hash);
+                var hash = new HashValue(span.Slice(i * HashValue.HashByteLength, HashValue.HashByteLength).ToArray());
+                result.Add(hash.HexString);
             }
 
             return result;

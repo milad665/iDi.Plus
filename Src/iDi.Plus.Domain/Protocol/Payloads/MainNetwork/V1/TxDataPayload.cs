@@ -15,14 +15,12 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         public const int SubjectByteLength = 256;
         public const int IdentifierByteLength = 256;
 
-        private static readonly int TxHashByteLength = FrameworkEnvironment.HashAlgorithm.HashSize / 8;
-
         public TxDataPayload(byte[] rawData):base(rawData, MessageTypes.TxData)
         {
             ExtractData(rawData);
         }
 
-        protected TxDataPayload(string transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, string previousTransactionHash, byte[] signedData, byte[] rawData) : base(rawData, MessageTypes.TxData)
+        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, byte[] rawData) : base(rawData, MessageTypes.TxData)
         {
             TransactionHash = transactionHash;
             TransactionType = transactionType;
@@ -36,7 +34,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             SignedData = signedData;
         }
 
-        public static TxDataPayload Create(string transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, string previousTransactionHash, byte[] signedData)
+        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
         {
             if (!IdCard.IsValidAddress(issuerAddress))
                 throw new InvalidDataException("Invalid IssuerAddress.");
@@ -49,20 +47,11 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             if (identifierKey.Length > IdentifierByteLength)
                 throw new InvalidDataException($"IdentifierKey length can not be over {IdentifierByteLength} characters");
 
-            var txHashBytes = transactionHash.HexStringToByteArray();
-
-            if (txHashBytes.Length != TxHashByteLength)
-                throw new InvalidDataException($"Invalid hash length. 'TransactionHash'");
-
-            var prevTxHashBytes = string.IsNullOrWhiteSpace(previousTransactionHash)
-                ? new byte[TxHashByteLength]
-                : previousTransactionHash.HexStringToByteArray();
-
-            if (prevTxHashBytes.Length != TxHashByteLength)
-                throw new InvalidDataException($"Invalid hash length. 'PreviousTransactionHash'");
+            if (previousTransactionHash == null)
+                previousTransactionHash = HashValue.Empty;
 
             var lstBytes = new List<byte>();
-            lstBytes.AddRange(txHashBytes);
+            lstBytes.AddRange(transactionHash.Bytes);
             lstBytes.Add((byte)transactionType);
             lstBytes.AddRange(issuerAddress.HexStringToByteArray());
             lstBytes.AddRange(holderAddress.HexStringToByteArray());
@@ -81,21 +70,28 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
             lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
             lstBytes.AddRange(BitConverter.GetBytes(timestamp.Ticks));
-            lstBytes.AddRange(prevTxHashBytes);
+            lstBytes.AddRange(previousTransactionHash.Bytes);
             lstBytes.AddRange(signedData);
 
             return new TxDataPayload(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
                 subject, identifierKey, timestamp, previousTransactionHash, signedData, lstBytes.ToArray());
         }
 
-        public string TransactionHash { get; private set; }
+        public HashValue TransactionHash { get; private set; }
 
         public TransactionTypes TransactionType { get; private set; }
 
+        /// <summary>
+        /// Reserved - Initial Issuer
+        /// </summary>
         public string IssuingAuthorityAddress { get; private set; }
-
+        /// <summary>
+        /// Reserved - Controllers with privilege to change access writes
+        /// </summary>
         public List<string> PrivilegeControllersAddresses { get; private set; }
-
+        /// <summary>
+        /// Reserved - Controllers
+        /// </summary>
         public List<string> ControllersAddresses { get; private set; }
 
         public string IssuerAddress { get; private set; }
@@ -113,7 +109,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public DateTime Timestamp { get; private set; }
 
-        public string PreviousTransactionHash { get; private set; }
+        public HashValue PreviousTransactionHash { get; private set; }
 
         public byte[] SignedData { get; private set; }
 
@@ -121,8 +117,8 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         {
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;
-            TransactionHash = span.Slice(index, TxHashByteLength).ToHexString();
-            index += TxHashByteLength;
+            TransactionHash = new HashValue(span.Slice(index, HashValue.HashByteLength).ToArray());
+            index += HashValue.HashByteLength;
             TransactionType = (TransactionTypes) span.Slice(index, 1)[0];
             index++;
             IssuerAddress = span.Slice(index, IdCard.PublicKeyByteLength).ToHexString();
@@ -140,9 +136,8 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             index += IdentifierByteLength;
             Timestamp = DateTime.FromBinary(BitConverter.ToInt64(span.Slice(index, 8)));
             index += 8;
-            var prevTxHashBytes = span.Slice(index, TxHashByteLength).ToArray();
-            PreviousTransactionHash = prevTxHashBytes.All(b => b == 0) ? null : prevTxHashBytes.ToHexString();
-            index += TxHashByteLength;
+            PreviousTransactionHash = new HashValue(span.Slice(index, HashValue.HashByteLength).ToArray());
+            index += HashValue.HashByteLength;
 
             SignedData = span.Slice(index).ToArray();
         }

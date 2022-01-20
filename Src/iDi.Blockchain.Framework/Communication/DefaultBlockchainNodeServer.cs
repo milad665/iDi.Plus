@@ -64,7 +64,7 @@ namespace iDi.Blockchain.Framework.Communication
                 networkStream.Write(response.RawData);
                 networkStream.Close(); // Send data
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //Console.WriteLine(e);
             }

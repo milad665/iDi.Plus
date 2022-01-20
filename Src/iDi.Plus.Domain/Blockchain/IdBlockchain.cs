@@ -15,7 +15,7 @@ namespace iDi.Plus.Domain.Blockchain
         protected override void ProofOfWork(Block<IdTransaction> block)
         {
             Difficulty = Math.Min(Blocks.Count / 1000000 + 4, MaxDifficulty);
-            while (!block.Hash.EndsWith(new string('0', Difficulty)))
+            while (!block.Hash.HexString.EndsWith(new string('0', Difficulty)))
                 block.NextNonce();
         }
 
