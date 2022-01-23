@@ -13,6 +13,15 @@ namespace iDi.Plus.Domain.Tests;
 
 public class SampleDataProvider
 {
+    public SampleDataProvider()
+    {
+        SampleLocalNodeKeys = DigitalSignatureKeys.Generate();
+        SampleRemoteNodeKeys = DigitalSignatureKeys.Generate();
+    }
+
+    public DigitalSignatureKeys SampleLocalNodeKeys { get; }
+    public DigitalSignatureKeys SampleRemoteNodeKeys { get; }
+
     public byte[] BlockDataMessageBytes(bool produceValidPayloadSignature, Networks network, short version)
     {
         var senderNodeKeys = DigitalSignatureKeys.Generate();
@@ -61,6 +70,8 @@ public class SampleDataProvider
         new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", "DATA", null),
         new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", "DATA", null),
     };
+
+
     public byte[] BlockDataPayloadBytes(BlockTestData blockTestData)
     {
         var payloadBytes = new List<byte>();
@@ -82,34 +93,6 @@ public class SampleDataProvider
         //Last 4 Bytes of this payload must be zeros
         payloadBytes.AddRange(BitConverter.GetBytes((int)0));
         return payloadBytes.ToArray();
-    }
-    public byte[] CreateTxPayloadBytes(string transactionHash, byte[] signedData, string issuerPublicKey)
-    {
-        var lstBytes = new List<byte>();
-        lstBytes.AddRange(transactionHash.HexStringToByteArray());
-        lstBytes.AddRange(BitConverter.GetBytes(signedData.Length));
-        lstBytes.AddRange(signedData);
-        lstBytes.AddRange(issuerPublicKey.HexStringToByteArray());
-        return lstBytes.ToArray();
-    }
-    public byte[] TxDataPayloadBytes(TransactionTestData transactionTestData)
-    {
-        var lstBytes = new List<byte>();
-        lstBytes.AddRange(transactionTestData.TransactionHash.Bytes);
-        lstBytes.Add((byte)TransactionTypes.IssueTransaction);
-        lstBytes.AddRange(transactionTestData.Issuer.Address.HexStringToByteArray());
-        lstBytes.AddRange(transactionTestData.Holder.Address.HexStringToByteArray());
-        lstBytes.AddRange(transactionTestData.Verifier?.Address?.HexStringToByteArray() ?? new byte[IdCard.PublicKeyByteLength]);
-
-        var subjectPadded = transactionTestData.Subject.PadRight(TxDataPayload.SubjectByteLength);
-        var identifierKeyPadded = transactionTestData.Identifier.PadRight(TxDataPayload.IdentifierByteLength);
-        lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
-        lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
-        lstBytes.AddRange(BitConverter.GetBytes(transactionTestData.Timestamp.Ticks));
-        lstBytes.AddRange(transactionTestData.PreviousTransactionHash?.Bytes ?? new byte[HashValue.HashByteLength]);
-        lstBytes.AddRange(transactionTestData.SignedData);
-
-        return lstBytes.ToArray();
     }
     public byte[] CreateTxPayloadBytes(TransactionTestData transactionTestData)
     {
@@ -157,5 +140,98 @@ public class SampleDataProvider
             bytes.AddRange(hash.Bytes);
 
         return bytes.ToArray();
+    }
+    public byte[] TxDataPayloadBytes(TransactionTestData transactionTestData)
+    {
+        var lstBytes = new List<byte>();
+        lstBytes.AddRange(transactionTestData.TransactionHash.Bytes);
+        lstBytes.Add((byte)TransactionTypes.IssueTransaction);
+        lstBytes.AddRange(transactionTestData.Issuer.Address.HexStringToByteArray());
+        lstBytes.AddRange(transactionTestData.Holder.Address.HexStringToByteArray());
+        lstBytes.AddRange(transactionTestData.Verifier?.Address?.HexStringToByteArray() ?? new byte[IdCard.PublicKeyByteLength]);
+
+        var subjectPadded = transactionTestData.Subject.PadRight(TxDataPayload.SubjectByteLength);
+        var identifierKeyPadded = transactionTestData.Identifier.PadRight(TxDataPayload.IdentifierByteLength);
+        lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
+        lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
+        lstBytes.AddRange(BitConverter.GetBytes(transactionTestData.Timestamp.Ticks));
+        lstBytes.AddRange(transactionTestData.PreviousTransactionHash?.Bytes ?? new byte[HashValue.HashByteLength]);
+        lstBytes.AddRange(transactionTestData.SignedData);
+
+        return lstBytes.ToArray();
+    }
+    public byte[] CreateTxPayloadBytes(string transactionHash, byte[] signedData, string issuerPublicKey)
+    {
+        var lstBytes = new List<byte>();
+        lstBytes.AddRange(transactionHash.HexStringToByteArray());
+        lstBytes.AddRange(BitConverter.GetBytes(signedData.Length));
+        lstBytes.AddRange(signedData);
+        lstBytes.AddRange(issuerPublicKey.HexStringToByteArray());
+        return lstBytes.ToArray();
+    }
+
+
+
+    public Message BlockDataMessage(BlockTestData blockTestData)
+    {
+        var payload = new BlockDataPayload(BlockDataPayloadBytes(blockTestData));
+        var header = CreateHeader(MessageTypes.BlockData, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message CreateTxMessage(TransactionTestData transactionTestData)
+    {
+        var payload = new CreateTxPayload(CreateTxPayloadBytes(transactionTestData));
+        var header = CreateHeader(MessageTypes.CreateTx, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message GetBlockMessage(HashValue blockHash)
+    {
+        var payload = new GetBlockPayload(GetBlockPayloadBytes(blockHash));
+        var header = CreateHeader(MessageTypes.GetBlock, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message GetNewBlocksMessage(long lastBlockIndex)
+    {
+        var payload = new GetNewBlocksPayload(GetNewBlocksPayloadBytes(lastBlockIndex));
+        var header = CreateHeader(MessageTypes.GetNewBlocks, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message GetTxMessage(HashValue transactionHash)
+    {
+        var payload = new GetTxPayload(GetTxPayloadBytes(transactionHash));
+        var header = CreateHeader(MessageTypes.GetTx, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message NewBlocksMessage(List<HashValue> blockHashes)
+    {
+        var payload = new NewBlocksPayload(NewBlocksPayloadBytes(blockHashes));
+        var header = CreateHeader(MessageTypes.NewBlocks, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message NewTxsMessage(List<HashValue> transactionHashes)
+    {
+        var payload = new NewTxsPayload(NewTxsPayloadBytes(transactionHashes));
+        var header = CreateHeader(MessageTypes.NewTxs, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+    public Message TxDataMessage(TransactionTestData transactionTestData)
+    {
+        var payload = new TxDataPayload(TxDataPayloadBytes(transactionTestData));
+        var header = CreateHeader(MessageTypes.TxData, payload, SampleRemoteNodeKeys);
+        return Message.Create(header, payload);
+    }
+
+
+    private Header CreateHeader(MessageTypes messageType, IPayload payload, KeyPair localKeys)
+    {
+        var signature = SignPayload(payload, localKeys);
+        return Header.Create(Networks.Main, 1, SampleRemoteNodeKeys.PublicKey.ToHexString(), messageType,
+            payload.RawData.Length, signature);
+    }
+    private byte[] SignPayload(IPayload payload, KeyPair localKeys)
+    {
+        var cryptoService = new CryptoServiceProvider();
+        var signature = cryptoService.Sign(localKeys.PrivateKey, payload?.RawData);
+        return signature;
     }
 }

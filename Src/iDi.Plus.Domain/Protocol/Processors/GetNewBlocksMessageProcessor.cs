@@ -21,8 +21,7 @@ public class GetNewBlocksMessageProcessor : MessageProcessorBase
 
     public override Message ProcessPayload(Message message)
     {
-        var payload = message.Payload as GetNewBlocksPayload;
-        if (payload == null)
+        if (message.Payload is not GetNewBlocksPayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");
 
         var hashes = BlockchainRepository.GetHashesOfBlocksCreatedAfter(payload.LastBlockIndex);
