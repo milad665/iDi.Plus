@@ -19,6 +19,9 @@ public class HashValue
 
     public HashValue(string hexHexString)
     {
+        if (string.IsNullOrWhiteSpace(hexHexString))
+            throw new InvalidInputException("Hash cannot be empty.");
+
         var bytes = hexHexString.HexStringToByteArray();
         if (bytes.Length != HashByteLength)
             throw new InvalidInputException("Invalid hash length.");
