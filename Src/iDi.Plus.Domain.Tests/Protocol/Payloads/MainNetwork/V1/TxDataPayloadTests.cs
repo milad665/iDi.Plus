@@ -2,6 +2,7 @@
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
+using iDi.Plus.Domain.Tests.Protocol.TestData;
 using Xunit;
 
 namespace iDi.Plus.Domain.Tests.Protocol.Payloads.MainNetwork.V1;
@@ -11,7 +12,7 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void MessageCreatedSuccessfullyFromByteArray()
     {
-        var txData = SampleDataProvider.Transaction1;
+        var txData = TransactionTestData.SampleTransactionIdCard2PassportName1;
         var transactionBytes = SampleDataProvider.TxDataPayloadBytes(txData);
         var target = new TxDataPayload(transactionBytes);
 
@@ -29,7 +30,7 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void RawDataCreatedSuccessfully()
     {
-        var txData = SampleDataProvider.Transaction1;
+        var txData = TransactionTestData.SampleTransactionIdCard2PassportName1;
         var transactionBytes = SampleDataProvider.TxDataPayloadBytes(txData);
         var target = TxDataPayload.Create(txData.TransactionHash, TransactionTypes.IssueTransaction,
             txData.Issuer.Address, txData.Holder.Address, txData.Verifier?.Address, txData.Subject, txData.Identifier,
@@ -45,8 +46,8 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [InlineData("162fe433afd216")] //Too small
     public void ThrowsError_InvalidIssueAddress(string invalidIssuerAddress)
     {
-        var txData = SampleDataProvider.Transaction1;
-        Assert.Throws<InvalidDataException>(()=>TxDataPayload.Create(txData.TransactionHash, TransactionTypes.IssueTransaction,
+        var txData = TransactionTestData.SampleTransactionIdCard2PassportName1;
+        Assert.Throws<InvalidInputException>(()=>TxDataPayload.Create(txData.TransactionHash, TransactionTypes.IssueTransaction,
             invalidIssuerAddress, txData.Holder.Address, txData.Verifier?.Address, txData.Subject, txData.Identifier,
             txData.Timestamp, txData.PreviousTransactionHash, txData.SignedData));
     }
@@ -58,8 +59,8 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [InlineData("162fe433afd216")] //Too small
     public void ThrowsError_InvalidHolderAddress(string invalidHolderAddress)
     {
-        var txData = SampleDataProvider.Transaction1;
-        Assert.Throws<InvalidDataException>(() => TxDataPayload.Create(txData.TransactionHash, TransactionTypes.IssueTransaction,
+        var txData = TransactionTestData.SampleTransactionIdCard2PassportName1;
+        Assert.Throws<InvalidInputException>(() => TxDataPayload.Create(txData.TransactionHash, TransactionTypes.IssueTransaction,
             txData.Issuer.Address, invalidHolderAddress, txData.Verifier?.Address, txData.Subject, txData.Identifier,
             txData.Timestamp, txData.PreviousTransactionHash, txData.SignedData));
     }

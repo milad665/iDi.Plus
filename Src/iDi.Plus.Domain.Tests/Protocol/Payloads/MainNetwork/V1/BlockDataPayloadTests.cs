@@ -6,6 +6,7 @@ using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
+using iDi.Plus.Domain.Tests.Protocol.TestData;
 using Xunit;
 
 namespace iDi.Plus.Domain.Tests.Protocol.Payloads.MainNetwork.V1;
@@ -15,7 +16,7 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void MessageCreatedSuccessfullyFromByteArray()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
 
         var payloadData = SampleDataProvider.BlockDataPayloadBytes(block);
         var target = new BlockDataPayload(payloadData);
@@ -31,7 +32,7 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void RawDataCreatedSuccessfully()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
 
         var expectedPayloadData = SampleDataProvider.BlockDataPayloadBytes(block);
         var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
@@ -46,7 +47,7 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void RawDataCreatedSuccessfully_ForNullTransactions()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
         block.Transactions = null;
         var expectedPayloadData = SampleDataProvider.BlockDataPayloadBytes(block);
 
@@ -58,7 +59,7 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void RawDataCreatedSuccessfully_ForEmptyTransactionsList()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
         block.Transactions = null;
         var expectedPayloadData = SampleDataProvider.BlockDataPayloadBytes(block);
 
@@ -70,31 +71,31 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void ThrowError_InvalidHashLength()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
 
         var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
             t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
 
-        Assert.Throws<InvalidDataException>(() => BlockDataPayload.Create(block.Index, new HashValue("ab12"), block.PreviousHash, block.TimeStamp, transactionsPayload, block.Nonce));
+        Assert.Throws<InvalidInputException>(() => BlockDataPayload.Create(block.Index, new HashValue("ab12"), block.PreviousHash, block.TimeStamp, transactionsPayload, block.Nonce));
     }
 
     [Fact]
     public void ThrowError_InvalidPreviousHashLength()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
 
         var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
             t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
 
-        Assert.Throws<InvalidDataException>(() => BlockDataPayload.Create(block.Index, block.Hash, new HashValue("ab12"), block.TimeStamp, transactionsPayload, block.Nonce));
+        Assert.Throws<InvalidInputException>(() => BlockDataPayload.Create(block.Index, block.Hash, new HashValue("ab12"), block.TimeStamp, transactionsPayload, block.Nonce));
     }
 
     [Fact]
     public void ThrowError_InvalidHashFormat()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
 
         var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
@@ -106,7 +107,7 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     [Fact]
     public void ThrowError_InvalidPreviousHashFormat()
     {
-        var block = SampleDataProvider.Block1;
+        var block = BlockTestData.SampleBlock1;
 
         var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,

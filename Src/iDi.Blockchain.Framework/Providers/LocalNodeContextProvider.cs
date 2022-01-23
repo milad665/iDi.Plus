@@ -13,7 +13,7 @@ public class LocalNodeContextProvider : ILocalNodeContextProvider
         set
         {
             if (_localKeyPair != null)
-                throw new InvalidDataException("Node keys have been set before.");
+                throw new InvalidInputException("Node keys have been set before.");
 
             _localKeyPair = value;
         }

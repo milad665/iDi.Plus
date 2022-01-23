@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -40,7 +39,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             var txHashByteLength = HashValue.HashByteLength;
 
             if (span.Length % txHashByteLength != 0)
-                throw new InvalidDataException("Data length does not match the hash length.");
+                throw new InvalidInputException("Data length does not match the hash length.");
             var count = span.Length / txHashByteLength;
             var result = new List<HashValue>();
 

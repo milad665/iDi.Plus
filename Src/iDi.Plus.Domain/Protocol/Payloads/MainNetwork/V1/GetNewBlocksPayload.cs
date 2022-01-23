@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using iDi.Blockchain.Framework.Protocol;
+using iDi.Blockchain.Framework.Protocol.Exceptions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -22,6 +22,9 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public static GetNewBlocksPayload Create(long lastBlockIndex)
         {
+            if (lastBlockIndex < 0)
+                throw new InvalidInputException("Block index cannot be negative.");
+
             return new GetNewBlocksPayload(lastBlockIndex, BitConverter.GetBytes(lastBlockIndex));
         }
 
@@ -33,9 +36,13 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         private long GetBlockIndex(byte[] rawData)
         {
             if (rawData.Length != 8)
-                throw new InvalidDataException("Data length does not match length of 'long' type.");
+                throw new InvalidInputException("Data length does not match length of 'long' type.");
 
-            return BitConverter.ToInt64(rawData);
+            var lastBlockIndex = BitConverter.ToInt64(rawData);
+            if (lastBlockIndex < 0)
+                throw new InvalidInputException("Block index cannot be negative.");
+
+            return lastBlockIndex;
         }
     }
 }

@@ -23,7 +23,7 @@ public class NewBlocksMessageProcessor : MessageProcessorBase
     {
         var payload = message.Payload as NewBlocksPayload;
         if (payload == null)
-            throw new InvalidDataException("Payload can not be cast to the target type of this processor.");
+            throw new InvalidInputException("Payload can not be cast to the target type of this processor.");
 
         foreach (var blockHash in payload.Blocks)
         {

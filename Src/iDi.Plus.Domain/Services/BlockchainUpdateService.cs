@@ -88,7 +88,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
         var payload = message.Payload as BlockDataPayload;
 
         if (payload == null)
-            throw new InvalidDataException("Invalid Block data payload");
+            throw new InvalidInputException("Invalid Block data payload");
 
         var transactions = new List<IdTransaction>();
         if (payload.Transactions == null)
@@ -123,11 +123,11 @@ public class BlockchainUpdateService : IBlockchainUpdateService
         var minReceivedBlock = orderedBlocks.Last();
         
         if (minReceivedBlock.Index != _blockchainRepository.GetLastBlockIndex() + 1)
-            throw new InvalidDataException("Received blocks do not follow the last block in the blockchain.");
+            throw new InvalidInputException("Received blocks do not follow the last block in the blockchain.");
 
         var lastBlockchainBlock = _blockchainRepository.GetLastBlock();
         if (lastBlockchainBlock == null && !orderedBlocks.First().IsGenesis())
-            throw new InvalidDataException("Received blocks do not start with genesis block while no blockchain is stored.");
+            throw new InvalidInputException("Received blocks do not start with genesis block while no blockchain is stored.");
 
 
         var index = minReceivedBlock.Index + 1;
@@ -135,9 +135,9 @@ public class BlockchainUpdateService : IBlockchainUpdateService
         foreach (var block in orderedBlocks)
         {
             if (index != block.Index)
-                throw new InvalidDataException("At least one block is missing.");
+                throw new InvalidInputException("At least one block is missing.");
             if (previousBlock != null && !block.PreviousHash.Equals(previousBlock.Hash))
-                throw new InvalidDataException("Previous hash does not match the hash of the previous block.");
+                throw new InvalidInputException("Previous hash does not match the hash of the previous block.");
             
             previousBlock = block;
 

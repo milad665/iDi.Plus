@@ -21,7 +21,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public static ConsentIdTransaction FromTxDataPayload(TxDataPayload payload)
         {
             if (payload.TransactionType != TransactionTypes.ConsentTransaction)
-                throw new InvalidDataException("Transaction type does not match.");
+                throw new InvalidInputException("Transaction type does not match.");
 
             return new ConsentIdTransaction(payload.IssuerAddress, payload.HolderAddress, payload.Subject,
                 payload.IdentifierKey, payload.SignedData.ToHexString(), payload.VerifierAddress,

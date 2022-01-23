@@ -20,7 +20,12 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, byte[] rawData) : base(rawData, MessageTypes.TxData)
+        protected TxDataPayload(byte[] rawData, MessageTypes messageType) : base(rawData, messageType)
+        {
+            ExtractData(rawData);
+        }
+
+        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, byte[] rawData, MessageTypes messageType) : base(rawData, messageType)
         {
             TransactionHash = transactionHash;
             TransactionType = transactionType;
@@ -34,18 +39,18 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             SignedData = signedData;
         }
 
-        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
+        protected static TxDataPayload InternalCreate(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, MessageTypes messageType)
         {
             if (!IdCard.IsValidAddress(issuerAddress))
-                throw new InvalidDataException("Invalid IssuerAddress.");
+                throw new InvalidInputException("Invalid IssuerAddress.");
             if (!IdCard.IsValidAddress(holderAddress))
-                throw new InvalidDataException("Invalid HolderAddress.");
+                throw new InvalidInputException("Invalid HolderAddress.");
 
             if (subject.Length > SubjectByteLength)
-                throw new InvalidDataException($"Subject length can not be over {SubjectByteLength} characters");
+                throw new InvalidInputException($"Subject length can not be over {SubjectByteLength} characters");
 
             if (identifierKey.Length > IdentifierByteLength)
-                throw new InvalidDataException($"IdentifierKey length can not be over {IdentifierByteLength} characters");
+                throw new InvalidInputException($"IdentifierKey length can not be over {IdentifierByteLength} characters");
 
             if (previousTransactionHash == null)
                 previousTransactionHash = HashValue.Empty;
@@ -60,7 +65,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             else
             {
                 if (!IdCard.IsValidAddress(verifierAddress))
-                    throw new InvalidDataException("Invalid VerifierAddress.");
+                    throw new InvalidInputException("Invalid VerifierAddress.");
 
                 lstBytes.AddRange(verifierAddress.HexStringToByteArray());
             }
@@ -74,7 +79,15 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             lstBytes.AddRange(signedData);
 
             return new TxDataPayload(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
-                subject, identifierKey, timestamp, previousTransactionHash, signedData, lstBytes.ToArray());
+                subject, identifierKey, timestamp, previousTransactionHash, signedData, lstBytes.ToArray(), messageType);
+        }
+
+        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType,
+            string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey,
+            DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
+        {
+            return InternalCreate(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
+                subject, identifierKey, timestamp, previousTransactionHash, signedData, MessageTypes.TxData);
         }
 
         public HashValue TransactionHash { get; private set; }
@@ -113,7 +126,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public byte[] SignedData { get; private set; }
 
-        private void ExtractData(byte[] rawData)
+        protected void ExtractData(byte[] rawData)
         {
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;

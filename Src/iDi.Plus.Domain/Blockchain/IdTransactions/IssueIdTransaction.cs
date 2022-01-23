@@ -19,7 +19,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public static IssueIdTransaction FromTxDataPayload(TxDataPayload payload)
         {
             if (payload.TransactionType != TransactionTypes.IssueTransaction)
-                throw new InvalidDataException("Transaction type does not match.");
+                throw new InvalidInputException("Transaction type does not match.");
 
             return new IssueIdTransaction(payload.IssuerAddress, payload.HolderAddress, payload.Subject,
                 payload.IdentifierKey, payload.SignedData.ToHexString(), payload.PreviousTransactionHash);

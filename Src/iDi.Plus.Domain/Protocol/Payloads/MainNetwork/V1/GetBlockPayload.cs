@@ -13,7 +13,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             BlockHash = new HashValue(rawData);
         }
 
-        public GetBlockPayload(byte[] rawData, HashValue blockHash) : base(rawData, MessageTypes.GetBlock)
+        protected GetBlockPayload(byte[] rawData, HashValue blockHash) : base(rawData, MessageTypes.GetBlock)
         {
             BlockHash = blockHash;
         }

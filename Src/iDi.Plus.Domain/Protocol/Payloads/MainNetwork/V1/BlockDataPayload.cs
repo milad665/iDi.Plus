@@ -33,7 +33,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
                 previousHash = HashValue.Empty;
 
             if (previousHash.IsEmpty() && (index != 0 || transactions != null))
-                throw new InvalidDataException("Previous transaction is empty but the block is not genesis.");
+                throw new InvalidInputException("Previous transaction is empty but the block is not genesis.");
 
             var lstBytes = new List<byte>();
             lstBytes.AddRange(BitConverter.GetBytes(index));

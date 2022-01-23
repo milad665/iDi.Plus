@@ -21,7 +21,7 @@ public class HashValue
     {
         var bytes = hexHexString.HexStringToByteArray();
         if (bytes.Length != HashByteLength)
-            throw new InvalidDataException("Invalid hash length.");
+            throw new InvalidInputException("Invalid hash length.");
         HexString = hexHexString;
         Bytes = bytes;
     }
@@ -29,7 +29,7 @@ public class HashValue
     public HashValue(byte[] bytes)
     {
         if (bytes.Length != HashByteLength)
-            throw new InvalidDataException("Invalid hash length.");
+            throw new InvalidInputException("Invalid hash length.");
         HexString = bytes.All(b => b == 0) ? null : bytes.ToHexString();
         Bytes = bytes;
     }

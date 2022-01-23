@@ -31,7 +31,7 @@ public abstract class MessageProcessorBase : IMessageProcessor
     public Message Process(Message message)
     {
         if (message.Payload.MessageType != MessageType)
-            throw new InvalidDataException("Payload type does not match the target message type of this processor.");
+            throw new InvalidInputException("Payload type does not match the target message type of this processor.");
 
         return ProcessPayload(message);
     }

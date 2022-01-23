@@ -23,7 +23,7 @@ public class GetNewBlocksMessageProcessor : MessageProcessorBase
     {
         var payload = message.Payload as GetNewBlocksPayload;
         if (payload == null)
-            throw new InvalidDataException("Payload can not be cast to the target type of this processor.");
+            throw new InvalidInputException("Payload can not be cast to the target type of this processor.");
 
         var hashes = BlockchainRepository.GetHashesOfBlocksCreatedAfter(payload.LastBlockIndex);
         var returnPayload = hashes is {Count: > 0} ? NewBlocksPayload.Create(hashes) : null;

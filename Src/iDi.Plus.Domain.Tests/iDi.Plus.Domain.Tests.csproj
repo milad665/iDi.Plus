@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Blockchain\" />
-    <Folder Include="Protocol\TestData\" />
     <Folder Include="Protocol\Payloads\MainNetwork\V1\" />
   </ItemGroup>
 
