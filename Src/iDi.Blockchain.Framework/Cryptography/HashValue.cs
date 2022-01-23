@@ -75,16 +75,22 @@ public class HashValue
         if (IsEmpty() && hashObj.IsEmpty())
             return true;
 
+        if (string.IsNullOrWhiteSpace(HexString))
+            return string.IsNullOrWhiteSpace(hashObj.HexString);
+
         return HexString.Equals(hashObj.HexString, StringComparison.OrdinalIgnoreCase);
     }
 
     protected bool Equals(HashValue other)
 
     {
-        if (other == null)
+        if (other is null)
             return false;
 
-        return HexString.Equals(other.HexString, StringComparison.OrdinalIgnoreCase) && Equals(Bytes, other.Bytes);
+        if (string.IsNullOrWhiteSpace(HexString))
+            return string.IsNullOrWhiteSpace(other.HexString);
+
+        return HexString.Equals(other.HexString, StringComparison.OrdinalIgnoreCase);
     }
 
     public override int GetHashCode()
@@ -108,7 +114,12 @@ public class HashValue
         }
     }
 
-    public static bool operator ==(HashValue value1, HashValue value2) => value1?.Equals(value2) ?? value2 is null;
+    public static bool operator ==(HashValue value1, HashValue value2) => value1?.Equals(value2) ?? (value2 is null);
 
     public static bool operator !=(HashValue value1, HashValue value2) => !(value1 == value2);
+
+    public override string ToString()
+    {
+        return HexString?.ToLower();
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
@@ -84,4 +85,68 @@ public class HashValueTests
         
         Assert.Null(target.HexString);
     }
+
+    [Theory]
+    [MemberData(nameof(EqualityTestData))]
+    public void EqualityTest(HashValue value1, HashValue value2, bool expectedEquality)
+    {
+        if (value1 != null)
+            Assert.Equal(expectedEquality, value1.Equals(value2));
+
+        Assert.Equal(expectedEquality, value1 == value2);
+        Assert.NotEqual(expectedEquality, value1 != value2);
+    }
+
+    public static IEnumerable<object[]> EqualityTestData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new HashValue("53bcada38e3b5c3aaf46a7d7962d1c172a961c8804abf70a2e0d7b77f66ac9fa"),
+                new HashValue("53BCADA38E3B5C3AAF46A7D7962D1C172A961C8804ABF70A2E0D7B77F66AC9FA"), 
+                true
+            },
+            new object[]
+            {
+                new HashValue("53bcada38e3b5c3aaf46a7d7962d1c172a961c8804abf70a2e0d7b77f66ac9fa"),
+                HashValue.Empty,
+                false
+            },
+            new object[]
+            {
+                HashValue.Empty,
+                HashValue.Empty,
+                true
+            },
+            new object[]
+            {
+                HashValue.Empty,
+                null,
+                false
+            },
+            new object[]
+            {
+                new HashValue("53bcada38e3b5c3aaf46a7d7962d1c172a961c8804abf70a2e0d7b77f66ac9fa"),
+                null,
+                false
+            },
+            new object[]
+            {
+                null,
+                HashValue.Empty,
+                false
+            },
+            new object[]
+            {
+                null,
+                new HashValue("53bcada38e3b5c3aaf46a7d7962d1c172a961c8804abf70a2e0d7b77f66ac9fa"),
+                false
+            },
+            new object[]
+            {
+                null,
+                null,
+                true
+            }
+        };
 }
