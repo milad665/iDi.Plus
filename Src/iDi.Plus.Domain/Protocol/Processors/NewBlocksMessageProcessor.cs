@@ -12,7 +12,7 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 public class NewBlocksMessageProcessor : MessageProcessorBase
 {
     public NewBlocksMessageProcessor(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, 
-        ILocalNodeContextProvider localNodeContextProvider, BlockchainNodesProvider blockchainNodesProvider) 
+        ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesProvider blockchainNodesProvider) 
         : base(blockchainNodeClient, blockchainRepository, localNodeContextProvider, blockchainNodesProvider)
     {
     }
@@ -21,8 +21,7 @@ public class NewBlocksMessageProcessor : MessageProcessorBase
 
     public override Message ProcessPayload(Message message)
     {
-        var payload = message.Payload as NewBlocksPayload;
-        if (payload == null)
+        if (message.Payload is not NewBlocksPayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");
 
         foreach (var blockHash in payload.Blocks)

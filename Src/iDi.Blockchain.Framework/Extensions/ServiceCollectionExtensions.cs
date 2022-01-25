@@ -30,7 +30,7 @@ namespace iDi.Blockchain.Framework.Extensions
         public static IServiceCollection AddIdiPlusCoreServices(this IServiceCollection services)
         {
             services.AddScoped<CryptoServiceProvider>();
-            services.AddSingleton<BlockchainNodesProvider>();
+            services.AddSingleton<IBlockchainNodesProvider, BlockchainNodesProvider>();
             services.AddSingleton<ILocalNodeContextProvider, LocalNodeContextProvider>();
 
             return services;

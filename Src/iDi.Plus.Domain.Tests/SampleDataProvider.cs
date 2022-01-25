@@ -16,11 +16,14 @@ public class SampleDataProvider
     public SampleDataProvider()
     {
         SampleLocalNodeKeys = DigitalSignatureKeys.Generate();
-        SampleRemoteNodeKeys = DigitalSignatureKeys.Generate();
+
+        SampleRemoteNodeKeys1 = DigitalSignatureKeys.Generate();
+        SampleRemoteNodeKeys2 = DigitalSignatureKeys.Generate();
     }
 
     public DigitalSignatureKeys SampleLocalNodeKeys { get; }
-    public DigitalSignatureKeys SampleRemoteNodeKeys { get; }
+    public DigitalSignatureKeys SampleRemoteNodeKeys1 { get; }
+    public DigitalSignatureKeys SampleRemoteNodeKeys2 { get; }
 
     public byte[] BlockDataMessageBytes(bool produceValidPayloadSignature, Networks network, short version)
     {
@@ -175,49 +178,49 @@ public class SampleDataProvider
     public Message BlockDataMessage(BlockTestData blockTestData)
     {
         var payload = new BlockDataPayload(BlockDataPayloadBytes(blockTestData));
-        var header = CreateHeader(MessageTypes.BlockData, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.BlockData, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message CreateTxMessage(TransactionTestData transactionTestData)
     {
         var payload = new CreateTxPayload(CreateTxPayloadBytes(transactionTestData));
-        var header = CreateHeader(MessageTypes.CreateTx, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.CreateTx, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message GetBlockMessage(HashValue blockHash)
     {
         var payload = new GetBlockPayload(GetBlockPayloadBytes(blockHash));
-        var header = CreateHeader(MessageTypes.GetBlock, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.GetBlock, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message GetNewBlocksMessage(long lastBlockIndex)
     {
         var payload = new GetNewBlocksPayload(GetNewBlocksPayloadBytes(lastBlockIndex));
-        var header = CreateHeader(MessageTypes.GetNewBlocks, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.GetNewBlocks, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message GetTxMessage(HashValue transactionHash)
     {
         var payload = new GetTxPayload(GetTxPayloadBytes(transactionHash));
-        var header = CreateHeader(MessageTypes.GetTx, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.GetTx, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message NewBlocksMessage(List<HashValue> blockHashes)
     {
         var payload = new NewBlocksPayload(NewBlocksPayloadBytes(blockHashes));
-        var header = CreateHeader(MessageTypes.NewBlocks, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.NewBlocks, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message NewTxsMessage(List<HashValue> transactionHashes)
     {
         var payload = new NewTxsPayload(NewTxsPayloadBytes(transactionHashes));
-        var header = CreateHeader(MessageTypes.NewTxs, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.NewTxs, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message TxDataMessage(TransactionTestData transactionTestData)
     {
         var payload = new TxDataPayload(TxDataPayloadBytes(transactionTestData));
-        var header = CreateHeader(MessageTypes.TxData, payload, SampleRemoteNodeKeys);
+        var header = CreateHeader(MessageTypes.TxData, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
 
@@ -225,7 +228,7 @@ public class SampleDataProvider
     private Header CreateHeader(MessageTypes messageType, IPayload payload, KeyPair localKeys)
     {
         var signature = SignPayload(payload, localKeys);
-        return Header.Create(Networks.Main, 1, SampleRemoteNodeKeys.PublicKey.ToHexString(), messageType,
+        return Header.Create(Networks.Main, 1, SampleRemoteNodeKeys1.PublicKey.ToHexString(), messageType,
             payload.RawData.Length, signature);
     }
     private byte[] SignPayload(IPayload payload, KeyPair localKeys)

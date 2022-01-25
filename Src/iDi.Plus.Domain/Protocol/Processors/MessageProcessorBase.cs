@@ -14,10 +14,10 @@ public abstract class MessageProcessorBase : IMessageProcessor
     protected readonly IBlockchainNodeClient BlockchainNodeClient;
     protected readonly IBlockchainRepository<IdTransaction> BlockchainRepository;
     protected readonly ILocalNodeContextProvider LocalNodeContextProvider;
-    protected readonly BlockchainNodesProvider BlockchainNodesProvider;
+    protected readonly IBlockchainNodesProvider BlockchainNodesProvider;
 
     protected MessageProcessorBase(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, 
-        ILocalNodeContextProvider localNodeContextProvider, BlockchainNodesProvider blockchainNodesProvider)
+        ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesProvider blockchainNodesProvider)
     {
         BlockchainNodeClient = blockchainNodeClient;
         BlockchainRepository = blockchainRepository;

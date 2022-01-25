@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
@@ -22,7 +21,7 @@ public class GetNewBlocksMessageProcessorTests : MessageProcessorTestBase
         Setup();    
     }
 
-    private readonly List<HashValue> _returnedTransactionsFromRepository = new List<HashValue>
+    private readonly List<HashValue> _returnedTransactionsFromRepository = new()
     {
         TransactionTestData.SampleTransactionIdCard3PassportName1.TransactionHash,
         TransactionTestData.SampleTransactionIdCard2PassportName1.TransactionHash,

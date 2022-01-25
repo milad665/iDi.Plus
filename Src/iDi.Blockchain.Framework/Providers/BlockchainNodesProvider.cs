@@ -5,7 +5,7 @@ using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Providers;
 
-public class BlockchainNodesProvider
+public class BlockchainNodesProvider : IBlockchainNodesProvider
 {
     private readonly Dictionary<string, BlockchainNode> _blockchainNodes;
 
