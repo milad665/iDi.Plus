@@ -22,7 +22,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
                 throw new InvalidInputException("Transaction type does not match.");
 
             return new IssueIdTransaction(payload.IssuerAddress, payload.HolderAddress, payload.Subject,
-                payload.IdentifierKey, payload.SignedData.ToHexString(), payload.PreviousTransactionHash);
+                payload.IdentifierKey, payload.DoubleEncryptedData.ToHexString(), payload.PreviousTransactionHash);
         }
 
         public override HashValue ComputeHash()

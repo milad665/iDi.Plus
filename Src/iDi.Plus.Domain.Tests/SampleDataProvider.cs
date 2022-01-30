@@ -106,8 +106,8 @@ public class SampleDataProvider
         lstBytes.AddRange(transactionTestData.Holder.Address.HexStringToByteArray());
         lstBytes.AddRange(transactionTestData.Verifier?.Address?.HexStringToByteArray() ?? new byte[IdCard.PublicKeyByteLength]);
 
-        var subjectPadded = transactionTestData.Subject.PadRight(TxDataPayload.SubjectByteLength);
-        var identifierKeyPadded = transactionTestData.Identifier.PadRight(TxDataPayload.IdentifierByteLength);
+        var subjectPadded = transactionTestData.Subject.PadRight(FrameworkEnvironment.SubjectByteLength);
+        var identifierKeyPadded = transactionTestData.Identifier.PadRight(FrameworkEnvironment.IdentifierByteLength);
         lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
         lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
         lstBytes.AddRange(BitConverter.GetBytes(transactionTestData.Timestamp.Ticks));
@@ -153,8 +153,8 @@ public class SampleDataProvider
         lstBytes.AddRange(transactionTestData.Holder.Address.HexStringToByteArray());
         lstBytes.AddRange(transactionTestData.Verifier?.Address?.HexStringToByteArray() ?? new byte[IdCard.PublicKeyByteLength]);
 
-        var subjectPadded = transactionTestData.Subject.PadRight(TxDataPayload.SubjectByteLength);
-        var identifierKeyPadded = transactionTestData.Identifier.PadRight(TxDataPayload.IdentifierByteLength);
+        var subjectPadded = transactionTestData.Subject.PadRight(FrameworkEnvironment.SubjectByteLength);
+        var identifierKeyPadded = transactionTestData.Identifier.PadRight(FrameworkEnvironment.IdentifierByteLength);
         lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
         lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
         lstBytes.AddRange(BitConverter.GetBytes(transactionTestData.Timestamp.Ticks));

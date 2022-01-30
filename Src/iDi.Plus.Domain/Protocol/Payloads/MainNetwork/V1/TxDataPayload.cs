@@ -12,9 +12,6 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
     public class TxDataPayload : MainNetworkV1PayloadBase
     {
-        public const int SubjectByteLength = 256;
-        public const int IdentifierByteLength = 256;
-
         public TxDataPayload(byte[] rawData):base(rawData, MessageTypes.TxData)
         {
             ExtractData(rawData);
@@ -25,7 +22,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, byte[] rawData, MessageTypes messageType) : base(rawData, messageType)
+        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData, byte[] rawData, MessageTypes messageType) : base(rawData, messageType)
         {
             TransactionHash = transactionHash;
             TransactionType = transactionType;
@@ -36,21 +33,21 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             IdentifierKey = identifierKey;
             Timestamp = timestamp;
             PreviousTransactionHash = previousTransactionHash;
-            SignedData = signedData;
+            DoubleEncryptedData = doubleEncryptedData;
         }
 
         protected static TxDataPayload InternalCreate(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, MessageTypes messageType)
         {
             if (!IdCard.IsValidAddress(issuerAddress))
-                throw new InvalidInputException("Invalid IssuerAddress.");
+                throw new InvalidInputException("Invalid IssuerPublicKey.");
             if (!IdCard.IsValidAddress(holderAddress))
-                throw new InvalidInputException("Invalid HolderAddress.");
+                throw new InvalidInputException("Invalid HolderPublicKey.");
 
-            if (subject.Length > SubjectByteLength)
-                throw new InvalidInputException($"Subject length can not be over {SubjectByteLength} characters");
+            if (subject.Length > FrameworkEnvironment.SubjectByteLength)
+                throw new InvalidInputException($"Subject length can not be over {FrameworkEnvironment.SubjectByteLength} characters");
 
-            if (identifierKey.Length > IdentifierByteLength)
-                throw new InvalidInputException($"IdentifierKey length can not be over {IdentifierByteLength} characters");
+            if (identifierKey.Length > FrameworkEnvironment.IdentifierByteLength)
+                throw new InvalidInputException($"IdentifierKey length can not be over {FrameworkEnvironment.IdentifierByteLength} characters");
 
             if (previousTransactionHash == null)
                 previousTransactionHash = HashValue.Empty;
@@ -70,8 +67,8 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
                 lstBytes.AddRange(verifierAddress.HexStringToByteArray());
             }
 
-            var subjectPadded = subject.PadRight(SubjectByteLength);
-            var identifierKeyPadded = identifierKey.PadRight(IdentifierByteLength);
+            var subjectPadded = subject.PadRight(FrameworkEnvironment.SubjectByteLength);
+            var identifierKeyPadded = identifierKey.PadRight(FrameworkEnvironment.IdentifierByteLength);
             lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
             lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
             lstBytes.AddRange(BitConverter.GetBytes(timestamp.Ticks));
@@ -124,7 +121,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public HashValue PreviousTransactionHash { get; private set; }
 
-        public byte[] SignedData { get; private set; }
+        public byte[] DoubleEncryptedData { get; private set; }
 
         protected void ExtractData(byte[] rawData)
         {
@@ -143,16 +140,16 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
                 VerifierAddress = verifierAddressBytes.ToHexString();
             
             index += IdCard.PublicKeyByteLength;
-            Subject = Encoding.ASCII.GetString(span.Slice(index, SubjectByteLength)).Trim();
-            index += SubjectByteLength;
-            IdentifierKey = Encoding.ASCII.GetString(span.Slice(index, IdentifierByteLength)).Trim();
-            index += IdentifierByteLength;
+            Subject = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.SubjectByteLength)).Trim();
+            index += FrameworkEnvironment.SubjectByteLength;
+            IdentifierKey = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.IdentifierByteLength)).Trim();
+            index += FrameworkEnvironment.IdentifierByteLength;
             Timestamp = DateTime.FromBinary(BitConverter.ToInt64(span.Slice(index, 8)));
             index += 8;
             PreviousTransactionHash = new HashValue(span.Slice(index, HashValue.HashByteLength).ToArray());
             index += HashValue.HashByteLength;
 
-            SignedData = span.Slice(index).ToArray();
+            DoubleEncryptedData = span.Slice(index).ToArray();
         }
     }
 }

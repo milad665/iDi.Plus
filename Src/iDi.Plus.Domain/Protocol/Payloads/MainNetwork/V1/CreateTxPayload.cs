@@ -16,10 +16,10 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public new static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType,
             string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey,
-            DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
+            DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData)
         {
             return InternalCreate(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
-                subject, identifierKey, timestamp, previousTransactionHash, signedData, MessageTypes.CreateTx);
+                subject, identifierKey, timestamp, previousTransactionHash, doubleEncryptedData, MessageTypes.CreateTx);
         }
     }
 }

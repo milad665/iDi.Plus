@@ -20,7 +20,7 @@ public class TxDataPayloadTests : ProtocolsTestBase, IPayloadTest
         Assert.Equal(txData.PreviousTransactionHash, target.PreviousTransactionHash);
         Assert.Equal(txData.Timestamp, target.Timestamp);
         Assert.Equal(txData.Subject, target.Subject);
-        Assert.Equal(txData.SignedData, target.SignedData);
+        Assert.Equal(txData.SignedData, target.DoubleEncryptedData);
         Assert.Equal(txData.Identifier, target.IdentifierKey);
         Assert.Equal(txData.Holder.Address, target.HolderAddress,true);
         Assert.Equal(txData.Issuer.Address, target.IssuerAddress,true);

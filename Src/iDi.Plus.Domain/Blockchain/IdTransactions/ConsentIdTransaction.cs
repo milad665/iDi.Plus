@@ -24,7 +24,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
                 throw new InvalidInputException("Transaction type does not match.");
 
             return new ConsentIdTransaction(payload.IssuerAddress, payload.HolderAddress, payload.Subject,
-                payload.IdentifierKey, payload.SignedData.ToHexString(), payload.VerifierAddress,
+                payload.IdentifierKey, payload.DoubleEncryptedData.ToHexString(), payload.VerifierAddress,
                 payload.PreviousTransactionHash);
         }
 
