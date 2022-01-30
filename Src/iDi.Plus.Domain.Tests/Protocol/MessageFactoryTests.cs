@@ -1,4 +1,5 @@
 ﻿using System;
+using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Plus.Domain.Protocol;
 using Xunit;
@@ -21,7 +22,7 @@ public class MessageFactoryTests : ProtocolsTestBase
     {
         var target = new MessageFactory();
 
-        Assert.Throws<UnauthorizedAccessException>(() => target.CreateMessage(SampleDataProvider.BlockDataMessageBytes(false, Networks.Main, 1)));
+        Assert.Throws<UnauthorizedException>(() => target.CreateMessage(SampleDataProvider.BlockDataMessageBytes(false, Networks.Main, 1)));
     }
 
     [Fact]

@@ -1,25 +1,71 @@
 ﻿using System;
+using System.Collections.Generic;
 using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 
-namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
+namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
+
+/// <summary>
+/// Payload of CreateTx (Create Transaction) command
+/// </summary>
+public class CreateTxPayload : MainNetworkV1PayloadBase
 {
-    /// <summary>
-    /// Payload of CreateTx (Create Transaction) command
-    /// </summary>
-    public class CreateTxPayload : TxDataPayload
+    public CreateTxPayload(byte[] rawData) : base(rawData, MessageTypes.CreateTx)
     {
-        public CreateTxPayload(byte[] rawData) : base(rawData, MessageTypes.CreateTx)
+        ExtractAndVerifyData(rawData);
+    }
+
+    private CreateTxPayload(byte[] senderPublicKey, byte[] encryptedTransactionData, TxDataPayload txDataPayload, byte[] rawData) : base(rawData, MessageTypes.CreateTx)
+    {
+        SenderPublicKey = senderPublicKey;
+        EncryptedTransactionData = encryptedTransactionData;
+        TxDataPayload = txDataPayload;
+    }
+
+    public static CreateTxPayload FromTxDataPayload(IdCard senderKeys, TxDataPayload txData)
+    {
+        var csp = new CryptoServiceProvider();
+        var encryptedTransactionData = csp.EncryptByPrivateKey(txData.RawData, senderKeys.PrivateKey);
+
+        var bytes = new List<byte>();
+        bytes.AddRange(senderKeys.PublicKey);
+        bytes.AddRange(encryptedTransactionData);
+
+        return new CreateTxPayload(senderKeys.PublicKey, encryptedTransactionData, txData, bytes.ToArray());
+    }
+
+    public byte[] SenderPublicKey { get; private set; }
+    public byte[] EncryptedTransactionData { get; private set; }
+    public TxDataPayload TxDataPayload { get; private set; }
+
+    private void ExtractAndVerifyData(byte[] rawData)
+    {
+        var span = new ReadOnlySpan<byte>(rawData);
+        var index = 0;
+        var senderPublicKey = span.Slice(index, IdCard.PublicKeyByteLength).ToArray();
+        index += IdCard.PublicKeyByteLength;
+        var encryptedTransactionData = span.Slice(index).ToArray();
+
+        var csp = new CryptoServiceProvider();
+        var decryptedData = csp.DecryptByPublicKey(encryptedTransactionData, senderPublicKey);
+        var txDataPayload = new TxDataPayload(decryptedData);
+        var senderPublicKeyString = senderPublicKey.ToHexString();
+
+        switch (txDataPayload.TransactionType)
         {
+            case TransactionTypes.IssueTransaction when txDataPayload.IssuerAddress.Equals(senderPublicKeyString, StringComparison.OrdinalIgnoreCase):
+                break;
+            case TransactionTypes.ConsentTransaction when txDataPayload.HolderAddress.Equals(senderPublicKeyString, StringComparison.OrdinalIgnoreCase):
+                break;
+            default:
+                throw new UnauthorizedException("Cannot verify transaction sender.");
         }
 
-        public new static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType,
-            string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey,
-            DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData)
-        {
-            return InternalCreate(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
-                subject, identifierKey, timestamp, previousTransactionHash, doubleEncryptedData, MessageTypes.CreateTx);
-        }
+        SenderPublicKey = senderPublicKey;
+        EncryptedTransactionData = encryptedTransactionData;
+        TxDataPayload = txDataPayload;
     }
 }

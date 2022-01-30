@@ -1,4 +1,6 @@
-﻿using Org.BouncyCastle.Crypto.Encodings;
+﻿using System;
+using System.Collections.Generic;
+using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Security;
 using System.Security.Cryptography;
@@ -22,7 +24,12 @@ namespace iDi.Blockchain.Framework.Cryptography
             var keyParameter = PrivateKeyFactory.CreateKey(privateKey);
             encryptEngine.Init(true, keyParameter);
 
-            return encryptEngine.ProcessBlock(bytesToEncrypt, 0, bytesToEncrypt.Length);
+            var result = new List<byte>();
+            var blockSize = encryptEngine.GetInputBlockSize();
+            for (var i = 0; i < bytesToEncrypt.Length; i += blockSize)
+                result.AddRange(encryptEngine.ProcessBlock(bytesToEncrypt, i, Math.Min(blockSize, bytesToEncrypt.Length - i)));
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -36,8 +43,13 @@ namespace iDi.Blockchain.Framework.Cryptography
             var decryptEngine = new Pkcs1Encoding(new RsaEngine());
             var keyParameter = PublicKeyFactory.CreateKey(publicKey);
             decryptEngine.Init(false, keyParameter);
-            
-            return decryptEngine.ProcessBlock(bytesToDecrypt, 0, bytesToDecrypt.Length);
+
+            var result = new List<byte>();
+            var blockSize = decryptEngine.GetInputBlockSize();
+            for (var i = 0; i < bytesToDecrypt.Length; i += blockSize)
+                result.AddRange(decryptEngine.ProcessBlock(bytesToDecrypt, i, Math.Min(blockSize, bytesToDecrypt.Length - i)));
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -52,7 +64,12 @@ namespace iDi.Blockchain.Framework.Cryptography
             var keyParameter = PublicKeyFactory.CreateKey(publicKey);
             encryptEngine.Init(true, keyParameter);
 
-            return encryptEngine.ProcessBlock(bytesToEncrypt, 0, bytesToEncrypt.Length);
+            var result = new List<byte>();
+            var blockSize = encryptEngine.GetInputBlockSize();
+            for (var i = 0; i < bytesToEncrypt.Length; i += blockSize)
+                result.AddRange(encryptEngine.ProcessBlock(bytesToEncrypt, i, Math.Min(blockSize, bytesToEncrypt.Length - i)));
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -67,7 +84,12 @@ namespace iDi.Blockchain.Framework.Cryptography
             var keyParameter = PrivateKeyFactory.CreateKey(privateKey);
             decryptEngine.Init(false, keyParameter);
 
-            return decryptEngine.ProcessBlock(bytesToDecrypt, 0, bytesToDecrypt.Length);
+            var result = new List<byte>();
+            var blockSize = decryptEngine.GetInputBlockSize();
+            for (var i = 0; i < bytesToDecrypt.Length; i += blockSize)
+                result.AddRange(decryptEngine.ProcessBlock(bytesToDecrypt, i, Math.Min(blockSize, bytesToDecrypt.Length - i)));
+
+            return result.ToArray();
         }
 
         /// <summary>

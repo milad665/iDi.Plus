@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
+using iDi.Blockchain.Framework.Exceptions;
 
 namespace iDi.Blockchain.Framework.Cryptography;
 
@@ -11,7 +12,7 @@ internal class Pkcs12Provider
     {
         var info = Pkcs12Info.Decode(pkcs12Data, out _);
         if (!info.VerifyMac(l1Password))
-            throw new UnauthorizedAccessException("Invalid l1Password");
+            throw new UnauthorizedException("Invalid l1Password");
 
         var safe = info.AuthenticatedSafe.First();
         safe.Decrypt(l2Password);

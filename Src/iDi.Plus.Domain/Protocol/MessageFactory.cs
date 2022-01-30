@@ -1,5 +1,6 @@
 ﻿using System;
 using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 
@@ -25,7 +26,7 @@ namespace iDi.Plus.Domain.Protocol
                 throw new NotSupportedException("Network or version not supported");
 
             if (!cryptoServiceProvider.Verify(nodeId, payloadData, messageSignature))
-                throw new UnauthorizedAccessException("Unable to verify message signature. BlockchainNode Id (node public key) does not match its real origin.");
+                throw new UnauthorizedException("Unable to verify message signature. BlockchainNode Id (node public key) does not match its real origin.");
 
             switch (messageType)
             {

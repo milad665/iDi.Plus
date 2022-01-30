@@ -99,23 +99,16 @@ public class SampleDataProvider
     }
     public byte[] CreateTxPayloadBytes(TransactionTestData transactionTestData)
     {
+        var txDataPayloadBytes = TxDataPayloadBytes(transactionTestData);
+        var cryptoServiceProvider = new CryptoServiceProvider();
+        var encrypted =
+            cryptoServiceProvider.EncryptByPrivateKey(txDataPayloadBytes, transactionTestData.Issuer.PrivateKey);
         var lstBytes = new List<byte>();
-        lstBytes.AddRange(transactionTestData.TransactionHash.Bytes);
-        lstBytes.Add((byte)TransactionTypes.IssueTransaction);
-        lstBytes.AddRange(transactionTestData.Issuer.Address.HexStringToByteArray());
-        lstBytes.AddRange(transactionTestData.Holder.Address.HexStringToByteArray());
-        lstBytes.AddRange(transactionTestData.Verifier?.Address?.HexStringToByteArray() ?? new byte[IdCard.PublicKeyByteLength]);
-
-        var subjectPadded = transactionTestData.Subject.PadRight(FrameworkEnvironment.SubjectByteLength);
-        var identifierKeyPadded = transactionTestData.Identifier.PadRight(FrameworkEnvironment.IdentifierByteLength);
-        lstBytes.AddRange(Encoding.ASCII.GetBytes(subjectPadded));
-        lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
-        lstBytes.AddRange(BitConverter.GetBytes(transactionTestData.Timestamp.Ticks));
-        lstBytes.AddRange(transactionTestData.PreviousTransactionHash?.Bytes ?? new byte[HashValue.HashByteLength]);
-        lstBytes.AddRange(transactionTestData.SignedData);
-
+        lstBytes.AddRange(transactionTestData.Issuer.PublicKey);
+        lstBytes.AddRange(encrypted);
         return lstBytes.ToArray();
     }
+
     public byte[] GetBlockPayloadBytes(HashValue blockHash)
     {
         return blockHash.Bytes;

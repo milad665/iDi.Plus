@@ -22,7 +22,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData, byte[] rawData, MessageTypes messageType) : base(rawData, messageType)
+        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData, byte[] rawData) : base(rawData, MessageTypes.TxData)
         {
             TransactionHash = transactionHash;
             TransactionType = transactionType;
@@ -36,7 +36,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             DoubleEncryptedData = doubleEncryptedData;
         }
 
-        protected static TxDataPayload InternalCreate(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData, MessageTypes messageType)
+        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
         {
             if (!IdCard.IsValidAddress(issuerAddress))
                 throw new InvalidInputException("Invalid IssuerPublicKey.");
@@ -76,15 +76,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             lstBytes.AddRange(signedData);
 
             return new TxDataPayload(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
-                subject, identifierKey, timestamp, previousTransactionHash, signedData, lstBytes.ToArray(), messageType);
-        }
-
-        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType,
-            string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey,
-            DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
-        {
-            return InternalCreate(transactionHash, transactionType, issuerAddress, holderAddress, verifierAddress,
-                subject, identifierKey, timestamp, previousTransactionHash, signedData, MessageTypes.TxData);
+                subject, identifierKey, timestamp, previousTransactionHash, signedData, lstBytes.ToArray());
         }
 
         public HashValue TransactionHash { get; private set; }
@@ -123,7 +115,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 
         public byte[] DoubleEncryptedData { get; private set; }
 
-        protected void ExtractData(byte[] rawData)
+        private void ExtractData(byte[] rawData)
         {
             var span = new ReadOnlySpan<byte>(rawData);
             var index = 0;
