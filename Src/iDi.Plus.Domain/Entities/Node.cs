@@ -12,12 +12,12 @@ namespace iDi.Plus.Domain.Entities
             TimeStamp = DateTime.UtcNow;
         }
 
-        public Node(string nodeId, bool isVerifierNode, IPEndPoint verifiedEndpoint1, IPEndPoint verifiedEndpoint2, DateTime? lastHeartbeatUtcTime, bool isDns) 
-            : base(nodeId, isVerifierNode, verifiedEndpoint1, verifiedEndpoint2, lastHeartbeatUtcTime, isDns)
+        public Node(string nodeId, bool isWitnessNode, IPEndPoint verifiedEndpoint1, IPEndPoint verifiedEndpoint2, DateTime? lastHeartbeatUtcTime, bool isDns) 
+            : base(nodeId, isWitnessNode, verifiedEndpoint1, verifiedEndpoint2, lastHeartbeatUtcTime, isDns)
         {
         }
 
-        public bool IsOriginIpAcceptable(IPAddress currentIpAddress) => !IsVerifierNode ||
+        public bool IsOriginIpAcceptable(IPAddress currentIpAddress) => !IsWitnessNode ||
                                                                         VerifiedEndpoint1.Address.Equals(
                                                                             currentIpAddress) ||
                                                                         VerifiedEndpoint2.Address.Equals(

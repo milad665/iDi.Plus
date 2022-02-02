@@ -103,8 +103,8 @@ public class Process
     private List<BlockchainNode> GetNodes()
     {
         var total = 1000;
-        var verifiers = _context.Nodes.Where(n => n.IsVerifierNode).ToList();
-        var nonVerifiers = _context.Nodes.Where(n => !n.IsVerifierNode).Take(total - verifiers.Count).ToList();
+        var verifiers = _context.Nodes.Where(n => n.IsWitnessNode).ToList();
+        var nonVerifiers = _context.Nodes.Where(n => !n.IsWitnessNode).Take(total - verifiers.Count).ToList();
         return verifiers.Union(nonVerifiers).Cast<BlockchainNode>().ToList();
     }
 

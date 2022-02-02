@@ -51,7 +51,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
     {
         var node = _blockchainNodesProvider.AllNodes()
             .OrderByDescending(n => n.LastHeartbeatUtcTime)
-            .FirstOrDefault(n => n.IsVerifierNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
+            .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
 
         if (node == null)
             throw new NotFoundException("No verifier nodes found in the database.");

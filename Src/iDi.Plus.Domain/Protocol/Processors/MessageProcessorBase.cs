@@ -13,16 +13,19 @@ public abstract class MessageProcessorBase : IMessageProcessor
 {
     protected readonly IBlockchainNodeClient BlockchainNodeClient;
     protected readonly IBlockchainRepository<IdTransaction> BlockchainRepository;
+    protected readonly IHotPoolRepository<IdTransaction> HotPoolRepository;
     protected readonly ILocalNodeContextProvider LocalNodeContextProvider;
     protected readonly IBlockchainNodesProvider BlockchainNodesProvider;
 
-    protected MessageProcessorBase(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, 
+    protected MessageProcessorBase(IBlockchainNodeClient blockchainNodeClient,
+        IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesProvider blockchainNodesProvider)
     {
         BlockchainNodeClient = blockchainNodeClient;
         BlockchainRepository = blockchainRepository;
         LocalNodeContextProvider = localNodeContextProvider;
         BlockchainNodesProvider = blockchainNodesProvider;
+        HotPoolRepository = hotPoolRepository;
     }
 
     public abstract MessageTypes MessageType { get; }

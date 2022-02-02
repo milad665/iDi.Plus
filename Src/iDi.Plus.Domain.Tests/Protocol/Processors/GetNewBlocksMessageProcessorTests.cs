@@ -13,7 +13,7 @@ namespace iDi.Plus.Domain.Tests.Protocol.Processors;
 public class GetNewBlocksMessageProcessorTests : MessageProcessorTestBase
 {
     private GetNewBlocksMessageProcessor Target => new(BlockchainNodeClientMock.Object,
-        BlockchainRepositoryMock.Object,
+        BlockchainRepositoryMock.Object, HotPoolRepositoryMock.Object,
         LocalNodeContextProviderMock.Object, BlockchainNodesProviderMock.Object);
 
     public GetNewBlocksMessageProcessorTests()

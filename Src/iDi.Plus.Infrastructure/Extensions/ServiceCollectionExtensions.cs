@@ -12,6 +12,7 @@ namespace iDi.Plus.Infrastructure.Extensions
         {
             services.AddScoped<IBlockchainContext>((x) => new BlockchainContext(blockchainMongoDatabaseConnectionString));
             services.AddScoped<IBlockchainRepository<IdTransaction>, BlockchainRepository>();
+            services.AddScoped<IHotPoolRepository<IdTransaction>, HotPoolRepository>();
 
             return services;
         }

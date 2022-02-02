@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using iDi.Blockchain.Framework;
+﻿using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
@@ -15,7 +13,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         {
             VerifierPublicKey = verifierPublicKey;
 
-            TransactionHash = ComputeHash();
+            TransactionHash = HashValue.ComputeHash(this);
         }
 
         public static ConsentIdTransaction FromTxDataPayload(TxDataPayload payload)
@@ -29,14 +27,5 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         }
 
         public string VerifierPublicKey { get; set; }
-        public override HashValue ComputeHash()
-        {
-            var tx =
-                $"{TransactionType}:{IssuerAddress}:{HolderAddress}:{VerifierPublicKey}:{IdentifierKey}:{Timestamp:yyMMddHHmmss.FFFFFFF}:{SignedData}";
-            var bytes = Encoding.UTF8.GetBytes(tx);
-            using var sha256Hash = SHA256.Create();
-            var hashedBytes = sha256Hash.ComputeHash(bytes);
-            return new HashValue(hashedBytes);
-        }
     }
 }

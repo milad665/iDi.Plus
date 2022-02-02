@@ -53,7 +53,7 @@ namespace iDi.Plus.Node
                 .AddPipeline(ConfigureStages)
                 .AddIdiPlusCoreServices()
                 .AddIdiInfrastructureServices(config.ConnectionString)
-                .AddUpdateService()
+                .AddDomainService()
                 .AddDomainServices();
 
             //AddBlock pipeline stage classes to the IoC container here

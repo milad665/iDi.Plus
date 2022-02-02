@@ -20,6 +20,7 @@ public class LocalNodeContextProvider : ILocalNodeContextProvider
     }
 
     public bool IsBlockchainUpToDate { get; private set; }
+    public bool IsWitnessNode { get; private set; }
 
     public void SetBlockchainUpToDate()
     {

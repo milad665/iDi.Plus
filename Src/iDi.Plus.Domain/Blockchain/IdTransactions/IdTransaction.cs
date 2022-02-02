@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Cryptography;
@@ -25,6 +26,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             Timestamp = DateTime.UtcNow;
         }
 
+        [JsonIgnore]
         public HashValue TransactionHash { get; protected set; }
         public TransactionTypes TransactionType { get; private set; }
         public string IssuerAddress { get; private set; }
@@ -40,10 +42,8 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         /// </summary>
         public void Verify()
         {
-            if (TransactionHash != ComputeHash())
+            if (TransactionHash != HashValue.ComputeHash(this))
                 throw new HashMismatchIdPlusException("Invalid transaction hash.");
         }
-
-        public abstract HashValue ComputeHash();
     }
 }

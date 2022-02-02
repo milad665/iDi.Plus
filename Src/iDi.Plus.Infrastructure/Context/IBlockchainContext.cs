@@ -8,4 +8,5 @@ public interface IBlockchainContext
 {
     IMongoDatabase Database { get; }
     IMongoCollection<Block<IdTransaction>> Blocks { get; }
+    IMongoCollection<IdTransaction> HotPoolTransactions { get; }
 }
