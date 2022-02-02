@@ -27,5 +27,8 @@ public class LocalNodeContextProvider : ILocalNodeContextProvider
         IsBlockchainUpToDate = true;
     }
 
-
+    public void SetWitnessNode()
+    {
+        IsWitnessNode = true;
+    }
 }

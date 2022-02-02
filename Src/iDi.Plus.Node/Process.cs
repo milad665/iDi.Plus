@@ -43,6 +43,8 @@ public class Process
     public void Run()
     {
         _localNodeContextProvider.LocalKeys = LoadNodeKeys();
+        if (_settings.IsWitness)
+            _localNodeContextProvider.SetWitnessNode();
 
         _context.ApplyMigrations(Seed);
         var dnsNodes = LoadDnsNodes();

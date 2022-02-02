@@ -8,4 +8,5 @@ public interface ILocalNodeContextProvider
     bool IsBlockchainUpToDate { get; }
     public bool IsWitnessNode { get; }
     void SetBlockchainUpToDate();
+    void SetWitnessNode();
 }
