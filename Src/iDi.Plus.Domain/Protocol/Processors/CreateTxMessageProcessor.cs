@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using iDi.Blockchain.Framework.Communication;
-using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Providers;

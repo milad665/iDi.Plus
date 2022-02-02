@@ -4,7 +4,7 @@
     {
         Empty = 0,
         /// <summary>
-        /// An issuer or holder asks a verifying node in the network to create a new transaction
+        /// An issuer or holder asks a witness node in the network to create a new transaction
         /// </summary>
         CreateTx,
         /// <summary>
