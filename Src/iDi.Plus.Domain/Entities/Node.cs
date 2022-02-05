@@ -1,6 +1,7 @@
 ﻿using iDi.Blockchain.Framework.Entities;
 using System;
 using System.Net;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Plus.Domain.Entities
@@ -12,7 +13,7 @@ namespace iDi.Plus.Domain.Entities
             TimeStamp = DateTime.UtcNow;
         }
 
-        public Node(string nodeId, bool isWitnessNode, IPEndPoint verifiedEndpoint1, IPEndPoint verifiedEndpoint2, DateTime? lastHeartbeatUtcTime, bool isDns) 
+        public Node(NodeIdValue nodeId, bool isWitnessNode, IPEndPoint verifiedEndpoint1, IPEndPoint verifiedEndpoint2, DateTime? lastHeartbeatUtcTime, bool isDns) 
             : base(nodeId, isWitnessNode, verifiedEndpoint1, verifiedEndpoint2, lastHeartbeatUtcTime, isDns)
         {
         }

@@ -221,7 +221,7 @@ public class SampleDataProvider
     private Header CreateHeader(MessageTypes messageType, IPayload payload, KeyPair localKeys)
     {
         var signature = SignPayload(payload, localKeys);
-        return Header.Create(Networks.Main, 1, SampleRemoteNodeKeys1.PublicKey.ToHexString(), messageType,
+        return Header.Create(Networks.Main, 1, new NodeIdValue(SampleRemoteNodeKeys1.PublicKey), messageType,
             payload.RawData.Length, signature);
     }
     private byte[] SignPayload(IPayload payload, KeyPair localKeys)

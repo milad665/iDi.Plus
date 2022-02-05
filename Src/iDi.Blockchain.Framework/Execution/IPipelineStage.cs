@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Execution
@@ -17,6 +18,6 @@ namespace iDi.Blockchain.Framework.Execution
         /// <summary>
         /// Blockchain nodes list
         /// </summary>
-        ReadOnlyDictionary<string, BlockchainNode> Nodes { get; set; }
+        ReadOnlyDictionary<NodeIdValue, BlockchainNode> Nodes { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using iDi.Blockchain.Framework.Communication;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
@@ -30,7 +31,7 @@ public class NewBlocksMessageProcessor : MessageProcessorBase
         {
             var getBlockMessagePayload = GetBlockPayload.Create(blockHash);
             var signature = SignPayload(getBlockMessagePayload);
-            var header = message.Header.ToResponseHeader(LocalNodeContextProvider.LocalKeys.PublicKey.ToHexString(),
+            var header = message.Header.ToResponseHeader(new NodeIdValue(LocalNodeContextProvider.LocalKeys.PublicKey),
                 MessageTypes.GetBlock, getBlockMessagePayload.RawData.Length, signature);
             var getBlockMessage = Message.Create(header, getBlockMessagePayload);
             SendMessage(message.Header.NodeId, getBlockMessage);

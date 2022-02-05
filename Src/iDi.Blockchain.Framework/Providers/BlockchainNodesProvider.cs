@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Providers;
 
 public class BlockchainNodesProvider : IBlockchainNodesProvider
 {
-    private readonly Dictionary<string, BlockchainNode> _blockchainNodes;
+    private readonly Dictionary<NodeIdValue, BlockchainNode> _blockchainNodes;
 
     public BlockchainNodesProvider()
     {
-        _blockchainNodes = new Dictionary<string, BlockchainNode>();
+        _blockchainNodes = new Dictionary<NodeIdValue, BlockchainNode>();
     }
 
     public void AddOrUpdateNode(BlockchainNode node)
@@ -33,12 +34,12 @@ public class BlockchainNodesProvider : IBlockchainNodesProvider
         }
     }
 
-    public ReadOnlyDictionary<string, BlockchainNode> ToDictionary()
+    public ReadOnlyDictionary<NodeIdValue, BlockchainNode> ToDictionary()
     {
-        return new ReadOnlyDictionary<string, BlockchainNode>(_blockchainNodes);
+        return new ReadOnlyDictionary<NodeIdValue, BlockchainNode>(_blockchainNodes);
     }
 
-    public IEnumerable<string> AllNodeIds()
+    public IEnumerable<NodeIdValue> AllNodeIds()
     {
         return _blockchainNodes.Keys;
     }
@@ -49,6 +50,18 @@ public class BlockchainNodesProvider : IBlockchainNodesProvider
     }
 
     public BlockchainNode this[string nodeId]
+    {
+        get
+        {
+            var nodeIdValue = new NodeIdValue(nodeId);
+            if (_blockchainNodes.ContainsKey(nodeIdValue))
+                return _blockchainNodes[nodeIdValue];
+
+            return null;
+        }
+    }
+
+    public BlockchainNode this[NodeIdValue nodeId]
     {
         get
         {

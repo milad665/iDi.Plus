@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using iDi.Blockchain.Framework.Communication;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Blockchain.Framework.Execution
@@ -33,7 +34,7 @@ namespace iDi.Blockchain.Framework.Execution
         /// <summary>
         /// Blockchain nodes list
         /// </summary>
-        public ReadOnlyDictionary<string, BlockchainNode> Nodes { get; set; }
+        public ReadOnlyDictionary<NodeIdValue, BlockchainNode> Nodes { get; set; }
 
         /// <summary>
         /// Stage response, if not null, the pipeline will abort execution of next stages and returns the response.

@@ -68,7 +68,7 @@ public abstract class MessageProcessorBase : IMessageProcessor
     /// <param name="nodeId">Id of the receiver node</param>
     /// <param name="message">Message to send</param>
     /// <returns>Response Message</returns>
-    protected bool SendToNode(string nodeId, Message message)
+    protected bool SendToNode(NodeIdValue nodeId, Message message)
     {
         return SendMessage(nodeId, message);
     }
@@ -85,7 +85,7 @@ public abstract class MessageProcessorBase : IMessageProcessor
         return signature;
     }
 
-    protected bool SendMessage(string nodeId, Message messageToSend)
+    protected bool SendMessage(NodeIdValue nodeId, Message messageToSend)
     {
         var node = BlockchainNodesProvider[nodeId];
         if (node != null)

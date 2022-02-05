@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net;
 using iDi.Blockchain.Framework.Communication;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
@@ -14,7 +15,7 @@ namespace iDi.Plus.Domain.Tests.Protocol.Processors;
 
 public abstract class MessageProcessorTestBase
 {
-    protected Dictionary<string, BlockchainNode> RemoteNodes;
+    protected Dictionary<NodeIdValue, BlockchainNode> RemoteNodes;
 
     protected MessageProcessorTestBase()
     {
@@ -33,18 +34,19 @@ public abstract class MessageProcessorTestBase
     {
         LocalNodeContextProviderMock.Setup(l => l.LocalKeys).Returns(SampleDataProvider.SampleLocalNodeKeys);
 
-        var nodeId1 = SampleDataProvider.SampleRemoteNodeKeys1.PublicKey.ToHexString();
-        var nodeId2 = SampleDataProvider.SampleRemoteNodeKeys2.PublicKey.ToHexString();
+        var nodeId1 = new NodeIdValue(SampleDataProvider.SampleRemoteNodeKeys1.PublicKey);
+        var nodeId2 = new NodeIdValue(SampleDataProvider.SampleRemoteNodeKeys2.PublicKey);
 
-        RemoteNodes = new Dictionary<string, BlockchainNode>
+        RemoteNodes = new Dictionary<NodeIdValue, BlockchainNode>
         {
             {nodeId1, new(nodeId1, true, new IPEndPoint(IPAddress.Loopback, 11000), new IPEndPoint(IPAddress.Loopback, 11001), DateTime.Now, true)},
             {nodeId2, new(nodeId2, true, new IPEndPoint(IPAddress.Loopback, 12000), new IPEndPoint(IPAddress.Loopback, 12001), DateTime.Now, true)}
         };
+
         BlockchainNodesProviderMock.Setup(p => p.AllNodeIds()).Returns(RemoteNodes.Keys);
         BlockchainNodesProviderMock.Setup(p => p.AllNodes()).Returns(RemoteNodes.Values);
-        BlockchainNodesProviderMock.Setup(p => p.ToDictionary()).Returns(new ReadOnlyDictionary<string, BlockchainNode>(RemoteNodes));
-        BlockchainNodesProviderMock.Setup(p => p[It.IsAny<string>()]).Returns((string nodeId) => RemoteNodes[nodeId]);
+        BlockchainNodesProviderMock.Setup(p => p.ToDictionary()).Returns(new ReadOnlyDictionary<NodeIdValue, BlockchainNode>(RemoteNodes));
+        BlockchainNodesProviderMock.Setup(p => p[It.IsAny<NodeIdValue>()]).Returns((NodeIdValue nodeId) => RemoteNodes[nodeId]);
     }
     protected SampleDataProvider SampleDataProvider { get; }
     protected Mock<IBlockchainNodeClient> BlockchainNodeClientMock { get; }

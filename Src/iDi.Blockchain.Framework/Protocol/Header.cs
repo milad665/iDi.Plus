@@ -10,7 +10,7 @@ namespace iDi.Blockchain.Framework.Protocol
     /// </summary>
     public class Header : IByteData
     {
-        protected Header(Networks network, short version, string nodeId, MessageTypes messageType, int payloadLength, byte[] payloadSignature, byte[] rawData)
+        protected Header(Networks network, short version, NodeIdValue nodeId, MessageTypes messageType, int payloadLength, byte[] payloadSignature, byte[] rawData)
         {
             Network = network;
             Version = version;
@@ -21,13 +21,13 @@ namespace iDi.Blockchain.Framework.Protocol
             RawData = rawData;
         }
 
-        public static Header Create(Networks network, short version, string nodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
+        public static Header Create(Networks network, short version, NodeIdValue nodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
         {
             var bytes = new List<byte>();
 
             var networkBytes = BitConverter.GetBytes((int)network);
             var versionBytes = BitConverter.GetBytes(version);
-            var nodeIdBytes = nodeId.HexStringToByteArray();
+            var nodeIdBytes = nodeId.Bytes;
             var payloadLengthBytes = BitConverter.GetBytes(payloadSize);
 
             bytes.AddRange(networkBytes);
@@ -55,25 +55,25 @@ namespace iDi.Blockchain.Framework.Protocol
             index += 4;
             var version = BitConverter.ToInt16(rawData.Slice(index, 2));
             index += 2;
-            var nodeId = rawData.Slice(index, DigitalSignatureKeys.NodeIdByteLength).ToHexString();
-            index += DigitalSignatureKeys.NodeIdByteLength;
+            var nodeId = rawData.Slice(index, DigitalSignatureKeys.PublicKeyByteLength).ToArray();
+            index += NodeIdValue.NodeIdByteLength;
             var messageType = rawData.Slice(index, 1)[0];
             index++;
             var payloadLength = BitConverter.ToInt32(rawData.Slice(index, 4));
             index += 4;
             var payloadSignature = rawData.Slice(index);
-            return new Header((Networks) network, version, nodeId, (MessageTypes) messageType, payloadLength,
+            return new Header((Networks) network, version, new NodeIdValue(nodeId), (MessageTypes) messageType, payloadLength,
                 payloadSignature.ToArray(), rawData.ToArray());
         }
 
-        public Header ToResponseHeader(string senderNodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
+        public Header ToResponseHeader(NodeIdValue senderNodeId, MessageTypes messageType, int payloadSize, byte[] payloadSignature)
         {
             return Create(Network, Version, senderNodeId, messageType, payloadSize, payloadSignature);
         }
 
         public Networks Network { get; }
         public short Version { get; }
-        public string NodeId { get; }
+        public NodeIdValue NodeId { get; }
         public MessageTypes MessageType { get; }
         public int PayloadLength { get; }
         public byte[] PayloadSignature { get; }

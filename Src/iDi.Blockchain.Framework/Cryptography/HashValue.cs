@@ -95,7 +95,7 @@ public class HashValue
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(HexString, Bytes);
+        return HashCode.Combine(HexString.ToLower(), Bytes);
     }
 
     public static bool IsValid(string hashHexString)

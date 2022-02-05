@@ -2,7 +2,6 @@
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol
 {
@@ -13,7 +12,7 @@ namespace iDi.Plus.Domain.Protocol
             var header = Header.FromPacketData(messageData);
             var payload = CreatePayload(header.Network, header.Version, header.MessageType,
                 messageData.Slice(header.RawData.Length).ToArray(), header.PayloadSignature,
-                header.NodeId.HexStringToByteArray());
+                header.NodeId.Bytes);
 
             return new Message(header, payload, messageData.ToArray());
         }

@@ -73,7 +73,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
         {
             var getBlockPayload = GetBlockPayload.Create(blockHash);
             var header = message.Header.ToResponseHeader(
-                _localNodeContextProvider.LocalKeys.PublicKey.ToHexString(), MessageTypes.GetBlock,
+                new NodeIdValue(_localNodeContextProvider.LocalKeys.PublicKey), MessageTypes.GetBlock,
                 getBlockPayload.RawData.Length,
                 cryptoServiceProvider.Sign(_localNodeContextProvider.LocalKeys.PrivateKey, payload.RawData));
             var messageToSend = Message.Create(header, getBlockPayload);
