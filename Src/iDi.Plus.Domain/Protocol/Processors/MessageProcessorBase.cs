@@ -15,16 +15,16 @@ public abstract class MessageProcessorBase : IMessageProcessor
     protected readonly IBlockchainRepository<IdTransaction> BlockchainRepository;
     protected readonly IHotPoolRepository<IdTransaction> HotPoolRepository;
     protected readonly ILocalNodeContextProvider LocalNodeContextProvider;
-    protected readonly IBlockchainNodesProvider BlockchainNodesProvider;
+    protected readonly IBlockchainNodesRepository BlockchainNodesRepository;
 
     protected MessageProcessorBase(IBlockchainNodeClient blockchainNodeClient,
         IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
-        ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesProvider blockchainNodesProvider)
+        ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository)
     {
         BlockchainNodeClient = blockchainNodeClient;
         BlockchainRepository = blockchainRepository;
         LocalNodeContextProvider = localNodeContextProvider;
-        BlockchainNodesProvider = blockchainNodesProvider;
+        BlockchainNodesRepository = blockchainNodesRepository;
         HotPoolRepository = hotPoolRepository;
     }
 
@@ -55,7 +55,7 @@ public abstract class MessageProcessorBase : IMessageProcessor
     /// <param name="excludedNodeIds">Id of the nodes to exclude when broadcasting the message.</param>
     protected void Broadcast(Message message, params string[] excludedNodeIds)
     {
-        foreach (var nodeId in BlockchainNodesProvider.AllNodeIds())
+        foreach (var nodeId in BlockchainNodesRepository.AllNodeIds())
         {
             if (excludedNodeIds == null || excludedNodeIds.All(e => !e.Equals(nodeId)))
                 SendMessage(nodeId, message);
@@ -87,7 +87,7 @@ public abstract class MessageProcessorBase : IMessageProcessor
 
     protected bool SendMessage(NodeIdValue nodeId, Message messageToSend)
     {
-        var node = BlockchainNodesProvider[nodeId];
+        var node = BlockchainNodesRepository[nodeId];
         if (node != null)
             return BlockchainNodeClient.Send(node.VerifiedEndpoint1, messageToSend);
 

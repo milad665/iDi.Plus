@@ -12,6 +12,7 @@ public class BlockchainUpdateServer : IBlockchainUpdateServer
 {
     private readonly IMessageFactory _messageFactory;
 
+    public event Action<IBlockchainUpdateServer, MessageReceivedEventArgs> WitnessNodesListMessageReceived;
     public event Action<IBlockchainUpdateServer, MessageReceivedEventArgs> NewBlocksMessageReceived;
     public event Action<IBlockchainUpdateServer, MessageReceivedEventArgs> BlockDataMessageReceived;
     public event Action ServerStarted;
@@ -66,6 +67,8 @@ public class BlockchainUpdateServer : IBlockchainUpdateServer
                 ProcessNewBlocksMessage(message);
             else if (message.Header.MessageType == MessageTypes.BlockData)
                 ProcessBlockDataMessage(message);
+            else if (message.Header.MessageType == MessageTypes.WitnessNodesList)
+                ProcessWitnessNodesListMessage(message);
 
             networkStream.Close(); // Send data
         }
@@ -77,6 +80,11 @@ public class BlockchainUpdateServer : IBlockchainUpdateServer
         {
             client.Close();
         }
+    }
+
+    private void ProcessWitnessNodesListMessage(Message message)
+    {
+        WitnessNodesListMessageReceived?.Invoke(this, new MessageReceivedEventArgs(message));
     }
 
     private void ProcessNewBlocksMessage(Message message)

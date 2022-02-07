@@ -22,18 +22,18 @@ public class BlockchainUpdateService : IBlockchainUpdateService
     private readonly IBlockchainNodeClient _blockchainNodeClient;
     private readonly ILocalNodeContextProvider _localNodeContextProvider;
     private readonly IBlockchainRepository<IdTransaction> _blockchainRepository;
-    private readonly BlockchainNodesProvider _blockchainNodesProvider;
+    private readonly IBlockchainNodesRepository _blockchainNodesRepository;
     private readonly List<Block<IdTransaction>> _blocks;
 
     public BlockchainUpdateService(IBlockchainUpdateServer blockchainUpdateServer, IBlockchainNodeClient blockchainNodeClient, 
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainRepository<IdTransaction> blockchainRepository, 
-        BlockchainNodesProvider blockchainNodesProvider)
+        IBlockchainNodesRepository blockchainNodesRepository)
     {
         _blockchainUpdateServer = blockchainUpdateServer;
         _blockchainNodeClient = blockchainNodeClient;
         _localNodeContextProvider = localNodeContextProvider;
         _blockchainRepository = blockchainRepository;
-        _blockchainNodesProvider = blockchainNodesProvider;
+        _blockchainNodesRepository = blockchainNodesRepository;
 
         _blocks = new List<Block<IdTransaction>>();
     }
@@ -41,6 +41,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
     public void Update(int serverPort)
     {
         _blockchainUpdateServer.ServerStarted += _blockchainUpdateServer_ServerStarted;
+        _blockchainUpdateServer.WitnessNodesListMessageReceived += _blockchainUpdateServer_WitnessNodesListMessageReceived;
         _blockchainUpdateServer.NewBlocksMessageReceived += _blockchainUpdateServer_NewBlocksMessageReceived; ;
         _blockchainUpdateServer.BlockDataMessageReceived += _blockchainUpdateServer_BlockDataMessageReceived; ;
         _blockchainUpdateServer.AllBlocksReceived += _blockchainUpdateServer_AllBlocksReceived;
@@ -49,19 +50,22 @@ public class BlockchainUpdateService : IBlockchainUpdateService
 
     private void _blockchainUpdateServer_ServerStarted()
     {
-        var node = _blockchainNodesProvider.AllNodes()
-            .OrderByDescending(n => n.LastHeartbeatUtcTime)
-            .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
+        var node = SelectAWitnessNode();
 
-        if (node == null)
-            throw new NotFoundException("No verifier nodes found in the database.");
-
-        var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockIndex());
-        var header = Header.Create(Networks.Main, 1, node.NodeId, MessageTypes.GetNewBlocks,
+        var payload = GetWitnessNodesPayload.Create();
+        var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.GetWitnessNodes,
             payload.RawData.Length, payload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
-        var updateMessage = Message.Create(header, payload);
+        var requestNodesMessage = Message.Create(header, payload);
+        _blockchainNodeClient.Send(node.VerifiedEndpoint1,requestNodesMessage);
+    }
 
-        _blockchainNodeClient.Send(node.VerifiedEndpoint1, updateMessage);
+    private void _blockchainUpdateServer_WitnessNodesListMessageReceived(IBlockchainUpdateServer arg1, MessageReceivedEventArgs arg2)
+    {
+        var message = arg2.Message;
+        if (message.Payload is WitnessNodesList payload)
+            _blockchainNodesRepository.ReplaceAllNodes(payload.Nodes);
+
+        RequestNewBlocks();
     }
 
     private void _blockchainUpdateServer_NewBlocksMessageReceived(IBlockchainUpdateServer arg1, MessageReceivedEventArgs arg2)
@@ -73,12 +77,12 @@ public class BlockchainUpdateService : IBlockchainUpdateService
         {
             var getBlockPayload = GetBlockPayload.Create(blockHash);
             var header = message.Header.ToResponseHeader(
-                new NodeIdValue(_localNodeContextProvider.LocalKeys.PublicKey), MessageTypes.GetBlock,
+                _localNodeContextProvider.LocalNodeId(), MessageTypes.GetBlock,
                 getBlockPayload.RawData.Length,
                 cryptoServiceProvider.Sign(_localNodeContextProvider.LocalKeys.PrivateKey, payload.RawData));
             var messageToSend = Message.Create(header, getBlockPayload);
 
-            _blockchainNodeClient.Send(_blockchainNodesProvider[message.Header.NodeId].VerifiedEndpoint1, messageToSend);
+            _blockchainNodeClient.Send(_blockchainNodesRepository[message.Header.NodeId].VerifiedEndpoint1, messageToSend);
         }
     }
 
@@ -116,6 +120,18 @@ public class BlockchainUpdateService : IBlockchainUpdateService
             _blockchainRepository.AddBlock(block);
     }
 
+
+    private void RequestNewBlocks()
+    {
+        var node = SelectAWitnessNode();
+
+        var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockIndex());
+        var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.GetNewBlocks,
+            payload.RawData.Length, payload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
+        var updateMessage = Message.Create(header, payload);
+
+        _blockchainNodeClient.Send(node.VerifiedEndpoint1, updateMessage);
+    }
     private void AssertReceivedBlocksOrder()
     {
         var orderedBlocks = _blocks.OrderBy(b => b.Index).ToList();
@@ -143,5 +159,22 @@ public class BlockchainUpdateService : IBlockchainUpdateService
 
             index++;
         }
+    }
+
+    private BlockchainNode SelectAWitnessNode()
+    {
+        var node = _blockchainNodesRepository.AllNodes()
+            .OrderByDescending(n => n.LastHeartbeatUtcTime)
+            .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
+
+        if (node == null)
+            node = _blockchainNodesRepository.AllNodes()
+                .OrderByDescending(n => n.LastHeartbeatUtcTime)
+                .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null);
+
+        if (node == null)
+            throw new NotFoundException("Cannot find a witness node in the database.");
+
+        return node;
     }
 }

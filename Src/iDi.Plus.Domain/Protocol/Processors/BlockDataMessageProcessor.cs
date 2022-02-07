@@ -8,7 +8,7 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 
 public class BlockDataMessageProcessor : MessageProcessorBase
 {
-    public BlockDataMessageProcessor(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository, ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesProvider blockchainNodesProvider) : base(blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider, blockchainNodesProvider)
+    public BlockDataMessageProcessor(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository, ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider, blockchainNodesRepository)
     {
     }
 

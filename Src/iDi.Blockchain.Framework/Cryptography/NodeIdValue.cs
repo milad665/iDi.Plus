@@ -9,6 +9,9 @@ public class NodeIdValue
 {
     public const int NodeIdByteLength = DigitalSignatureKeys.PublicKeyByteLength;
 
+    protected NodeIdValue()
+    {}
+
     public NodeIdValue(string hexHexString)
     {
         if (string.IsNullOrWhiteSpace(hexHexString))

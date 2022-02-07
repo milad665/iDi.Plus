@@ -16,9 +16,9 @@ public class CreateTxMessageProcessor : MessageProcessorBase
     public CreateTxMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
         IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider,
-        IBlockchainNodesProvider blockchainNodesProvider, IIdTransactionFactory idTransactionFactory)
+        IBlockchainNodesRepository blockchainNodesRepository, IIdTransactionFactory idTransactionFactory)
         : base(blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider,
-            blockchainNodesProvider)
+            blockchainNodesRepository)
     {
         _idTransactionFactory = idTransactionFactory;
     }
@@ -44,7 +44,7 @@ public class CreateTxMessageProcessor : MessageProcessorBase
             HotPoolRepository.AddTransaction(idTransaction);
         }
 
-        var witnessNodes = BlockchainNodesProvider.AllNodes()
+        var witnessNodes = BlockchainNodesRepository.AllNodes()
             .Where(n => n.IsWitnessNode && !n.NodeId.Equals(message.Header.NodeId)).ToList();
 
         foreach (var node in witnessNodes)

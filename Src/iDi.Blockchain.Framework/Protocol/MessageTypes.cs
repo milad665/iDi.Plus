@@ -47,6 +47,16 @@
         /// <summary>
         /// Vote to choose the node to create the next block
         /// </summary>
-        Vote
+        Vote,
+
+        /// <summary>
+        /// Request the list of all witness and dns nodes
+        /// </summary>
+        GetWitnessNodes,
+
+        /// <summary>
+        /// List of all witness and dns nodes
+        /// </summary>
+        WitnessNodesList,
     }
 }

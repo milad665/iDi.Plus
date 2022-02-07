@@ -12,9 +12,9 @@ public class GetNewBlocksMessageProcessor : MessageProcessorBase
 {
     public GetNewBlocksMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
         IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
-        ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesProvider blockchainNodesProvider) : base(
+        ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(
         blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider,
-        blockchainNodesProvider)
+        blockchainNodesRepository)
     {
     }
 

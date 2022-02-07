@@ -6,6 +6,7 @@ namespace iDi.Blockchain.Framework.Communication;
 
 public interface IBlockchainUpdateServer
 {
+    public event Action<IBlockchainUpdateServer, MessageReceivedEventArgs> WitnessNodesListMessageReceived;
     public event Action<IBlockchainUpdateServer, MessageReceivedEventArgs> NewBlocksMessageReceived;
     public event Action<IBlockchainUpdateServer, MessageReceivedEventArgs> BlockDataMessageReceived;
     public event Action ServerStarted;

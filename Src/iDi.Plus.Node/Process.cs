@@ -19,15 +19,16 @@ public class Process
 {
     private readonly Settings _settings;
     private readonly IBlockchainNodeServer _blockchainNodeServer;
-    private readonly BlockchainNodesProvider _blockchainNodesProvider;
     private readonly ILocalNodeContextProvider _localNodeContextProvider;
     private readonly IBlockchainUpdateService _blockchainUpdateService;
 
     private readonly IdPlusDbContext _context;
     private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public Process(Settings settings, IBlockchainNodeServer blockchainNodeServer, IdPlusDbContext context, 
-        BlockchainNodesProvider blockchainNodesProvider, ILocalNodeContextProvider localNodeContextProvider, 
+    public Process(Settings settings, 
+        IBlockchainNodeServer blockchainNodeServer, 
+        IdPlusDbContext context, 
+        ILocalNodeContextProvider localNodeContextProvider, 
         IBlockchainUpdateService blockchainUpdateService)
     {
         _cancellationTokenSource = new CancellationTokenSource();
@@ -35,7 +36,6 @@ public class Process
         _settings = settings;
         _blockchainNodeServer = blockchainNodeServer;
         _context = context;
-        _blockchainNodesProvider = blockchainNodesProvider;
         _localNodeContextProvider = localNodeContextProvider;
         _blockchainUpdateService = blockchainUpdateService;
     }
@@ -47,8 +47,6 @@ public class Process
             _localNodeContextProvider.SetWitnessNode();
 
         _context.ApplyMigrations(Seed);
-        var dnsNodes = LoadDnsNodes();
-        _blockchainNodesProvider.AddOrUpdateNodeRange(GetNodes());
         _blockchainUpdateService.Update(_settings.Port);
 
         _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
@@ -98,16 +96,6 @@ public class Process
         Console.WriteLine(keys.PublicKey.ToHexString());
         Console.WriteLine();
         return keys;
-    }
-
-    private List<Domain.Entities.Node> LoadDnsNodes() => _context.Nodes.Where(n => n.IsDns && n.VerifiedEndpoint1 != null).ToList();
-
-    private List<BlockchainNode> GetNodes()
-    {
-        var total = 1000;
-        var witnesses = _context.Nodes.Where(n => n.IsWitnessNode).ToList();
-        var nonWitnesses = _context.Nodes.Where(n => !n.IsWitnessNode).Take(total - witnesses.Count).ToList();
-        return witnesses.Union(nonWitnesses).Cast<BlockchainNode>().ToList();
     }
 
 

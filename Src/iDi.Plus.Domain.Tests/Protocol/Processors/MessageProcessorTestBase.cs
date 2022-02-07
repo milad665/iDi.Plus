@@ -23,7 +23,7 @@ public abstract class MessageProcessorTestBase
         BlockchainRepositoryMock = new Mock<IBlockchainRepository<IdTransaction>>();
         HotPoolRepositoryMock = new Mock<IHotPoolRepository<IdTransaction>>();
         LocalNodeContextProviderMock = new Mock<ILocalNodeContextProvider>();
-        BlockchainNodesProviderMock = new Mock<IBlockchainNodesProvider>();
+        BlockchainNodesProviderMock = new Mock<IBlockchainNodesRepository>();
 
         SampleDataProvider = new SampleDataProvider();
 
@@ -53,5 +53,5 @@ public abstract class MessageProcessorTestBase
     protected Mock<IBlockchainRepository<IdTransaction>> BlockchainRepositoryMock { get; }
     protected Mock<IHotPoolRepository<IdTransaction>> HotPoolRepositoryMock { get; }
     protected Mock<ILocalNodeContextProvider> LocalNodeContextProviderMock { get; }
-    protected Mock<IBlockchainNodesProvider> BlockchainNodesProviderMock { get; }
+    protected Mock<IBlockchainNodesRepository> BlockchainNodesProviderMock { get; }
 }

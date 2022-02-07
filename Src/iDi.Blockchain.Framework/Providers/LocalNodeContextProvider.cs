@@ -19,6 +19,11 @@ public class LocalNodeContextProvider : ILocalNodeContextProvider
         }
     }
 
+    public NodeIdValue LocalNodeId()
+    {
+        return new NodeIdValue(_localKeyPair.PublicKey);
+    }
+
     public bool IsBlockchainUpToDate { get; private set; }
     public bool IsWitnessNode { get; private set; }
 
