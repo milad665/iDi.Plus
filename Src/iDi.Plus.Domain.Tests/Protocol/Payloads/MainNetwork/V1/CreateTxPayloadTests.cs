@@ -21,9 +21,9 @@ public class CreateTxPayloadTests : ProtocolsTestBase, IPayloadTest
         Assert.Equal(txData.Subject, target.TxDataPayload.Subject);
         Assert.Equal(txData.SignedData, target.TxDataPayload.DoubleEncryptedData);
         Assert.Equal(txData.Identifier, target.TxDataPayload.IdentifierKey);
-        Assert.Equal(txData.Holder.Address, target.TxDataPayload.HolderAddress, true);
-        Assert.Equal(txData.Issuer.Address, target.TxDataPayload.IssuerAddress, true);
-        Assert.Equal(txData.Verifier?.Address, target.TxDataPayload.VerifierAddress, true);
+        Assert.Equal(txData.Holder.Address, target.TxDataPayload.HolderAddress);
+        Assert.Equal(txData.Issuer.Address, target.TxDataPayload.IssuerAddress);
+        Assert.Equal(txData.Verifier?.Address, target.TxDataPayload.VerifierAddress);
     }
 
     [Fact]

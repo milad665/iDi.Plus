@@ -52,13 +52,13 @@ public class CreateTxPayload : MainNetworkV1PayloadBase
         var csp = new CryptoServiceProvider();
         var decryptedData = csp.DecryptByPublicKey(encryptedTransactionData, senderPublicKey);
         var txDataPayload = new TxDataPayload(decryptedData);
-        var senderPublicKeyString = senderPublicKey.ToHexString();
+        var senderAddress = new AddressValue(senderPublicKey);
 
         switch (txDataPayload.TransactionType)
         {
-            case TransactionTypes.IssueTransaction when txDataPayload.IssuerAddress.Equals(senderPublicKeyString, StringComparison.OrdinalIgnoreCase):
+            case TransactionTypes.IssueTransaction when txDataPayload.IssuerAddress.Equals(senderAddress):
                 break;
-            case TransactionTypes.ConsentTransaction when txDataPayload.HolderAddress.Equals(senderPublicKeyString, StringComparison.OrdinalIgnoreCase):
+            case TransactionTypes.ConsentTransaction when txDataPayload.HolderAddress.Equals(senderAddress):
                 break;
             default:
                 throw new UnauthorizedException("Cannot verify transaction sender.");

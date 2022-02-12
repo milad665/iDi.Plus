@@ -19,10 +19,10 @@ public class TestTransaction : ITransaction
     public TransactionTypes TransactionType { get; }
     public string SomeValue { get; }
 
-    public void Verify()
+    public void VerifyHash()
     {
         if (TransactionHash != ComputeHash())
-            throw new HashMismatchIdPlusException("Invalid transaction hash.");
+            throw new VerificationFailedException("Invalid transaction hash.");
     }
 
     public HashValue ComputeHash()

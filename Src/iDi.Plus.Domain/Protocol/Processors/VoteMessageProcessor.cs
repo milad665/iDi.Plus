@@ -8,7 +8,7 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 
 public class VoteMessageProcessor : MessageProcessorBase
 {
-    public VoteMessageProcessor(IBlockchainNodeClient blockchainNodeClient, IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository, ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider, blockchainNodesRepository)
+    public VoteMessageProcessor(IBlockchainNodeClient blockchainNodeClient, IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository, ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider, blockchainNodesRepository)
     {
     }
 

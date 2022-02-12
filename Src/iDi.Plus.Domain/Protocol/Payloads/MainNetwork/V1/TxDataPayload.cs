@@ -6,7 +6,6 @@ using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -22,7 +21,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData, byte[] rawData) : base(rawData, MessageTypes.TxData)
+        protected TxDataPayload(HashValue transactionHash, TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, AddressValue verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] doubleEncryptedData, byte[] rawData) : base(rawData, MessageTypes.TxData)
         {
             TransactionHash = transactionHash;
             TransactionType = transactionType;
@@ -36,13 +35,8 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             DoubleEncryptedData = doubleEncryptedData;
         }
 
-        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType, string issuerAddress, string holderAddress, string verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
+        public static TxDataPayload Create(HashValue transactionHash, TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, AddressValue verifierAddress, string subject, string identifierKey, DateTime timestamp, HashValue previousTransactionHash, byte[] signedData)
         {
-            if (!IdCard.IsValidAddress(issuerAddress))
-                throw new InvalidInputException("Invalid IssuerPublicKey.");
-            if (!IdCard.IsValidAddress(holderAddress))
-                throw new InvalidInputException("Invalid HolderPublicKey.");
-
             if (subject.Length > FrameworkEnvironment.SubjectByteLength)
                 throw new InvalidInputException($"Subject length can not be over {FrameworkEnvironment.SubjectByteLength} characters");
 
@@ -55,17 +49,9 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             var lstBytes = new List<byte>();
             lstBytes.AddRange(transactionHash.Bytes);
             lstBytes.Add((byte)transactionType);
-            lstBytes.AddRange(issuerAddress.HexStringToByteArray());
-            lstBytes.AddRange(holderAddress.HexStringToByteArray());
-            if (string.IsNullOrWhiteSpace(verifierAddress))
-                lstBytes.AddRange(new byte[IdCard.PublicKeyByteLength]);
-            else
-            {
-                if (!IdCard.IsValidAddress(verifierAddress))
-                    throw new InvalidInputException("Invalid VerifierAddress.");
-
-                lstBytes.AddRange(verifierAddress.HexStringToByteArray());
-            }
+            lstBytes.AddRange(issuerAddress.Bytes);
+            lstBytes.AddRange(holderAddress.Bytes);
+            lstBytes.AddRange(verifierAddress.Bytes);
 
             var subjectPadded = subject.PadRight(FrameworkEnvironment.SubjectByteLength);
             var identifierKeyPadded = identifierKey.PadRight(FrameworkEnvironment.IdentifierByteLength);
@@ -96,14 +82,14 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         /// </summary>
         public List<string> ControllersAddresses { get; private set; }
 
-        public string IssuerAddress { get; private set; }
+        public AddressValue IssuerAddress { get; private set; }
 
-        public string HolderAddress { get; private set; }
+        public AddressValue HolderAddress { get; private set; }
 
         /// <summary>
         /// This property is only filled for consent transactions. The value will be null for issue transactions.
         /// </summary>
-        public string VerifierAddress { get; private set; }
+        public AddressValue VerifierAddress { get; private set; }
 
         public string Subject { get; private set; }
 
@@ -123,14 +109,13 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             index += HashValue.HashByteLength;
             TransactionType = (TransactionTypes) span.Slice(index, 1)[0];
             index++;
-            IssuerAddress = span.Slice(index, IdCard.PublicKeyByteLength).ToHexString();
+            IssuerAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyByteLength).ToArray());
             index += IdCard.PublicKeyByteLength;
-            HolderAddress = span.Slice(index, IdCard.PublicKeyByteLength).ToHexString();
+            HolderAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyByteLength).ToArray());
             index += IdCard.PublicKeyByteLength;
             var verifierAddressBytes = span.Slice(index, IdCard.PublicKeyByteLength).ToArray();
-            if (verifierAddressBytes.Any(b => b != 0)) //Verifier address memory-space contains a value
-                VerifierAddress = verifierAddressBytes.ToHexString();
-            
+            VerifierAddress = verifierAddressBytes.Any(b => b != 0) ? new AddressValue(verifierAddressBytes) : AddressValue.Empty;
+
             index += IdCard.PublicKeyByteLength;
             Subject = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.SubjectByteLength)).Trim();
             index += FrameworkEnvironment.SubjectByteLength;

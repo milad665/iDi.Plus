@@ -37,12 +37,6 @@ public class HashValue
         Bytes = bytes;
     }
 
-    public static HashValue ComputeHash(byte[] data)
-    {
-        var hashedBytes = HashAlgorithm.ComputeHash(data);
-        return new HashValue(hashedBytes);
-    }
-
     public static HashValue ComputeHash<T>(T input)
     {
         var data = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(input));
@@ -82,7 +76,6 @@ public class HashValue
     }
 
     protected bool Equals(HashValue other)
-
     {
         if (other is null)
             return false;

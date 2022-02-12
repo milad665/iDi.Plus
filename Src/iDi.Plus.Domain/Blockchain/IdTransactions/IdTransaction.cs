@@ -14,7 +14,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             Subject = subject;
         }
 
-        protected IdTransaction(TransactionTypes transactionType, string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, HashValue previousTransactionHash)
+        protected IdTransaction(TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, string subject, string identifierKey, string signedData, HashValue previousTransactionHash)
         {
             TransactionType = transactionType;
             IssuerAddress = issuerAddress;
@@ -29,8 +29,8 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         [JsonIgnore]
         public HashValue TransactionHash { get; protected set; }
         public TransactionTypes TransactionType { get; private set; }
-        public string IssuerAddress { get; private set; }
-        public string HolderAddress { get; private set; }
+        public AddressValue IssuerAddress { get; private set; }
+        public AddressValue HolderAddress { get; private set; }
         public string Subject { get; private set; }
         public string IdentifierKey { get; private set; }
         public string SignedData { get; private set; }
@@ -40,10 +40,10 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         /// <summary>
         /// Controls whether the transaction data is properly transmitted
         /// </summary>
-        public void Verify()
+        public void VerifyHash()
         {
             if (TransactionHash != HashValue.ComputeHash(this))
-                throw new HashMismatchIdPlusException("Invalid transaction hash.");
+                throw new VerificationFailedException("Invalid transaction hash.");
         }
     }
 }

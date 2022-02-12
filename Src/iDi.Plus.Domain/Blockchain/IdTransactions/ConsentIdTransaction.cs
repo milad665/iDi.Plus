@@ -8,10 +8,10 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
 {
     public sealed class ConsentIdTransaction : IdTransaction
     {
-        public ConsentIdTransaction(string issuerAddress, string holderAddress, string subject, string identifierKey, string signedData, string verifierPublicKey, HashValue previousTransactionHash) 
+        public ConsentIdTransaction(AddressValue issuerAddress, AddressValue holderAddress, string subject, string identifierKey, string signedData, AddressValue verifierAddress, HashValue previousTransactionHash) 
             : base(TransactionTypes.ConsentTransaction,issuerAddress, holderAddress, subject, identifierKey, signedData, previousTransactionHash)
         {
-            VerifierPublicKey = verifierPublicKey;
+            VerifierAddress = verifierAddress;
 
             TransactionHash = HashValue.ComputeHash(this);
         }
@@ -26,6 +26,6 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
                 payload.PreviousTransactionHash);
         }
 
-        public string VerifierPublicKey { get; set; }
+        public AddressValue VerifierAddress { get; set; }
     }
 }

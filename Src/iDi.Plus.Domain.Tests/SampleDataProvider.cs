@@ -142,9 +142,9 @@ public class SampleDataProvider
         var lstBytes = new List<byte>();
         lstBytes.AddRange(transactionTestData.TransactionHash.Bytes);
         lstBytes.Add((byte)TransactionTypes.IssueTransaction);
-        lstBytes.AddRange(transactionTestData.Issuer.Address.HexStringToByteArray());
-        lstBytes.AddRange(transactionTestData.Holder.Address.HexStringToByteArray());
-        lstBytes.AddRange(transactionTestData.Verifier?.Address?.HexStringToByteArray() ?? new byte[IdCard.PublicKeyByteLength]);
+        lstBytes.AddRange(transactionTestData.Issuer.Address.Bytes);
+        lstBytes.AddRange(transactionTestData.Holder.Address.Bytes);
+        lstBytes.AddRange(transactionTestData.Verifier?.Address?.Bytes ?? AddressValue.Empty.Bytes);
 
         var subjectPadded = transactionTestData.Subject.PadRight(FrameworkEnvironment.SubjectByteLength);
         var identifierKeyPadded = transactionTestData.Identifier.PadRight(FrameworkEnvironment.IdentifierByteLength);

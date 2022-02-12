@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Cryptography;
 
-namespace iDi.Plus.Domain.Blockchain;
+namespace iDi.Blockchain.Framework.Blockchain;
 
 public interface IBlockchainRepository<T> where T : ITransaction
 {

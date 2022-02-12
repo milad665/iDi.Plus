@@ -9,9 +9,9 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 public class TxDataMessageProcessor : MessageProcessorBase
 {
     public TxDataMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
-        IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
+        IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(
-        blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider,
+        blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider,
         blockchainNodesRepository)
     {
     }

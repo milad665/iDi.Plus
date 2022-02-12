@@ -12,17 +12,17 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 public abstract class MessageProcessorBase : IMessageProcessor
 {
     protected readonly IBlockchainNodeClient BlockchainNodeClient;
-    protected readonly IBlockchainRepository<IdTransaction> BlockchainRepository;
+    protected readonly IIdBlockchainRepository IdBlockchainRepository;
     protected readonly IHotPoolRepository<IdTransaction> HotPoolRepository;
     protected readonly ILocalNodeContextProvider LocalNodeContextProvider;
     protected readonly IBlockchainNodesRepository BlockchainNodesRepository;
 
     protected MessageProcessorBase(IBlockchainNodeClient blockchainNodeClient,
-        IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
+        IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository)
     {
         BlockchainNodeClient = blockchainNodeClient;
-        BlockchainRepository = blockchainRepository;
+        IdBlockchainRepository = idBlockchainRepository;
         LocalNodeContextProvider = localNodeContextProvider;
         BlockchainNodesRepository = blockchainNodesRepository;
         HotPoolRepository = hotPoolRepository;

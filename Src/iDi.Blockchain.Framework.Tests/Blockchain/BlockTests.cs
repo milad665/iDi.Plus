@@ -22,7 +22,7 @@ public class BlockTests
     public void NextNonceProducesCorrectHash()
     {
         var genesis = Block<TestTransaction>.Genesis();
-        var block = new Block<TestTransaction>(1, genesis.Hash, DateTime.UtcNow,
+        var block = Block<TestTransaction>.Create(1, genesis.Hash, DateTime.UtcNow,
             new List<TestTransaction> {new TestTransaction(TransactionTypes.IssueTransaction, "Value")});
         
         Assert.Equal(0, block.Nonce);

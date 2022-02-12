@@ -110,7 +110,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
             }
         }
 
-        _blocks.Add(new Block<IdTransaction>(payload.Index, payload.PreviousHash, payload.Timestamp, transactions));
+        _blocks.Add(Block<IdTransaction>.Create(payload.Index, payload.PreviousHash, payload.Timestamp, transactions));
     }
 
     private void _blockchainUpdateServer_AllBlocksReceived()
@@ -151,9 +151,9 @@ public class BlockchainUpdateService : IBlockchainUpdateService
         foreach (var block in orderedBlocks)
         {
             if (index != block.Index)
-                throw new InvalidInputException("At least one block is missing.");
+                throw new VerificationFailedException("At least one block is missing.");
             if (previousBlock != null && !block.PreviousHash.Equals(previousBlock.Hash))
-                throw new InvalidInputException("Previous hash does not match the hash of the previous block.");
+                throw new VerificationFailedException("Previous hash does not match the hash of the previous block.");
             
             previousBlock = block;
 

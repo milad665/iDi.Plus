@@ -1,10 +1,8 @@
-﻿using System;
-using Org.BouncyCastle.Crypto;
+﻿using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Cryptography
 {
@@ -67,30 +65,14 @@ namespace iDi.Blockchain.Framework.Cryptography
         /// <summary>
         /// IdCard address generated from the public key
         /// </summary>
-        public string Address { get; private set; }
+        public AddressValue Address { get; private set; }
 
-        public static bool IsValidAddress(string walletAddress)
-        {
-            if (string.IsNullOrWhiteSpace(walletAddress))
-                return false;
-
-            try
-            {
-                var bytes = walletAddress.HexStringToByteArray();
-                return bytes.Length == PublicKeyByteLength;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private string GetAddressFromPublicKey(byte[] publicKey)
+        private AddressValue GetAddressFromPublicKey(byte[] publicKey)
         {
             //var hash = FrameworkEnvironment.HashAlgorithm.ComputeHash(publicKey);
             //return $"{IdCardAddressPrefix}{Convert.ToHexString(hash.Take(IdiCardAddressByteLengthExcludingPrefix).ToArray())}";
 
-            return publicKey.ToHexString();
+            return new AddressValue(publicKey);
         }
     }
 }

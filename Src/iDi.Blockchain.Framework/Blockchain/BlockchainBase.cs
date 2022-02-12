@@ -17,7 +17,7 @@ namespace iDi.Blockchain.Framework.Blockchain
 
         public void AddBlock(List<TTransaction> transactions)
         {
-            var block = new Block<TTransaction>(_blocks.Count, _blocks.Last().Hash, DateTime.UtcNow, transactions);
+            var block = Block<TTransaction>.Create(_blocks.Count, _blocks.Last().Hash, DateTime.UtcNow, transactions);
             ProofOfWork(block);
             _blocks.Add(block);
         }

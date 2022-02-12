@@ -11,9 +11,9 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 public class GetNewBlocksMessageProcessor : MessageProcessorBase
 {
     public GetNewBlocksMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
-        IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
+        IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(
-        blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider,
+        blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider,
         blockchainNodesRepository)
     {
     }
@@ -25,7 +25,7 @@ public class GetNewBlocksMessageProcessor : MessageProcessorBase
         if (message.Payload is not GetNewBlocksPayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");
 
-        var hashes = BlockchainRepository.GetHashesOfBlocksCreatedAfter(payload.LastBlockIndex);
+        var hashes = IdBlockchainRepository.GetHashesOfBlocksCreatedAfter(payload.LastBlockIndex);
         var returnPayload = hashes is {Count: > 0} ? NewBlocksPayload.Create(hashes) : null;
 
         var signature = SignPayload(returnPayload);

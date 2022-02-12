@@ -11,11 +11,11 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 public class GetWitnessNodesMessageProcessor : MessageProcessorBase
 {
     public GetWitnessNodesMessageProcessor(IBlockchainNodeClient blockchainNodeClient, 
-        IBlockchainRepository<IdTransaction> blockchainRepository, 
+        IIdBlockchainRepository idBlockchainRepository, 
         IHotPoolRepository<IdTransaction> hotPoolRepository, 
         ILocalNodeContextProvider localNodeContextProvider, 
         IBlockchainNodesRepository blockchainNodesRepository) 
-        : base(blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider, blockchainNodesRepository)
+        : base(blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider, blockchainNodesRepository)
     {
     }
 

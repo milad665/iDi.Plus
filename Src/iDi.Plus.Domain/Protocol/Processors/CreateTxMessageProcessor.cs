@@ -14,10 +14,10 @@ public class CreateTxMessageProcessor : MessageProcessorBase
     private readonly IIdTransactionFactory _idTransactionFactory;
 
     public CreateTxMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
-        IBlockchainRepository<IdTransaction> blockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
+        IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider,
         IBlockchainNodesRepository blockchainNodesRepository, IIdTransactionFactory idTransactionFactory)
-        : base(blockchainNodeClient, blockchainRepository, hotPoolRepository, localNodeContextProvider,
+        : base(blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider,
             blockchainNodesRepository)
     {
         _idTransactionFactory = idTransactionFactory;
@@ -40,7 +40,7 @@ public class CreateTxMessageProcessor : MessageProcessorBase
             if (idTransaction == null)
                 throw new InvalidInputException("Id transaction cannot be created from the payload data.");
 
-            idTransaction.Verify();
+            idTransaction.VerifyHash();
             HotPoolRepository.AddTransaction(idTransaction);
         }
 

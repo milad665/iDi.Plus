@@ -7,11 +7,11 @@ using MongoDB.Driver;
 
 namespace iDi.Plus.Infrastructure.Repositories;
 
-public class BlockchainRepository : IBlockchainRepository<IdTransaction>
+public class IdBlockchainRepository : IIdBlockchainRepository
 {
     private readonly IBlockchainContext _context;
 
-    public BlockchainRepository(IBlockchainContext context)
+    public IdBlockchainRepository(IBlockchainContext context)
     {
         _context = context;
     }
@@ -56,5 +56,11 @@ public class BlockchainRepository : IBlockchainRepository<IdTransaction>
     public void AddBlock(Block<IdTransaction> block)
     {
         _context.Blocks.InsertOne(block);
+    }
+
+    public IssueIdTransaction GetLastIssueTransactionInTheVirtualTransactionChain(AddressValue issuer, AddressValue holder,
+        string subject, string identifier)
+    {
+        throw new NotImplementedException();
     }
 }

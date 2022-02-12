@@ -7,6 +7,6 @@ namespace iDi.Blockchain.Framework.Blockchain
         HashValue TransactionHash { get;}
         TransactionTypes TransactionType { get;  }
 
-        void Verify();
+        void VerifyHash();
     }
 }

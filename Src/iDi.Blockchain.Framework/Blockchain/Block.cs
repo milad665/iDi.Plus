@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Exceptions;
 
 namespace iDi.Blockchain.Framework.Blockchain
 {
@@ -10,7 +11,17 @@ namespace iDi.Blockchain.Framework.Blockchain
         private Block()
         {}
 
-        public Block(long index, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions)
+        public Block(long index, HashValue hash, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions, long nonce)
+        {
+            Index = index;
+            Hash = hash;
+            PreviousHash = previousHash;
+            Timestamp = timestamp;
+            Transactions = transactions;
+            Nonce = nonce;
+        }
+
+        private Block(long index, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions)
         {
             Index = index;
             PreviousHash = previousHash;
@@ -18,6 +29,11 @@ namespace iDi.Blockchain.Framework.Blockchain
             Transactions = transactions;
             Nonce = 0;
             Hash = GetHash();
+        }
+
+        public static Block<TTransaction> Create(long index, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions)
+        {
+            return new Block<TTransaction>(index, previousHash, timestamp, transactions);
         }
 
         public static Block<TTransaction> Genesis()
@@ -39,6 +55,13 @@ namespace iDi.Blockchain.Framework.Blockchain
         {
             Nonce++;
             Hash = GetHash();
+        }
+
+        public void VerifyHash()
+        {
+            var computedHash = GetHash();
+            if (Hash != computedHash)
+                throw new VerificationFailedException("Invalid block hash.");
         }
 
         private HashValue GetHash()

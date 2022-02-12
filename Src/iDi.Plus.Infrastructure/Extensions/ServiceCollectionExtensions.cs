@@ -11,7 +11,7 @@ namespace iDi.Plus.Infrastructure.Extensions
         public static IServiceCollection AddIdiInfrastructureServices(this IServiceCollection services, string blockchainMongoDatabaseConnectionString)
         {
             services.AddScoped<IBlockchainContext>((x) => new BlockchainContext(blockchainMongoDatabaseConnectionString));
-            services.AddScoped<IBlockchainRepository<IdTransaction>, BlockchainRepository>();
+            services.AddScoped<IIdBlockchainRepository, IdBlockchainRepository>();
             services.AddScoped<IHotPoolRepository<IdTransaction>, HotPoolRepository>();
 
             return services;
