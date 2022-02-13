@@ -1,5 +1,6 @@
 ﻿using iDi.Blockchain.Framework.Entities;
 using System;
+using iDi.Blockchain.Framework.Cryptography;
 
 namespace iDi.Plus.Domain.Entities
 {
@@ -8,19 +9,15 @@ namespace iDi.Plus.Domain.Entities
         public KeyChange()
         {}
 
-        public KeyChange(string newAddress, byte[] newPublicKey, string oldAddress, byte[] oldPublicKey, DateTime changeTime)
+        public KeyChange(AddressValue newAddress, AddressValue oldAddress, DateTime changeTime)
         {
             NewAddress = newAddress;
-            NewPublicKey = newPublicKey;
             OldAddress = oldAddress;
-            OldPublicKey = oldPublicKey;
             ChangeTime = changeTime;
         }
 
-        public string NewAddress { get; private set; }
-        public byte[] NewPublicKey { get; private set; }
-        public string OldAddress { get; private set; }
-        public byte[] OldPublicKey { get; private set; }
+        public AddressValue NewAddress { get; private set; }
+        public AddressValue OldAddress { get; private set; }
         public DateTime ChangeTime { get; private set; }
     }
 }

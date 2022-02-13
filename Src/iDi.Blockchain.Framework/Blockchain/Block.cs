@@ -11,7 +11,7 @@ namespace iDi.Blockchain.Framework.Blockchain
         private Block()
         {}
 
-        public Block(long index, HashValue hash, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions, long nonce)
+        public Block(long index, HashValue hash, HashValue previousHash, DateTime timestamp, IEnumerable<TTransaction> transactions, long nonce)
         {
             Index = index;
             Hash = hash;
@@ -21,7 +21,7 @@ namespace iDi.Blockchain.Framework.Blockchain
             Nonce = nonce;
         }
 
-        private Block(long index, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions)
+        private Block(long index, HashValue previousHash, DateTime timestamp, IEnumerable<TTransaction> transactions)
         {
             Index = index;
             PreviousHash = previousHash;
@@ -31,7 +31,7 @@ namespace iDi.Blockchain.Framework.Blockchain
             Hash = GetHash();
         }
 
-        public static Block<TTransaction> Create(long index, HashValue previousHash, DateTime timestamp, List<TTransaction> transactions)
+        public static Block<TTransaction> Create(long index, HashValue previousHash, DateTime timestamp, IEnumerable<TTransaction> transactions)
         {
             return new Block<TTransaction>(index, previousHash, timestamp, transactions);
         }
@@ -46,7 +46,7 @@ namespace iDi.Blockchain.Framework.Blockchain
         public HashValue Hash { get; private set; }
         public HashValue PreviousHash { get; private set; }
         public DateTime Timestamp { get; private set; }
-        public List<TTransaction> Transactions { get; private set; }
+        public IEnumerable<TTransaction> Transactions { get; private set; }
         public long Nonce { get; private set; }
 
         public bool IsGenesis() => Index == 0 && PreviousHash.IsEmpty() && Transactions == null;

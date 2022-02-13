@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMessageProcessor, GetNewBlocksMessageProcessor>();
         services.AddScoped<IMessageFactory, MessageFactory>();
         services.AddScoped<IConsensusService, ConsensusService>();
+        services.AddScoped<IVerificationService, VerificationService>();
 
         return services;
     }
