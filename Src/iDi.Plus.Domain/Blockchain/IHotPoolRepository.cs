@@ -11,4 +11,5 @@ public interface IHotPoolRepository<T> where T : ITransaction
     void AddTransaction(T transaction);
     void RemoveTransaction(T transaction);
     void RemoveTransaction(HashValue hash);
+    void RemoveTransactions(IEnumerable<T> transactions);
 }

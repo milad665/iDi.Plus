@@ -5,31 +5,30 @@ using System.Reflection;
 using iDi.Plus.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace iDi.Plus.Node.Context
+namespace iDi.Plus.Node.Context;
+
+public class IdPlusDbContext : DbContext
 {
-    public class IdPlusDbContext : DbContext
+    private readonly string _dbPath;
+
+    public DbSet<Domain.Entities.Node> Nodes { get; set; }
+    public DbSet<KeyChange> KeyChangeList { get; set; }
+    public DbSet<HotPoolRecord> HotPool { get; set; }
+
+    public IdPlusDbContext()
     {
-        private readonly string _dbPath;
+        var path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+        _dbPath = Path.Join(path, "IdPlus.db");
+    }
 
-        public DbSet<Domain.Entities.Node> Nodes { get; set; }
-        public DbSet<KeyChange> KeyChangeList { get; set; }
-        public DbSet<HotPoolRecord> HotPool { get; set; }
+    protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={_dbPath}");
 
-        public IdPlusDbContext()
-        {
-            var path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            _dbPath = Path.Join(path, "IdPlus.db");
-        }
+    public void ApplyMigrations(Action<IdPlusDbContext> seedMethod = null)
+    {
+        if (Database.GetPendingMigrations().Any())
+            Database.Migrate();
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={_dbPath}");
-
-        public void ApplyMigrations(Action<IdPlusDbContext> seedMethod = null)
-        {
-            if (Database.GetPendingMigrations().Any())
-                Database.Migrate();
-
-            if (seedMethod != null)
-                seedMethod(this);
-        }
+        if (seedMethod != null)
+            seedMethod(this);
     }
 }

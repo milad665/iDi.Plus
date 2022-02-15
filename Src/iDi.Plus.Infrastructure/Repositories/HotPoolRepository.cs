@@ -34,14 +34,18 @@ public class HotPoolRepository : IHotPoolRepository<IdTransaction>
     public void RemoveTransaction(IdTransaction transaction)
     {
         _context.HotPoolTransactions.DeleteOne(t =>
-            t.TransactionHash.HexString.Equals(transaction.TransactionHash.HexString,
-                StringComparison.OrdinalIgnoreCase));
+            t.TransactionHash.Equals(transaction.TransactionHash));
     }
 
     public void RemoveTransaction(HashValue hash)
     {
-        _context.HotPoolTransactions.DeleteOne(t =>
-            t.TransactionHash.HexString.Equals(hash.HexString,
-                StringComparison.OrdinalIgnoreCase));
+        _context.HotPoolTransactions.DeleteOne(t => t.TransactionHash.Equals(hash));
+    }
+
+    public void RemoveTransactions(IEnumerable<IdTransaction> transactions)
+    {
+        var txHashes = transactions.Select(t => t.TransactionHash).ToList();
+
+        _context.HotPoolTransactions.DeleteMany(x => txHashes.Contains(x.TransactionHash));
     }
 }
