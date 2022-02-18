@@ -27,6 +27,9 @@ public class AddressValue
 
     public AddressValue(byte[] bytes)
     {
+        if (bytes == null)
+            throw new InvalidInputException("Address bytes cannot be null");
+
         if (bytes.Length != AddressByteLength)
             throw new InvalidInputException("Invalid address length.");
 

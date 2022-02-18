@@ -65,13 +65,13 @@ public class SampleDataProvider
     }
     public List<IdTransaction> GetSampleIdTransactions() => new()
     {
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Name", "DATA", null),
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Photo", "DATA", null),
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "ExpirationDate", "DATA", null),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Type", "DATA", null),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Photo", "DATA", null),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", "DATA", null),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", "DATA", null),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Name", "DATA", HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Photo", "DATA", HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "ExpirationDate", "DATA", HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Type", "DATA", HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Photo", "DATA", HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", "DATA", HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", "DATA", HashValue.Empty)
     };
 
 

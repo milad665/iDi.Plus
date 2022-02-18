@@ -1,5 +1,8 @@
-﻿using iDi.Blockchain.Framework.Communication;
+﻿using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Communication;
 using iDi.Blockchain.Framework.Protocol;
+using iDi.Plus.Domain.Blockchain;
+using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Domain.Communication;
 using iDi.Plus.Domain.Protocol;
 using iDi.Plus.Domain.Protocol.Processors;
@@ -16,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMessageProcessor, GetNewBlocksMessageProcessor>();
         services.AddScoped<IMessageFactory, MessageFactory>();
         services.AddScoped<IConsensusService, ConsensusService>();
+        services.AddScoped<IBlockchain<IdTransaction>, IdBlockchain>();
 
         return services;
     }

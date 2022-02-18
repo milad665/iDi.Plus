@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />

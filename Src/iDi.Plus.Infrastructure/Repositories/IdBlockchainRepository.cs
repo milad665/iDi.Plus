@@ -4,6 +4,7 @@ using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Domain.Entities;
 using iDi.Plus.Infrastructure.Context;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace iDi.Plus.Infrastructure.Repositories;
@@ -21,6 +22,11 @@ public class IdBlockchainRepository : IIdBlockchainRepository
     {
         var lastBlock = _context.Blocks.AsQueryable().OrderByDescending(b => b.Index).FirstOrDefault();
         return lastBlock?.Index ?? -1;
+    }
+
+    public long GetBlocksCount()
+    {
+        return _context.Blocks.CountDocuments(new BsonDocumentFilterDefinition<Block<IdTransaction>>(new BsonDocument()));
     }
 
     public Block<IdTransaction> GetLastBlock()
