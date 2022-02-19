@@ -29,7 +29,7 @@ public class IdBlockchainTests
         repo.Setup(r => r.GetKeyChangeHistory(It.IsAny<AddressValue>())).Returns(new List<KeyChange>());
 
         var target = new IdBlockchain(repo.Object);
-        var block = target.CreateBlock(_sampleDataProvider.GetSampleIdTransactions());
+        var block = target.AddNewBlock(_sampleDataProvider.GetSampleIdTransactions());
         Assert.EndsWith(new string('0', target.Difficulty), block.Hash.HexString);
     }
 }

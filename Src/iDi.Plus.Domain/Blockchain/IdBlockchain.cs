@@ -6,88 +6,96 @@ using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Exceptions;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 
-namespace iDi.Plus.Domain.Blockchain
+namespace iDi.Plus.Domain.Blockchain;
+
+/// <summary>
+/// Blockchain which contains transactions of type IdTransaction
+/// </summary>
+/// <inheritdoc />
+public class IdBlockchain : BlockchainBase<IdTransaction>
 {
-    public class IdBlockchain : BlockchainBase<IdTransaction>
+    private const int MaxDifficulty = 20;
+    private readonly IIdBlockchainRepository _idBlockchainRepository;
+
+    public IdBlockchain(IIdBlockchainRepository repository) : base(repository)
     {
-        private const int MaxDifficulty = 20;
-        private readonly IIdBlockchainRepository _idBlockchainRepository;
+        _idBlockchainRepository = repository;
+    }
 
-        public IdBlockchain(IIdBlockchainRepository repository) : base(repository)
+    protected override void ProofOfWork(Block<IdTransaction> block)
+    {
+        Difficulty = (int) Math.Min(BlocksCount / 1000000 + 4, MaxDifficulty);
+        while (!block.Hash.HexString.EndsWith(new string('0', Difficulty)))
+            block.NextNonce();
+    }
+
+    public override int Difficulty { get; protected set; }
+
+    /// <summary>
+    /// Verifies an IdTransaction
+    /// </summary>
+    /// <param name="transaction">the transaction to verify</param>
+    /// <exception cref="VerificationFailedException"></exception>
+    public override void VerifyTransaction(IdTransaction transaction)
+    {
+        transaction.VerifyHash();
+
+        if (_idBlockchainRepository.IsObsolete(transaction.IssuerAddress))
+            throw new VerificationFailedException("Issuer address is obsolete and no longer valid.");
+
+        if (_idBlockchainRepository.IsObsolete(transaction.HolderAddress))
+            throw new VerificationFailedException("Holder address is obsolete and no longer valid.");
+
+        var issuerAddresses = GetPreviousAddressesOfTheIdCardAddress(transaction.IssuerAddress);
+        var holderAddresses = GetPreviousAddressesOfTheIdCardAddress(transaction.HolderAddress);
+
+        if (transaction.PreviousTransactionHash.IsEmpty())
         {
-            _idBlockchainRepository = repository;
+            var lastTransaction =
+                _idBlockchainRepository.GetLastIssueTransactionInTheVirtualTransactionChainIncludingAddressChanges(
+                    issuerAddresses, holderAddresses, transaction.Subject, transaction.IdentifierKey);
+
+            if (lastTransaction != null)
+                throw new VerificationFailedException(
+                    "Previous transaction hash field is empty but another transaction with the same Issuer, Holder, Subject and Identifier exists.");
         }
-
-        protected override void ProofOfWork(Block<IdTransaction> block)
+        else
         {
-            Difficulty = (int) Math.Min(BlocksCount / 1000000 + 4, MaxDifficulty);
-            while (!block.Hash.HexString.EndsWith(new string('0', Difficulty)))
-                block.NextNonce();
-        }
+            var prevTx = _idBlockchainRepository.GetTransaction(transaction.PreviousTransactionHash);
+            if (prevTx == null)
+                throw new VerificationFailedException(
+                    "Invalid previous transaction. Previous transaction provided in this transaction does not exist in the blockchain");
 
-        public override int Difficulty { get; protected set; }
+            if (!IsTransactionTheLastIssueTransactionInTheVirtualChain(prevTx))
+                throw new VerificationFailedException(
+                    "Invalid previous transaction. Previous transaction must be the last transaction in the virtual chain.");
 
-        public override void VerifyTransaction(IdTransaction transaction)
-        {
-            transaction.VerifyHash();
-
-            if (_idBlockchainRepository.IsObsolete(transaction.IssuerAddress))
-                throw new VerificationFailedException("Issuer address is obsolete and no longer valid.");
-
-            if (_idBlockchainRepository.IsObsolete(transaction.HolderAddress))
-                throw new VerificationFailedException("Holder address is obsolete and no longer valid.");
-
-            var issuerAddresses = GetPreviousAddressesOfTheIdCardAddress(transaction.IssuerAddress);
-            var holderAddresses = GetPreviousAddressesOfTheIdCardAddress(transaction.HolderAddress);
-
-            if (transaction.PreviousTransactionHash.IsEmpty())
+            //Check if this transaction and previous transaction share the main identifiers
+            if (!issuerAddresses.Contains(prevTx.IssuerAddress) || !holderAddresses.Contains(prevTx.HolderAddress) ||
+                !prevTx.Subject.Equals(transaction.Subject, StringComparison.OrdinalIgnoreCase) ||
+                !prevTx.IdentifierKey.Equals(transaction.IdentifierKey, StringComparison.OrdinalIgnoreCase))
             {
-                var lastTransaction =
-                    _idBlockchainRepository.GetLastIssueTransactionInTheVirtualTransactionChainIncludingAddressChanges(
-                        issuerAddresses, holderAddresses, transaction.Subject, transaction.IdentifierKey);
-
-                if (lastTransaction != null)
-                    throw new VerificationFailedException(
-                        "Previous transaction hash field is empty but another transaction with the same Issuer, Holder, Subject and Identifier exists.");
-            }
-            else
-            {
-                var prevTx = _idBlockchainRepository.GetTransaction(transaction.PreviousTransactionHash);
-                if (prevTx == null)
-                    throw new VerificationFailedException(
-                        "Invalid previous transaction. Previous transaction provided in this transaction does not exist in the blockchain");
-
-                if (!IsTransactionTheLastIssueTransactionInTheVirtualChain(prevTx))
-                    throw new VerificationFailedException(
-                        "Invalid previous transaction. Previous transaction must be the last transaction in the virtual chain.");
-
-                //Check if this transaction and previous transaction share the main identifiers
-                if (!issuerAddresses.Contains(prevTx.IssuerAddress) || !holderAddresses.Contains(prevTx.HolderAddress) ||
-                    !prevTx.Subject.Equals(transaction.Subject, StringComparison.OrdinalIgnoreCase) ||
-                    !prevTx.IdentifierKey.Equals(transaction.IdentifierKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new VerificationFailedException("Transaction identifiers do not match the previous transaction's");
-                }
+                throw new VerificationFailedException("Transaction identifiers do not match the previous transaction's");
             }
         }
+    }
 
-        private bool IsTransactionTheLastIssueTransactionInTheVirtualChain(IdTransaction transaction)
-        {
-            if (transaction is not IssueIdTransaction)
-                return false;
+    private bool IsTransactionTheLastIssueTransactionInTheVirtualChain(IdTransaction transaction)
+    {
+        if (transaction is not IssueIdTransaction)
+            return false;
 
-            //is this tx, the previous transaction of another tx
-            var nextTransaction = _idBlockchainRepository.GetTransactionByPreviousTransactionHash(transaction.TransactionHash);
+        //is this tx, the previous transaction of another tx
+        var nextTransaction = _idBlockchainRepository.GetTransactionByPreviousTransactionHash(transaction.TransactionHash);
 
-            return nextTransaction == null;
-        }
+        return nextTransaction == null;
+    }
 
-        private List<AddressValue> GetPreviousAddressesOfTheIdCardAddress(AddressValue addressValue)
-        {
-            var issuerKeyChangeHistory = _idBlockchainRepository.GetKeyChangeHistory(addressValue);
-            var issuerAddresses = new List<AddressValue> { addressValue };
-            issuerAddresses.AddRange(issuerKeyChangeHistory.Select(c => c.OldAddress));
-            return issuerAddresses;
-        }
+    private List<AddressValue> GetPreviousAddressesOfTheIdCardAddress(AddressValue addressValue)
+    {
+        var issuerKeyChangeHistory = _idBlockchainRepository.GetKeyChangeHistory(addressValue);
+        var issuerAddresses = new List<AddressValue> { addressValue };
+        issuerAddresses.AddRange(issuerKeyChangeHistory.Select(c => c.OldAddress));
+        return issuerAddresses;
     }
 }

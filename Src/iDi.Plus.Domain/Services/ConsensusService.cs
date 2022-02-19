@@ -42,10 +42,45 @@ public class ConsensusService : IConsensusService
 
         var transactions = _hotPoolRepository.GetAllTransactions().Take(MaximumNumberOfTransactionsInABlock).ToList();
 
-        var block = _blockchain.CreateBlock(transactions);
+        var block = _blockchain.AddNewBlock(transactions);
         _hotPoolRepository.RemoveTransactions(transactions);
         
         var duration = DateTime.Now - startTime;
         BlockCreated?.Invoke(this, new BlockCreatedEventArgs(block, duration));
+    }
+
+    public void ExecuteBlockCreationCycle()
+    {
+        //Is it my turn
+        //  Yes:
+        //      - Is 5 minutes passed since the last block creation or the there are 100+ transaction in the Hot Pool?
+        //          - Yes:
+        //              Create a block
+        //              Send to other nodes
+        //          - No:
+        //              Wait
+        //  No:
+        //      - Have I voted?
+        //          - Yes:
+        //              - Was it already over 100 tx when the node was selected?
+        //                  - Yes:
+        //                      - Is 5 minutes passed since the node is selected?
+        //                          - Yes:
+        //                              Revoke the turn from the node
+        //                              Vote again
+        //                          - No:
+        //                              Wait
+        //                  -No:
+        //                      - Is 15 minutes passed since the node is selected?
+        //                          - Yes:
+        //                              Revoke the turn from the node
+        //                              Vote again
+        //                          - No:
+        //                              Wait
+        //          - No:
+        //              Wait
+
+
+        throw new NotImplementedException();
     }
 }

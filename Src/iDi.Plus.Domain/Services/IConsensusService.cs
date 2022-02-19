@@ -3,5 +3,5 @@
 public interface IConsensusService
 {
     void CreateNewBlockFromHotPool();
-
+    void ExecuteBlockCreationCycle();
 }

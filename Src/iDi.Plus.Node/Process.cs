@@ -12,6 +12,7 @@ using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
 using iDi.Plus.Domain.Services;
 using iDi.Plus.Node.Context;
+using Timer = System.Timers.Timer;
 
 namespace iDi.Plus.Node;
 
@@ -24,6 +25,8 @@ public class Process
 
     private readonly IdPlusDbContext _context;
     private readonly CancellationTokenSource _cancellationTokenSource;
+
+    private Timer _timer;
 
     public Process(Settings settings, 
         IBlockchainNodeServer blockchainNodeServer, 
@@ -38,6 +41,8 @@ public class Process
         _context = context;
         _localNodeContextProvider = localNodeContextProvider;
         _blockchainUpdateService = blockchainUpdateService;
+
+        InitializeTimer();
     }
 
     public void Run()
@@ -48,6 +53,9 @@ public class Process
 
         _context.ApplyMigrations(Seed);
         _blockchainUpdateService.Update(_settings.Port);
+        
+        //Start the timer for time based recurring checks
+        _timer.Enabled = true;
 
         _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
     }
@@ -98,6 +106,18 @@ public class Process
         return keys;
     }
 
+    private void InitializeTimer()
+    {
+        _timer = new Timer(2000);
+        _timer.Enabled = false;
+        _timer.AutoReset = true;
+        _timer.Elapsed += _timer_Elapsed;
+    }
+
+    private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        throw new NotImplementedException();
+    }
 
     private void Seed(IdPlusDbContext context)
     {
