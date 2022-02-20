@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using iDi.Blockchain.Framework;
+using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
+using iDi.Plus.Domain.Blockchain.IdTransactions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
@@ -61,7 +65,13 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         public DateTime Timestamp { get; private set; }
         public long Nonce { get; private set; }
         public IReadOnlyCollection<TxDataPayload> Transactions { get; private set; }
-        
+
+        public Block<IdTransaction> ToBlock(IIdTransactionFactory idTransactionFactory)
+        {
+            var transactions = Transactions.Select(idTransactionFactory.CreateFromTxDataPayload).ToList();
+
+            return new Block<IdTransaction>(Index, Hash, PreviousHash, Timestamp, transactions, Nonce);
+        }
 
         private void ExtractData(byte[] rawData)
         {

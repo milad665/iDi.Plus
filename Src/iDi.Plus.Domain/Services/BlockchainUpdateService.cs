@@ -10,7 +10,6 @@ using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
-using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
@@ -63,7 +62,15 @@ public class BlockchainUpdateService : IBlockchainUpdateService
     {
         var message = arg2.Message;
         if (message.Payload is WitnessNodesList payload)
+        {
             _blockchainNodesRepository.ReplaceAllNodes(payload.Nodes);
+            
+            if (!payload.Nodes.Any(n => n.NodeId.Equals(_localNodeContextProvider.LocalNodeId())))
+            {
+                _blockchainNodesRepository.AddOrUpdateNode(new BlockchainNode(_localNodeContextProvider.LocalNodeId(),
+                    _localNodeContextProvider.IsWitnessNode, null, null, null, _localNodeContextProvider.IsDnsNode));
+            }
+        }
 
         RequestNewBlocks();
     }

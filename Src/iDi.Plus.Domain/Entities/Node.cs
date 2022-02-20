@@ -23,8 +23,8 @@ public class Node : BlockchainNode, IEntity
                                                                         currentIpAddress) ||
                                                                     VerifiedEndpoint2.Address.Equals(
                                                                         currentIpAddress);
-    public long Id { get; }
-    public DateTime TimeStamp { get; }
+    public long Id { get; private set; }
+    public DateTime TimeStamp { get; private set; }
 
     public static Node FromBlockchainNode(BlockchainNode node)
     {

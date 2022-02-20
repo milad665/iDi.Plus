@@ -8,6 +8,8 @@ public interface ILocalNodeContextProvider
     NodeIdValue LocalNodeId();
     bool IsBlockchainUpToDate { get; }
     public bool IsWitnessNode { get; }
+    public bool IsDnsNode { get; }
     void SetBlockchainUpToDate();
     void SetWitnessNode();
+    void SetDnsNode();
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Cryptography;
 using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 
@@ -42,7 +43,7 @@ public class ConsensusService : IConsensusService
 
         var transactions = _hotPoolRepository.GetAllTransactions().Take(MaximumNumberOfTransactionsInABlock).ToList();
 
-        var block = _blockchain.AddNewBlock(transactions);
+        var block = _blockchain.CreateNewBlock(transactions);
         _hotPoolRepository.RemoveTransactions(transactions);
         
         var duration = DateTime.Now - startTime;
@@ -80,6 +81,17 @@ public class ConsensusService : IConsensusService
         //          - No:
         //              Wait
 
+
+        throw new NotImplementedException();
+    }
+
+    public NodeIdValue VoteForNextNode()
+    {
+        // Choose next node (alphanumerical order)
+        // Send the vote to the selected node
+        // While the connection fails, select next node and send the vote to it again.
+        // The selected node Id will be sent to all other witness nodes - So all witness nodes know(based on the majority of votes) who should create the next block.
+        // Return the selected node Id
 
         throw new NotImplementedException();
     }

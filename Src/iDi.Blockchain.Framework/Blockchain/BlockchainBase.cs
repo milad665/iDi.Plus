@@ -17,7 +17,7 @@ public abstract class BlockchainBase<TTransaction> : IBlockchain<TTransaction> w
     public Block<TTransaction> LastBlock => _repository.GetLastBlock();
     public long BlocksCount => _repository.GetBlocksCount();
 
-    public Block<TTransaction> AddNewBlock(List<TTransaction> transactions)
+    public Block<TTransaction> CreateNewBlock(List<TTransaction> transactions)
     {
         foreach (var tx in transactions)
             VerifyTransaction(tx);
@@ -27,6 +27,15 @@ public abstract class BlockchainBase<TTransaction> : IBlockchain<TTransaction> w
 
         _repository.AddBlock(block);
         return block;
+    }
+
+    public void AddReceivedBlock(Block<TTransaction> block)
+    {
+        VerifyBlock(block);
+        foreach (var transaction in block.Transactions)
+            VerifyTransaction(transaction);
+
+        _repository.AddBlock(block);
     }
 
     public void VerifyBlock(Block<TTransaction> block)

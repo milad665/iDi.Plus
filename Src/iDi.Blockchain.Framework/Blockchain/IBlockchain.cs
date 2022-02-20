@@ -30,7 +30,15 @@ public interface IBlockchain<TTransaction> where TTransaction : ITransaction
     /// </summary>
     /// <param name="transactions">Transactions to be sealed in a block</param>
     /// <returns>The newly created block instance</returns>
-    Block<TTransaction> AddNewBlock(List<TTransaction> transactions);
+    Block<TTransaction> CreateNewBlock(List<TTransaction> transactions);
+
+    /// <summary>
+    /// Verifies a block and its transactions and adds the block to the blockchain
+    /// This method is normally called after receiving a new block from other nodes.
+    /// PoW is NOT executed for this block
+    /// </summary>
+    /// <param name="block">Block to be verified and added to the blockchain</param>
+    void AddReceivedBlock(Block<TTransaction> block);
 
     /// <summary>
     /// Verifies a block by verifying its hash, its index and its reference to the previous block

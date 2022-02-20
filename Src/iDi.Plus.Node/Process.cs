@@ -51,6 +51,9 @@ public class Process
         if (_settings.IsWitness)
             _localNodeContextProvider.SetWitnessNode();
 
+        if (_settings.IsDns)
+            _localNodeContextProvider.SetDnsNode();
+
         _context.ApplyMigrations(Seed);
         _blockchainUpdateService.Update(_settings.Port);
         
