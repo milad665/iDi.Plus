@@ -69,15 +69,18 @@ public class BlockchainNodesRepository : IBlockchainNodesRepository
         var nodes = _context.Nodes.Where(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null)
             .OrderBy(n => n.NodeId.HexString.ToLower()).ToList(); //Get ordered witness nodes
 
-        var turn = 0;
+        var turn = -1;
         for (var i = 0; i < nodes.Count; i++)
         {
-            if (nodes[i].IsTurn)
+            if ((lastNode == null && nodes[i].IsTurn) || (lastNode != null && nodes[i].NodeId.Equals(lastNode)))
             {
                 turn = i;
                 break;
             }
         }
+
+        if (turn == -1)
+            return null;
 
         var currentNode = nodes[turn];
         currentNode.IsTurn = false;

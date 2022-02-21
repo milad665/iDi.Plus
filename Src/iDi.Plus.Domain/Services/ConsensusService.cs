@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using iDi.Blockchain.Framework.Blockchain;
+using iDi.Blockchain.Framework.Communication;
 using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Protocol;
+using iDi.Blockchain.Framework.Protocol.Extensions;
+using iDi.Blockchain.Framework.Providers;
 using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
+using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
 namespace iDi.Plus.Domain.Services;
 
@@ -23,15 +29,24 @@ public class ConsensusService : IConsensusService
 
     private readonly IBlockchain<IdTransaction> _blockchain;
     private readonly IHotPoolRepository<IdTransaction> _hotPoolRepository;
-
+    private readonly IBlockchainNodesRepository _blockchainNodesRepository;
+    private readonly IBlockchainNodeClient _blockchainNodeClient;
+    private readonly ILocalNodeContextProvider _localNodeContextProvider;
 
     public const int MaximumNumberOfTransactionsInABlock = 1000;
     public event Action<ConsensusService, BlockCreatedEventArgs> BlockCreated;
 
-    public ConsensusService(IHotPoolRepository<IdTransaction> hotPoolRepository, IBlockchain<IdTransaction> blockchain)
+    public ConsensusService(IHotPoolRepository<IdTransaction> hotPoolRepository, 
+        IBlockchain<IdTransaction> blockchain,
+        IBlockchainNodesRepository blockchainNodesRepository, 
+        IBlockchainNodeClient blockchainNodeClient, 
+        ILocalNodeContextProvider localNodeContextProvider)
     {
         _hotPoolRepository = hotPoolRepository;
         _blockchain = blockchain;
+        _blockchainNodesRepository = blockchainNodesRepository;
+        _blockchainNodeClient = blockchainNodeClient;
+        _localNodeContextProvider = localNodeContextProvider;
     }
 
     public void CreateNewBlockFromHotPool()
@@ -88,11 +103,31 @@ public class ConsensusService : IConsensusService
     public NodeIdValue VoteForNextNode()
     {
         // Choose next node (alphanumerical order)
+        var nextNode = _blockchainNodesRepository.SelectNextWitnessNode();
+        if (nextNode == null)
+            return null;
+
         // Send the vote to the selected node
         // While the connection fails, select next node and send the vote to it again.
-        // The selected node Id will be sent to all other witness nodes - So all witness nodes know(based on the majority of votes) who should create the next block.
-        // Return the selected node Id
+        var votePayload = VotePayload.Create(nextNode.NodeId);
+        var header = Header.Create(Networks.Main, 1, nextNode.NodeId, votePayload.MessageType,
+            votePayload.RawData.Length, votePayload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
+        var message = Message.Create(header, votePayload);
+        while (!_blockchainNodeClient.Send(nextNode.VerifiedEndpoint1, message))
+        {
+            nextNode = _blockchainNodesRepository.SelectNextWitnessNode();
+            if (nextNode == null)
+                return null;
+            votePayload = VotePayload.Create(nextNode.NodeId);
+            header = Header.Create(Networks.Main, 1, nextNode.NodeId, votePayload.MessageType,
+                votePayload.RawData.Length, votePayload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
+            message = Message.Create(header, votePayload);
+        }
 
-        throw new NotImplementedException();
+        // The selected node Id will be sent to all other witness nodes - So all witness nodes know(based on the majority of votes) who should create the next block.
+        foreach (var node in _blockchainNodesRepository.GetWitnessNodes())
+            _blockchainNodeClient.Send(node.VerifiedEndpoint1, message);
+
+        return nextNode.NodeId;
     }
 }
