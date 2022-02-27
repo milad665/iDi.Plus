@@ -14,7 +14,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             Subject = subject;
         }
 
-        protected IdTransaction(TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, string subject, string identifierKey, string signedData, HashValue previousTransactionHash)
+        protected IdTransaction(TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, string subject, string identifierKey, byte[] signedData, HashValue previousTransactionHash)
         {
             TransactionType = transactionType;
             IssuerAddress = issuerAddress;
@@ -33,7 +33,7 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public AddressValue HolderAddress { get; private set; }
         public string Subject { get; private set; }
         public string IdentifierKey { get; private set; }
-        public string SignedData { get; private set; }
+        public byte[] SignedData { get; private set; }
         public DateTime Timestamp { get; private set; }
         public HashValue PreviousTransactionHash { get; private set; }
 

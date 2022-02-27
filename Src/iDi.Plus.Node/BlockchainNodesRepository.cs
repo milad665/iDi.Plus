@@ -1,31 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
+using iDi.Plus.Domain.Entities;
 using iDi.Plus.Node.Context;
 
 namespace iDi.Plus.Node;
 
 public class BlockchainNodesRepository : IBlockchainNodesRepository
 {
-    private Dictionary<NodeIdValue, BlockchainNode> _blockchainNodesCache;
     private readonly IdPlusDbContext _context;
+    public const int MaximumNumberOfNodes = 1000;
 
     public BlockchainNodesRepository(IdPlusDbContext context)
     {
         _context = context;
-        _blockchainNodesCache = new Dictionary<NodeIdValue, BlockchainNode>();
-
-        RefreshCache();
     }
 
     public void AddOrUpdateNode(BlockchainNode node)
     {
         _context.Nodes.Add(Domain.Entities.Node.FromBlockchainNode(node));
         _context.SaveChanges();
-
-        RefreshCache();
     }
 
     public void ReplaceAllNodes(IEnumerable<BlockchainNode> nodes)
@@ -35,28 +33,33 @@ public class BlockchainNodesRepository : IBlockchainNodesRepository
 
         _context.Nodes.AddRange(nodes.Select(Domain.Entities.Node.FromBlockchainNode));
         _context.SaveChanges();
-
-        RefreshCache();
     }
 
     public ReadOnlyDictionary<NodeIdValue, BlockchainNode> ToDictionary()
     {
-        return new ReadOnlyDictionary<NodeIdValue, BlockchainNode>(_blockchainNodesCache);
+        var dictionary = _context.Nodes.Cast<BlockchainNode>().ToDictionary(n => n.NodeId);
+        return new ReadOnlyDictionary<NodeIdValue, BlockchainNode>(dictionary);
     }
 
     public IEnumerable<NodeIdValue> AllNodeIds()
     {
-        return _blockchainNodesCache.Keys;
+        return _context.Nodes.Select(n => n.NodeId).ToList();
     }
 
     public IEnumerable<BlockchainNode> AllNodes()
     {
-        return _blockchainNodesCache.Values.ToList();
+        return _context.Nodes.Cast<BlockchainNode>().ToList();
     }
 
     public IEnumerable<BlockchainNode> GetWitnessNodes()
     {
         return _context.Nodes.Where(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null).ToList();
+    }
+
+    public IEnumerable<BlockchainNode> GetBystanderNodes()
+    {
+        return _context.Nodes.Where(n => !n.IsWitnessNode && n.VerifiedEndpoint1 != null).OrderBy(n => Guid.NewGuid())
+            .Take(MaximumNumberOfNodes).ToList();
     }
 
     public IEnumerable<BlockchainNode> GetDnsNodes()
@@ -69,10 +72,12 @@ public class BlockchainNodesRepository : IBlockchainNodesRepository
         var nodes = _context.Nodes.Where(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null)
             .OrderBy(n => n.NodeId.HexString.ToLower()).ToList(); //Get ordered witness nodes
 
+        var currentNode = CurrentWitnessTurn();
+
         var turn = -1;
         for (var i = 0; i < nodes.Count; i++)
         {
-            if ((lastNode == null && nodes[i].IsTurn) || (lastNode != null && nodes[i].NodeId.Equals(lastNode)))
+            if ((lastNode == null && nodes[i].NodeId.Equals(currentNode.NodeId)) || (lastNode != null && nodes[i].NodeId.Equals(lastNode)))
             {
                 turn = i;
                 break;
@@ -82,18 +87,72 @@ public class BlockchainNodesRepository : IBlockchainNodesRepository
         if (turn == -1)
             return null;
 
-        var currentNode = nodes[turn];
-        currentNode.IsTurn = false;
-        _context.Nodes.Update(currentNode);
+        var currentTurn = nodes[turn];
+        currentTurn.MyVote = false;
 
-        var nextNode = nodes[turn == nodes.Count - 1 ? 0 : turn + 1]; //cyclic next
-        nextNode.IsTurn = true;
-        _context.Nodes.Update(nextNode);
+        var nextNode = nodes[(turn + 1) % nodes.Count]; //cyclic next
+        nextNode.MyVote = true;
 
         _context.SaveChanges();
-        RefreshCache();
 
         return nodes[turn];
+    }
+
+    public BlockchainNode CurrentWitnessTurn()
+    {
+        var node = _context.Nodes.Where(n => n.IsWitnessNode).OrderByDescending(n => n.VotesCount).FirstOrDefault();
+        return node?.VotesCount switch
+        {
+            0 => null,
+            _ => node
+        };
+    }
+
+    public void SetWitnessNodeVote(NodeIdValue sender, NodeIdValue vote)
+    {
+        var senderNode = _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(sender));
+        if (senderNode == null || !senderNode.IsWitnessNode)
+            throw new VerificationFailedException("Vote sender does not exist or is not a witness node.");
+
+        var targetNode = _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(vote));
+        if (targetNode == null || !targetNode.IsWitnessNode)
+            return;
+        
+        var lastVote = _context.NodeVotes.FirstOrDefault(n => n.VoterNode.Equals(sender));
+        if (lastVote != null)
+        {
+            var previousTargetNode = _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(lastVote.Vote));
+            if (previousTargetNode != null)
+                previousTargetNode.VotesCount--;
+
+            var newTargetNode = _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(vote));
+            if (newTargetNode != null)
+                newTargetNode.VotesCount++;
+            
+            lastVote.Vote = vote;
+        }
+        else
+        {
+            var newTargetNode = _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(vote));
+            if (newTargetNode != null)
+                newTargetNode.VotesCount++;
+
+            _context.NodeVotes.Add(new NodeVote(sender, vote));
+        }
+
+        _context.SaveChanges();
+    }
+
+    public void ClearVotes()
+    {
+        var lastVotes = _context.NodeVotes.ToList();
+        _context.NodeVotes.RemoveRange(lastVotes);
+
+        var witnessNodes = GetWitnessNodes();
+        foreach (var node in witnessNodes)
+            node.VotesCount = 0;
+
+        _context.SaveChanges();
     }
 
     public BlockchainNode this[string nodeId]
@@ -101,29 +160,12 @@ public class BlockchainNodesRepository : IBlockchainNodesRepository
         get
         {
             var nodeIdValue = new NodeIdValue(nodeId);
-            if (_blockchainNodesCache.ContainsKey(nodeIdValue))
-                return _blockchainNodesCache[nodeIdValue];
-
-            return null;
+            return _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(nodeIdValue));
         }
     }
 
     public BlockchainNode this[NodeIdValue nodeId]
     {
-        get
-        {
-            if (_blockchainNodesCache.ContainsKey(nodeId))
-                return _blockchainNodesCache[nodeId];
-
-            return null;
-        }
-    }
-
-    private void RefreshCache()
-    {
-        var total = 1000;
-        var witnesses = _context.Nodes.Where(n => n.IsWitnessNode).ToList();
-        var nonWitnesses = _context.Nodes.Where(n => !n.IsWitnessNode).Take(total - witnesses.Count).ToList();
-        _blockchainNodesCache = witnesses.Union(nonWitnesses).Cast<BlockchainNode>().ToList().ToDictionary(n => n.NodeId);
+        get { return _context.Nodes.FirstOrDefault(n => n.NodeId.Equals(nodeId)); }
     }
 }

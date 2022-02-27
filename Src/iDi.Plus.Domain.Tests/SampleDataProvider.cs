@@ -13,6 +13,8 @@ namespace iDi.Plus.Domain.Tests;
 
 public class SampleDataProvider
 {
+    private byte[] _sampleData = Encoding.ASCII.GetBytes("DATA");
+
     public SampleDataProvider()
     {
         SampleLocalNodeKeys = DigitalSignatureKeys.Generate();
@@ -65,13 +67,13 @@ public class SampleDataProvider
     }
     public List<IdTransaction> GetSampleIdTransactions() => new()
     {
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Name", "DATA", HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Photo", "DATA", HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "ExpirationDate", "DATA", HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Type", "DATA", HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Photo", "DATA", HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", "DATA", HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", "DATA", HashValue.Empty)
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Name", _sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Photo", _sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "ExpirationDate", _sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Type", _sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Photo", _sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", _sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", _sampleData, HashValue.Empty)
     };
 
 

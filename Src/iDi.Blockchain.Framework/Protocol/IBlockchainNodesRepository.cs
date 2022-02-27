@@ -13,9 +13,13 @@ public interface IBlockchainNodesRepository
     IEnumerable<BlockchainNode> AllNodes();
 
     IEnumerable<BlockchainNode> GetWitnessNodes();
+    IEnumerable<BlockchainNode> GetBystanderNodes();
     IEnumerable<BlockchainNode> GetDnsNodes();
 
     BlockchainNode SelectNextWitnessNode(NodeIdValue lastNode = null);
+    BlockchainNode CurrentWitnessTurn();
+    void SetWitnessNodeVote(NodeIdValue sender, NodeIdValue vote);
+    void ClearVotes();
 
     BlockchainNode this[string nodeId] { get; }
     BlockchainNode this[NodeIdValue nodeId] { get; }

@@ -25,7 +25,10 @@ namespace iDi.Blockchain.Framework.Protocol
         public IPEndPoint VerifiedEndpoint2 { get; set; }
         public DateTime? LastHeartbeatUtcTime { get; set; }
         public bool IsDns { get; set; }
-        public NodeIdValue NodeIdVotedForNextBlockCreation { get; set; }
-        public bool IsTurn { get; set; }
+        public int VotesCount { get; set; }
+        public bool MyVote { get; set; }
+
+
+        //public bool IsTurn { get; set; }
     }
 }

@@ -42,6 +42,9 @@ public abstract class BlockchainBase<TTransaction> : IBlockchain<TTransaction> w
     {
         block.VerifyHash();
         var lastBlock = _repository.GetLastBlock();
+        if (block.Hash.Equals(lastBlock.Hash))
+            throw new VerificationFailedException("Block is already added");
+
         if (lastBlock.Hash != block.PreviousHash)
             throw new VerificationFailedException("Previous hash does not match the hash of the previous block.");
         if (block.Index != lastBlock.Index + 1)

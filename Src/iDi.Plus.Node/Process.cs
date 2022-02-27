@@ -10,8 +10,11 @@ using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
+using iDi.Plus.Domain.Blockchain.IdTransactions;
+using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Services;
 using iDi.Plus.Node.Context;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Timer = System.Timers.Timer;
 
 namespace iDi.Plus.Node;
@@ -22,6 +25,9 @@ public class Process
     private readonly IBlockchainNodeServer _blockchainNodeServer;
     private readonly ILocalNodeContextProvider _localNodeContextProvider;
     private readonly IBlockchainUpdateService _blockchainUpdateService;
+    private readonly IConsensusService _consensusService;
+    private readonly IBlockchainNodesRepository _blockchainNodesRepository;
+    private readonly IBlockchainNodeClient _blockchainNodeClient;
 
     private readonly IdPlusDbContext _context;
     private readonly CancellationTokenSource _cancellationTokenSource;
@@ -32,7 +38,10 @@ public class Process
         IBlockchainNodeServer blockchainNodeServer, 
         IdPlusDbContext context, 
         ILocalNodeContextProvider localNodeContextProvider, 
-        IBlockchainUpdateService blockchainUpdateService)
+        IBlockchainUpdateService blockchainUpdateService, 
+        IConsensusService consensusService, 
+        IBlockchainNodesRepository blockchainNodesRepository, 
+        IBlockchainNodeClient blockchainNodeClient)
     {
         _cancellationTokenSource = new CancellationTokenSource();
 
@@ -41,8 +50,45 @@ public class Process
         _context = context;
         _localNodeContextProvider = localNodeContextProvider;
         _blockchainUpdateService = blockchainUpdateService;
+        _consensusService = consensusService;
+        _blockchainNodesRepository = blockchainNodesRepository;
+        _blockchainNodeClient = blockchainNodeClient;
+        
+        _consensusService.BlockCreated += _consensusService_BlockCreated;
 
         InitializeTimer();
+    }
+
+    private void _consensusService_BlockCreated(ConsensusService arg1, BlockCreatedEventArgs arg2)
+    {
+        var witnessNodes = _blockchainNodesRepository.GetWitnessNodes();
+        var nonWitnessNodes = _blockchainNodesRepository.GetBystanderNodes();
+
+        var block = arg2.Block;
+        var transactions = new List<TxDataPayload>();
+        foreach (var transaction in block.Transactions)
+        {
+            var verifier = AddressValue.Empty;
+            if (transaction is ConsentIdTransaction consentIdTransaction)
+                verifier = consentIdTransaction.VerifierAddress;
+
+            var tx = TxDataPayload.Create(transaction.TransactionHash, transaction.TransactionType,
+                transaction.IssuerAddress, transaction.HolderAddress, verifier, transaction.Subject,
+                transaction.IdentifierKey, transaction.Timestamp, transaction.PreviousTransactionHash,
+                transaction.SignedData);
+            transactions.Add(tx);
+        }
+
+        var payload = BlockDataPayload.Create(block.Index, block.Hash, block.PreviousHash, block.Timestamp,
+            transactions, block.Nonce);
+
+        var signedData = payload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey);
+        var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.BlockData,
+            payload.RawData.Length, signedData);
+        var message = Message.Create(header, payload);
+
+        foreach (var node in witnessNodes.Union(nonWitnessNodes))
+            _blockchainNodeClient.Send(node.VerifiedEndpoint1, message);
     }
 
     public void Run()
@@ -119,7 +165,7 @@ public class Process
 
     private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-        throw new NotImplementedException();
+        _consensusService.ExecuteBlockCreationCycle();
     }
 
     private void Seed(IdPlusDbContext context)
