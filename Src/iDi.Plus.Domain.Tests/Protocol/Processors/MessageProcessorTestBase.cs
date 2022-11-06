@@ -5,7 +5,6 @@ using System.Net;
 using iDi.Blockchain.Framework.Communication;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
 using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;

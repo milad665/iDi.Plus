@@ -4,7 +4,6 @@ using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Exceptions;
 using iDi.Blockchain.Framework.Protocol;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 

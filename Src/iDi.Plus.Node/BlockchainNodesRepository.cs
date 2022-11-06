@@ -13,7 +13,7 @@ namespace iDi.Plus.Node;
 public class BlockchainNodesRepository : IBlockchainNodesRepository
 {
     private readonly IdPlusDbContext _context;
-    public const int MaximumNumberOfNodes = 1000;
+    private const int MaximumNumberOfNodes = 1000;
 
     public BlockchainNodesRepository(IdPlusDbContext context)
     {

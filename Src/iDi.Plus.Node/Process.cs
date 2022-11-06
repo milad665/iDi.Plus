@@ -14,7 +14,6 @@ using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Services;
 using iDi.Plus.Node.Context;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Timer = System.Timers.Timer;
 
 namespace iDi.Plus.Node;
@@ -62,7 +61,7 @@ public class Process
     private void _consensusService_BlockCreated(ConsensusService arg1, BlockCreatedEventArgs arg2)
     {
         var witnessNodes = _blockchainNodesRepository.GetWitnessNodes();
-        var nonWitnessNodes = _blockchainNodesRepository.GetBystanderNodes();
+        var bystanderNodes = _blockchainNodesRepository.GetBystanderNodes();
 
         var block = arg2.Block;
         var transactions = new List<TxDataPayload>();
@@ -87,7 +86,7 @@ public class Process
             payload.RawData.Length, signedData);
         var message = Message.Create(header, payload);
 
-        foreach (var node in witnessNodes.Union(nonWitnessNodes))
+        foreach (var node in witnessNodes.Union(bystanderNodes))
             _blockchainNodeClient.Send(node.VerifiedEndpoint1, message);
     }
 
@@ -165,7 +164,8 @@ public class Process
 
     private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
-        _consensusService.ExecuteBlockCreationCycle();
+        if (_localNodeContextProvider.IsWitnessNode)
+            _consensusService.ExecuteBlockCreationCycle();
     }
 
     private void Seed(IdPlusDbContext context)

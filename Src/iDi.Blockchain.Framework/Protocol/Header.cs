@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using iDi.Blockchain.Framework.Cryptography;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 
 namespace iDi.Blockchain.Framework.Protocol
 {

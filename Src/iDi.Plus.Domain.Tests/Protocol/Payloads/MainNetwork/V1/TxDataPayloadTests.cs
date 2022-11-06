@@ -1,5 +1,4 @@
 ﻿using iDi.Blockchain.Framework;
-using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Tests.Protocol.TestData;

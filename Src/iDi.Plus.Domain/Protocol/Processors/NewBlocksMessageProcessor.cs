@@ -2,7 +2,6 @@
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
-using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
 using iDi.Plus.Domain.Blockchain;
 using iDi.Plus.Domain.Blockchain.IdTransactions;

@@ -8,59 +8,58 @@ using iDi.Plus.Node.Context;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace iDi.Plus.Node
+namespace iDi.Plus.Node;
+
+internal static class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            // create service collection
-            var services = new ServiceCollection();
-            ConfigureServices(services);
+        // create service collection
+        var services = new ServiceCollection();
+        ConfigureServices(services);
 
-            // create service provider
-            var serviceProvider = services.BuildServiceProvider();
+        // create service provider
+        var serviceProvider = services.BuildServiceProvider();
 
-            // entry to run app
-            using var scope = serviceProvider.CreateScope();
-            scope.ServiceProvider.GetService<Process>()?.Run();
-        }
+        // entry to run app
+        using var scope = serviceProvider.CreateScope();
+        scope.ServiceProvider.GetService<Process>()?.Run();
+    }
 
-        private static void ConfigureStages(IPipelineFactory pipelineFactory)
-        {
-            //CreateNewBlock pipeline stage types here
-            //The order is important
+    private static void ConfigureStages(IPipelineFactory pipelineFactory)
+    {
+        //CreateNewBlock pipeline stage types here
+        //The order is important
 
-            pipelineFactory?.AddStage<LogicControllerStage>();
-        }
+        pipelineFactory?.AddStage<LogicControllerStage>();
+    }
 
-        private static void ConfigureServices(IServiceCollection services)
-        {
-            // build config
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", false)
-                .AddEnvironmentVariables()
-                .Build();
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        // build config
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", false)
+            .AddEnvironmentVariables()
+            .Build();
 
-            services.AddOptions();
+        services.AddOptions();
 
-            services.AddDbContext<IdPlusDbContext>();
+        services.AddDbContext<IdPlusDbContext>();
 
-            var config = configuration.GetSection("Settings").Get<Settings>();
-            services.AddSingleton(config);
-            services.AddIdiBlockchainCommunicationServices()
-                .AddPipeline(ConfigureStages)
-                .AddIdiPlusCoreServices()
-                .AddIdiInfrastructureServices(config.ConnectionString)
-                .AddDomainService()
-                .AddDomainServices();
+        var config = configuration.GetSection("Settings").Get<Settings>();
+        services.AddSingleton(config);
+        services.AddIdiBlockchainCommunicationServices()
+            .AddPipeline(ConfigureStages)
+            .AddIdiPlusCoreServices()
+            .AddIdiInfrastructureServices(config.ConnectionString)
+            .AddDomainService()
+            .AddDomainServices();
 
-            //CreateNewBlock pipeline stage classes to the IoC container here
-            //services.AddTransient<SampleStage>()
+        //CreateNewBlock pipeline stage classes to the IoC container here
+        //services.AddTransient<SampleStage>()
 
-            // add app
-            services.AddSingleton<Process>();
-        }
+        // add app
+        services.AddSingleton<Process>();
     }
 }

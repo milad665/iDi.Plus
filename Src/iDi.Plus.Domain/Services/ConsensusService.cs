@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using iDi.Blockchain.Framework.Blockchain;
 using iDi.Blockchain.Framework.Communication;
 using iDi.Blockchain.Framework.Cryptography;
