@@ -28,6 +28,4 @@ public class LogicControllerStage : PipelineStageBase
 
         Response = processor.Process(message);
     }
-    /// <inheritdoc/>
-    public override Message Response { get; protected set; }
 }

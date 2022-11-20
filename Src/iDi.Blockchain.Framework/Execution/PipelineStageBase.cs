@@ -22,7 +22,8 @@ namespace iDi.Blockchain.Framework.Execution
         public void Execute(RequestContext request)
         {
             _requestContext = request;
-            HandleExecute(_requestContext);
+            if (Response == null)
+                HandleExecute(_requestContext);
         }
 
         /// <summary>
@@ -39,6 +40,6 @@ namespace iDi.Blockchain.Framework.Execution
         /// <summary>
         /// Stage response, if not null, the pipeline will abort execution of next stages and returns the response.
         /// </summary>
-        public abstract Message Response { get; protected set; }
+        public Message Response { get; protected set; }
     }
 }
