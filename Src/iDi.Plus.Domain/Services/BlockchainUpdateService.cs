@@ -180,7 +180,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
                 .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null);
 
         if (node == null)
-            throw new NotFoundException("Cannot find a witness node in the database.");
+            throw new NotFoundException("Cannot find any witness node in the database.");
 
         return node;
     }

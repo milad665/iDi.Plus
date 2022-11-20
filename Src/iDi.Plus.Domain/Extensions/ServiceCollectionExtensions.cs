@@ -16,7 +16,18 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDomainServices(this IServiceCollection services)
     {
         services.AddSingleton<IBlockchainUpdateServer, BlockchainUpdateServer>();
+
+        services.AddScoped<IMessageProcessor, BlockDataMessageProcessor>();
+        services.AddScoped<IMessageProcessor, CreateTxMessageProcessor>();
+        services.AddScoped<IMessageProcessor, GetBlockMessageProcessor>();
         services.AddScoped<IMessageProcessor, GetNewBlocksMessageProcessor>();
+        services.AddScoped<IMessageProcessor, GetTxMessageProcessor>();
+        services.AddScoped<IMessageProcessor, GetWitnessNodesMessageProcessor>();
+        services.AddScoped<IMessageProcessor, NewBlocksMessageProcessor>();
+        services.AddScoped<IMessageProcessor, NewTxsMessageProcessor>();
+        services.AddScoped<IMessageProcessor, TxDataMessageProcessor>();
+        services.AddScoped<IMessageProcessor, VoteMessageProcessor>();
+
         services.AddScoped<IMessageFactory, MessageFactory>();
         services.AddScoped<IConsensusService, ConsensusService>();
         services.AddScoped<IBlockchain<IdTransaction>, IdBlockchain>();

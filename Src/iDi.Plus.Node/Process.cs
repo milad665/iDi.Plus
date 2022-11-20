@@ -57,7 +57,29 @@ public class Process
 
         InitializeTimer();
     }
+    
+    public void Run()
+    {
+        _localNodeContextProvider.LocalKeys = LoadNodeKeys();
+        if (_settings.IsWitness)
+            _localNodeContextProvider.SetWitnessNode();
 
+        if (_settings.IsDns)
+            _localNodeContextProvider.SetDnsNode();
+
+        _context.ApplyMigrations(Seed);
+        _blockchainUpdateService.Update(_settings.Port);
+        
+        //Start the timer for time based recurring checks
+        _timer.Enabled = true;
+
+        _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
+    }
+    private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        if (_localNodeContextProvider.IsWitnessNode)
+            _consensusService.ExecuteBlockCreationCycle();
+    }
     private void _consensusService_BlockCreated(ConsensusService arg1, BlockCreatedEventArgs arg2)
     {
         var witnessNodes = _blockchainNodesRepository.GetWitnessNodes();
@@ -89,25 +111,6 @@ public class Process
         foreach (var node in witnessNodes.Union(bystanderNodes))
             _blockchainNodeClient.Send(node.VerifiedEndpoint1, message);
     }
-
-    public void Run()
-    {
-        _localNodeContextProvider.LocalKeys = LoadNodeKeys();
-        if (_settings.IsWitness)
-            _localNodeContextProvider.SetWitnessNode();
-
-        if (_settings.IsDns)
-            _localNodeContextProvider.SetDnsNode();
-
-        _context.ApplyMigrations(Seed);
-        _blockchainUpdateService.Update(_settings.Port);
-        
-        //Start the timer for time based recurring checks
-        _timer.Enabled = true;
-
-        _blockchainNodeServer.Listen(_settings.Port, _cancellationTokenSource.Token);
-    }
-
     private KeyPair LoadNodeKeys()
     {
         var path = Directory.GetCurrentDirectory();
@@ -153,7 +156,6 @@ public class Process
         Console.WriteLine();
         return keys;
     }
-
     private void InitializeTimer()
     {
         _timer = new Timer(2000);
@@ -161,13 +163,6 @@ public class Process
         _timer.AutoReset = true;
         _timer.Elapsed += _timer_Elapsed;
     }
-
-    private void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-    {
-        if (_localNodeContextProvider.IsWitnessNode)
-            _consensusService.ExecuteBlockCreationCycle();
-    }
-
     private void Seed(IdPlusDbContext context)
     {
         if (!context.Nodes.Any())

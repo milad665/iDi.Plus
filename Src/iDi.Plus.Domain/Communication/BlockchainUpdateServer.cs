@@ -23,8 +23,8 @@ public class BlockchainUpdateServer : IBlockchainUpdateServer
         _messageFactory = messageFactory;
     }
 
-    public int NumberOfReceivedBlocks { get; private set; }
-    public int TotalBlocks { get; private set; }
+    private int NumberOfReceivedBlocks { get; set; }
+    private int TotalBlocks { get; set; }
 
     public void Listen(int port)
     {

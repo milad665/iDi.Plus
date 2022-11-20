@@ -25,7 +25,7 @@ public class GetWitnessNodesMessageProcessor : MessageProcessorBase
     {
         var cryptoServiceProvider = new CryptoServiceProvider();
 
-        var nodes = BlockchainNodesRepository.AllNodes();
+        var nodes = BlockchainNodesRepository.GetWitnessNodes();
         var payload = WitnessNodesList.Create(nodes);
         var header = Header.Create(message.Header.Network, message.Header.Version,
             LocalNodeContextProvider.LocalNodeId(), MessageTypes.WitnessNodesList, payload.RawData.Length,
