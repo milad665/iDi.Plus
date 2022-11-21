@@ -1,6 +1,11 @@
 # iDi+
 
-iDi+ is a hybrid distributed ledger working based on a three way encryption mechanism to provide a public Self Sovereign Identity platform. iDi+ is **hybrid**, meaning that it can be accessed and used publicly but only selected nodes will be able to verify transactions.
+iDi+ is a hybrid distributed ledger working based on a double encryption mechanism to provide a public Self Sovereign Identity platform. iDi+ is **hybrid**, meaning that it can be accessed and used publicly but only selected nodes will be able to verify transactions.
+
+## Why Blockchian?
+iDi+ has two pillars, **double-encryption** and **blockchain**, each of which is used to serve a specific purpose:
+- Double-encryption enables self-sovereign identity. It allows the claims to be encypted twice with two distict keys each controlled by a unique entity: the issuer and the holder. This way the verifiers can always make sure the claims are issued by the issuer of interest and also holders can make sure their claims can not be disclosed to any verifier without their explicit consent. 
+- On the other hand, blockchain technology allows entities with conflicting interests to maintain trust and use the same SSI platform for their clients. These entities can be political entities like governments as well as financial entities and corporates. It allows rival companies and governments to maintain the same global SSI platform.
 
 ***This project is still under development...***
 
