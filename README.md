@@ -27,6 +27,13 @@ iDi+ has two pillars, **double-encryption** and **blockchain**, each of which is
 
 **Consent transactions**: Transitions created by the holder to send an issued attribute to a specific verifier
 
+## Architecture
+### Context View
+![Context view](img/iDiPlus-Architecure-L1.drawio.png)
+
+### Container View
+![Context view](img/iDiPlus-Containers.drawio.png)
+
 # How it works? (30k feet view)
 
 Each issuer, holder and verifier has a unique Public/Private key pair. Also a 24-byte wallet address is derived from the public key.
