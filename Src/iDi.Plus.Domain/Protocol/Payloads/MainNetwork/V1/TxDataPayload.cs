@@ -51,6 +51,8 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             lstBytes.Add((byte)transactionType);
             lstBytes.AddRange(issuerAddress.Bytes);
             lstBytes.AddRange(holderAddress.Bytes);
+            if (verifierAddress == null)
+                verifierAddress = AddressValue.Empty;
             lstBytes.AddRange(verifierAddress.Bytes);
 
             var subjectPadded = subject.PadRight(FrameworkEnvironment.SubjectByteLength);

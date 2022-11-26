@@ -6,7 +6,7 @@ public static class Reflection
 {
     public static TReturn? InvokeNonPublic<TReturn>(this object target, string nonPublicMethodName, params object[]? parameters)
     {
-        var method = target.GetType().GetMethod(nonPublicMethodName, BindingFlags.NonPublic);
+        var method = target.GetType().GetMethod(nonPublicMethodName, BindingFlags.NonPublic | BindingFlags.Instance);
             if (method == null)
                 throw new Exception("Non-public method not found in object.");
 
@@ -15,7 +15,7 @@ public static class Reflection
     
     public static void InvokeNonPublicNoReturn(this object target, string nonPublicMethodName, params object[]? parameters)
     {
-        var method = target.GetType().GetMethod(nonPublicMethodName, BindingFlags.NonPublic);
+        var method = target.GetType().GetMethod(nonPublicMethodName, BindingFlags.NonPublic | BindingFlags.Instance);
         if (method == null)
             throw new Exception("Non-public method not found in object.");
 

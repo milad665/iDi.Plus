@@ -1,4 +1,5 @@
-﻿using iDi.Blockchain.Framework.Protocol.Extensions;
+﻿using iDi.Blockchain.Framework.Cryptography;
+using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Tests.Protocol.TestData;
 using Xunit;
@@ -23,7 +24,7 @@ public class CreateTxPayloadTests : ProtocolsTestBase, IPayloadTest
         Assert.Equal(txData.Identifier, target.TxDataPayload.IdentifierKey);
         Assert.Equal(txData.Holder.Address, target.TxDataPayload.HolderAddress);
         Assert.Equal(txData.Issuer.Address, target.TxDataPayload.IssuerAddress);
-        Assert.Equal(txData.Verifier?.Address, target.TxDataPayload.VerifierAddress);
+        Assert.Equal(txData.Verifier?.Address ?? AddressValue.Empty, target.TxDataPayload.VerifierAddress);
     }
 
     [Fact]

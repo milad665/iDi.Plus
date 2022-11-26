@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
@@ -53,6 +54,7 @@ public class GetNewBlocksMessageProcessorTests : MessageProcessorTestBase
     public void ThrowsErrorOnInvalidInputMessageType()
     {
         var message = SampleDataProvider.GetTxMessage(TransactionTestData.SampleTransactionIdCard3PassportName1.TransactionHash);
-        Assert.Throws<InvalidInputException>(() => Target.InvokeNonPublic<Message>("ProcessPayload", message));
+        var exception = Assert.Throws<TargetInvocationException>(() => Target.InvokeNonPublic<Message>("ProcessPayload", message));
+        Assert.IsType<InvalidInputException>(exception.InnerException);
     }
 }
