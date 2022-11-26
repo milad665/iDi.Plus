@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\iDi.Plus.Domain\iDi.Plus.Domain.csproj" />
+    <ProjectReference Include="..\iDi.Test.Framework\iDi.Test.Framework.csproj" />
   </ItemGroup>
 
 </Project>

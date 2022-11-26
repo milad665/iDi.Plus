@@ -21,7 +21,7 @@ public class GetWitnessNodesMessageProcessor : MessageProcessorBase
 
     public override MessageTypes MessageType => MessageTypes.GetWitnessNodes;
 
-    public override Message ProcessPayload(Message message)
+    protected override Message ProcessPayload(Message message)
     {
         var cryptoServiceProvider = new CryptoServiceProvider();
 

@@ -12,6 +12,7 @@ using iDi.Blockchain.Framework.Protocol.Extensions;
 using iDi.Blockchain.Framework.Providers;
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
+using iDi.Plus.Domain.Protocol.Processors;
 
 namespace iDi.Plus.Domain.Services;
 
@@ -49,28 +50,21 @@ public class BlockchainUpdateService : IBlockchainUpdateService
 
     private void _blockchainUpdateServer_ServerStarted()
     {
-        var node = SelectAWitnessNode();
+        var node = _blockchainNodesRepository.GetOneRandomWitnessNode();
 
         var payload = GetWitnessNodesPayload.Create();
         var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.GetWitnessNodes,
             payload.RawData.Length, payload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
-        var requestNodesMessage = Message.Create(header, payload);
-        _blockchainNodeClient.Send(node.VerifiedEndpoint1,requestNodesMessage);
+        var requestWitnessNodesListMessage = Message.Create(header, payload);
+        _blockchainNodeClient.Send(node.VerifiedEndpoint1,requestWitnessNodesListMessage);
     }
 
     private void _blockchainUpdateServer_WitnessNodesListMessageReceived(IBlockchainUpdateServer arg1, MessageReceivedEventArgs arg2)
     {
         var message = arg2.Message;
-        if (message.Payload is WitnessNodesList payload)
-        {
-            _blockchainNodesRepository.ReplaceAllNodes(payload.Nodes);
-            
-            if (!payload.Nodes.Any(n => n.NodeId.Equals(_localNodeContextProvider.LocalNodeId())))
-            {
-                _blockchainNodesRepository.AddOrUpdateNode(new BlockchainNode(_localNodeContextProvider.LocalNodeId(),
-                    _localNodeContextProvider.IsWitnessNode, null, null, null, _localNodeContextProvider.IsDnsNode));
-            }
-        }
+        var processor = new WitnessNodesListMessageProcessor(_blockchainNodeClient, null, null,
+            _localNodeContextProvider, _blockchainNodesRepository);
+        processor.Process(message);
 
         RequestNewBlocks();
     }
@@ -130,7 +124,7 @@ public class BlockchainUpdateService : IBlockchainUpdateService
 
     private void RequestNewBlocks()
     {
-        var node = SelectAWitnessNode();
+        var node = _blockchainNodesRepository.GetOneRandomWitnessNode();
 
         var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockIndex());
         var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.GetNewBlocks,
@@ -166,22 +160,5 @@ public class BlockchainUpdateService : IBlockchainUpdateService
 
             index++;
         }
-    }
-
-    private BlockchainNode SelectAWitnessNode()
-    {
-        var node = _blockchainNodesRepository.AllNodes()
-            .OrderByDescending(n => n.LastHeartbeatUtcTime)
-            .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
-
-        if (node == null)
-            node = _blockchainNodesRepository.AllNodes()
-                .OrderByDescending(n => n.LastHeartbeatUtcTime)
-                .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null);
-
-        if (node == null)
-            throw new NotFoundException("Cannot find any witness node in the database.");
-
-        return node;
     }
 }

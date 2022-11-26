@@ -10,6 +10,9 @@ namespace iDi.Plus.Domain.Protocol.Processors;
 
 public class GetNewBlocksMessageProcessor : MessageProcessorBase
 {
+    protected GetNewBlocksMessageProcessor()
+    {}
+    
     public GetNewBlocksMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
         IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(
@@ -20,7 +23,7 @@ public class GetNewBlocksMessageProcessor : MessageProcessorBase
 
     public override MessageTypes MessageType => MessageTypes.GetNewBlocks;
 
-    public override Message ProcessPayload(Message message)
+    protected override Message ProcessPayload(Message message)
     {
         if (message.Payload is not GetNewBlocksPayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");

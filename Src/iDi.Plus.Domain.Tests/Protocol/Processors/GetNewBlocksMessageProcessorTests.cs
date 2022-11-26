@@ -5,6 +5,8 @@ using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Protocol.Processors;
 using iDi.Plus.Domain.Tests.Protocol.TestData;
+using iDi.Test.Framework.Extensions;
+
 using Moq;
 using Xunit;
 
@@ -38,7 +40,7 @@ public class GetNewBlocksMessageProcessorTests : MessageProcessorTestBase
     public void ResponseMessageCreatedSuccessfully()
     {
         var message = SampleDataProvider.GetNewBlocksMessage(1);
-        var responseMessage = Target.ProcessPayload(message);
+        var responseMessage = Target.InvokeNonPublic<Message>("ProcessPayload", message);
         Assert.Equal(MessageTypes.NewBlocks, responseMessage.Header.MessageType);
         Assert.IsType<NewBlocksPayload>(responseMessage.Payload);
 
@@ -51,6 +53,6 @@ public class GetNewBlocksMessageProcessorTests : MessageProcessorTestBase
     public void ThrowsErrorOnInvalidInputMessageType()
     {
         var message = SampleDataProvider.GetTxMessage(TransactionTestData.SampleTransactionIdCard3PassportName1.TransactionHash);
-        Assert.Throws<InvalidInputException>(() => Target.ProcessPayload(message));
+        Assert.Throws<InvalidInputException>(() => Target.InvokeNonPublic<Message>("ProcessPayload", message));
     }
 }

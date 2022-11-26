@@ -34,7 +34,7 @@ public class BlockDataMessageProcessor : MessageProcessorBase
     }
 
     public override MessageTypes MessageType => MessageTypes.BlockData;
-    public override Message ProcessPayload(Message message)
+    protected override Message ProcessPayload(Message message)
     {
         if (message.Payload is not BlockDataPayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");

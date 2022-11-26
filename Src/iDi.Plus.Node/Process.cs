@@ -32,7 +32,8 @@ public class Process
     private readonly CancellationTokenSource _cancellationTokenSource;
 
     private Timer _timer;
-
+    private DateTime _lastWitnessNodeUpdateTime = DateTime.MinValue;
+    
     public Process(Settings settings, 
         IBlockchainNodeServer blockchainNodeServer, 
         IdPlusDbContext context, 
@@ -69,6 +70,7 @@ public class Process
 
         _context.ApplyMigrations(Seed);
         _blockchainUpdateService.Update(_settings.Port);
+        _lastWitnessNodeUpdateTime = DateTime.Now;
         
         //Start the timer for time based recurring checks
         _timer.Enabled = true;
@@ -79,6 +81,8 @@ public class Process
     {
         if (_localNodeContextProvider.IsWitnessNode)
             _consensusService.ExecuteBlockCreationCycle();
+        
+        RequestWitnessNodeUpdateIfOutdated();
     }
     private void _consensusService_BlockCreated(ConsensusService arg1, BlockCreatedEventArgs arg2)
     {
@@ -162,6 +166,21 @@ public class Process
         _timer.Enabled = false;
         _timer.AutoReset = true;
         _timer.Elapsed += _timer_Elapsed;
+    }
+
+    private void RequestWitnessNodeUpdateIfOutdated()
+    {
+        if (DateTime.Now - _lastWitnessNodeUpdateTime < TimeSpan.FromMinutes(10)) 
+            return;
+        
+        var node = _blockchainNodesRepository.GetOneRandomWitnessNode();
+
+        var payload = GetWitnessNodesPayload.Create();
+        var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.GetWitnessNodes,
+            payload.RawData.Length, payload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
+        var requestWitnessNodesListMessage = Message.Create(header, payload);
+        _blockchainNodeClient.Send(node.VerifiedEndpoint1,requestWitnessNodesListMessage);
+        _lastWitnessNodeUpdateTime = DateTime.Now;
     }
     private void Seed(IdPlusDbContext context)
     {

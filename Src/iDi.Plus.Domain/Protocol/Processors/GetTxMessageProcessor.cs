@@ -17,7 +17,7 @@ public class GetTxMessageProcessor : MessageProcessorBase
     }
 
     public override MessageTypes MessageType => MessageTypes.GetTx;
-    public override Message ProcessPayload(Message message)
+    protected override Message ProcessPayload(Message message)
     {
         throw new System.NotImplementedException();
     }

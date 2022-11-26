@@ -17,6 +17,9 @@ public abstract class MessageProcessorBase : IMessageProcessor
     protected readonly ILocalNodeContextProvider LocalNodeContextProvider;
     protected readonly IBlockchainNodesRepository BlockchainNodesRepository;
 
+    protected MessageProcessorBase()
+    {}
+    
     protected MessageProcessorBase(IBlockchainNodeClient blockchainNodeClient,
         IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository)
@@ -46,7 +49,7 @@ public abstract class MessageProcessorBase : IMessageProcessor
     /// </summary>
     /// <param name="message"></param>
     /// <returns>If a response should be sent back to the sender node, returns the response message, otherwise null</returns>
-    public abstract Message ProcessPayload(Message message);
+    protected abstract Message ProcessPayload(Message message);
 
     /// <summary>
     /// Send message to all other nodes

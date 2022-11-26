@@ -155,6 +155,24 @@ public class BlockchainNodesRepository : IBlockchainNodesRepository
         _context.SaveChanges();
     }
 
+    
+    public BlockchainNode GetOneRandomWitnessNode()
+    {
+        var node = AllNodes()
+            .OrderByDescending(n => n.LastHeartbeatUtcTime)
+            .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null && n.LastHeartbeatUtcTime != null);
+
+        if (node == null)
+            node = AllNodes()
+                .OrderByDescending(n => n.LastHeartbeatUtcTime)
+                .FirstOrDefault(n => n.IsWitnessNode && n.VerifiedEndpoint1 != null);
+
+        if (node == null)
+            throw new NotFoundException("Cannot find any witness node in the database.");
+
+        return node;
+    }
+
     public BlockchainNode this[string nodeId]
     {
         get

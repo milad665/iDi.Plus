@@ -21,7 +21,7 @@ public class NewBlocksMessageProcessor : MessageProcessorBase
 
     public override MessageTypes MessageType => MessageTypes.NewBlocks;
 
-    public override Message ProcessPayload(Message message)
+    protected override Message ProcessPayload(Message message)
     {
         if (message.Payload is not NewBlocksPayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");

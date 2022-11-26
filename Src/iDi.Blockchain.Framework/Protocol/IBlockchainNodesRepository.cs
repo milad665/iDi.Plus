@@ -21,6 +21,8 @@ public interface IBlockchainNodesRepository
     void SetWitnessNodeVote(NodeIdValue sender, NodeIdValue vote);
     void ClearVotes();
 
+    BlockchainNode GetOneRandomWitnessNode();
+    
     BlockchainNode this[string nodeId] { get; }
     BlockchainNode this[NodeIdValue nodeId] { get; }
 }

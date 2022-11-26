@@ -17,7 +17,7 @@ public class NewTxsMessageProcessor : MessageProcessorBase
     }
 
     public override MessageTypes MessageType => MessageTypes.NewTxs;
-    public override Message ProcessPayload(Message message)
+    protected override Message ProcessPayload(Message message)
     {
         throw new System.NotImplementedException();
     }
