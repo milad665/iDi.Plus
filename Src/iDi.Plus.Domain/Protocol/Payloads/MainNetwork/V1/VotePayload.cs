@@ -10,7 +10,7 @@ public class VotePayload : MainNetworkV1PayloadBase
         NodeId = new NodeIdValue(rawData);
     }
 
-    protected VotePayload(byte[] rawData, NodeIdValue nodeId) : base(rawData, MessageTypes.Vote)
+    private VotePayload(byte[] rawData, NodeIdValue nodeId) : base(rawData, MessageTypes.Vote)
     {
         NodeId = nodeId;
     }
@@ -20,5 +20,5 @@ public class VotePayload : MainNetworkV1PayloadBase
         return new VotePayload(nodeId.Bytes, nodeId);
     }
 
-    public NodeIdValue NodeId { get; set; }
+    public NodeIdValue NodeId { get; }
 }

@@ -6,8 +6,7 @@ using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Protocol.Processors;
 using iDi.Plus.Domain.Tests.Protocol.TestData;
-using iDi.Test.Framework.Extensions;
-
+using iDi.Plus.Test.Extensions;
 using Moq;
 using Xunit;
 
@@ -42,6 +41,7 @@ public class GetNewBlocksMessageProcessorTests : MessageProcessorTestBase
     {
         var message = SampleDataProvider.GetNewBlocksMessage(1);
         var responseMessage = Target.InvokeNonPublic<Message>("ProcessPayload", message);
+
         Assert.Equal(MessageTypes.NewBlocks, responseMessage.Header.MessageType);
         Assert.IsType<NewBlocksPayload>(responseMessage.Payload);
 

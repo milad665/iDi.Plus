@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Domain.Tests", "iD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iDi.Plus.Node.Tests", "iDi.Plus.Node.Tests\iDi.Plus.Node.Tests.csproj", "{DEB53965-DEA2-49CD-B482-1F9C6E927D8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Test.Framework", "iDi.Test.Framework\iDi.Test.Framework.csproj", "{00658931-D225-47A8-A28D-2BD20C007D4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iDi.Plus.Test", "iDi.Plus.Test\iDi.Plus.Test.csproj", "{00658931-D225-47A8-A28D-2BD20C007D4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

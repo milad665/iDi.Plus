@@ -20,7 +20,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        protected BlockDataPayload(long index, HashValue hash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce, byte[] rawData) : base(rawData, MessageTypes.BlockData)
+        private BlockDataPayload(long index, HashValue hash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce, byte[] rawData) : base(rawData, MessageTypes.BlockData)
         {
             Index = index;
             Hash = hash;

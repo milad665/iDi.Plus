@@ -8,7 +8,7 @@ using iDi.Blockchain.Framework.Protocol.Exceptions;
 using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 using iDi.Plus.Domain.Protocol.Processors;
 using iDi.Plus.Domain.Tests.Protocol.TestData;
-using iDi.Test.Framework.Extensions;
+using iDi.Plus.Test.Extensions;
 using Moq;
 using Xunit;
 
