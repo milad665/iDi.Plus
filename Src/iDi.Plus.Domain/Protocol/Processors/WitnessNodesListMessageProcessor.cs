@@ -21,7 +21,7 @@ public class WitnessNodesListMessageProcessor: MessageProcessorBase
     public override MessageTypes MessageType => MessageTypes.WitnessNodesList;
     protected override Message ProcessPayload(Message message)
     {
-        if (message.Payload is WitnessNodesList payload)
+        if (message.Payload is WitnessNodesListPayload payload)
         {
             BlockchainNodesRepository.ReplaceAllNodes(payload.Nodes);
 

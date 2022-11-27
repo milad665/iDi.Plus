@@ -8,19 +8,19 @@ using iDi.Blockchain.Framework.Protocol;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
-public class WitnessNodesList : MainNetworkV1PayloadBase
+public class WitnessNodesListPayload : MainNetworkV1PayloadBase
 {
-    public WitnessNodesList(byte[] rawData) : base(rawData, MessageTypes.WitnessNodesList)
+    public WitnessNodesListPayload(byte[] rawData) : base(rawData, MessageTypes.WitnessNodesList)
     {
         ExtractRawData(rawData);
     }
 
-    protected WitnessNodesList(byte[] rawData, IEnumerable<BlockchainNode> nodes) : base(rawData, MessageTypes.WitnessNodesList)
+    private WitnessNodesListPayload(byte[] rawData, IEnumerable<BlockchainNode> nodes) : base(rawData, MessageTypes.WitnessNodesList)
     {
         Nodes = nodes;
     }
 
-    public static WitnessNodesList Create(IEnumerable<BlockchainNode> nodes)
+    public static WitnessNodesListPayload Create(IEnumerable<BlockchainNode> nodes)
     {
         var bytes = new List<byte>();
         foreach (var node in nodes)
@@ -54,7 +54,7 @@ public class WitnessNodesList : MainNetworkV1PayloadBase
             bytes.Add(Convert.ToByte(node.IsWitnessNode)); //1
         }
 
-        return new WitnessNodesList(bytes.ToArray(), nodes);
+        return new WitnessNodesListPayload(bytes.ToArray(), nodes);
     }
 
     public IEnumerable<BlockchainNode> Nodes { get; private set; }

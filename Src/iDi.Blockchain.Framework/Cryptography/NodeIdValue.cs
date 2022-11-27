@@ -54,7 +54,7 @@ public class NodeIdValue
         return HexString.Equals(hashObj.HexString, StringComparison.OrdinalIgnoreCase);
     }
 
-    protected bool Equals(NodeIdValue other)
+    private bool Equals(NodeIdValue other)
     {
         if (other is null)
             return false;
