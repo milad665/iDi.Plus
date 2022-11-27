@@ -24,11 +24,13 @@ public class WitnessNodesListMessageProcessor: MessageProcessorBase
         if (message.Payload is WitnessNodesList payload)
         {
             BlockchainNodesRepository.ReplaceAllNodes(payload.Nodes);
-            
-            if (!payload.Nodes.Any(n => n.NodeId.Equals(LocalNodeContextProvider.LocalNodeId())))
+
+            var witnessNodes = payload.Nodes.Where(n => !n.NodeId.Equals(LocalNodeContextProvider.LocalNodeId()))
+                .ToList();
+            foreach (var node in witnessNodes)
             {
-                BlockchainNodesRepository.AddOrUpdateNode(new BlockchainNode(LocalNodeContextProvider.LocalNodeId(),
-                    LocalNodeContextProvider.IsWitnessNode, null, null, null, LocalNodeContextProvider.IsDnsNode));
+                BlockchainNodesRepository.AddOrUpdateNode(new BlockchainNode(node.NodeId,
+                    node.IsWitnessNode, node.VerifiedEndpoint1, node.VerifiedEndpoint2, node.LastHeartbeatUtcTime, node.IsDns));
             }
         }
 
