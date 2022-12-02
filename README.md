@@ -60,8 +60,7 @@ To verify an identity claim (or a group of them) the verifier needs to send the 
 11. Verifier can the fetch the consent transaction from the network.
 12. The consent transaction will be deleted right after. In case the verifier never fetches the consent transaction it will be destroyed after a certain period of time.
 
-> - To prevent collusion between two holders, the Issue Transaction Id, Holder public key and Identifier key are also signed by the issuer along with the identifier value so that a holder can not compromise its identifier to another holder allowing it to sign fake data for a verifier.  
-> - Signing the issue transaction Id by the issuer also guarantees that a holder can not sign another issue transaction data of itself for a verifier
-> - In addition to the blockchain there is another virtual chain between the transactions of the same id tuple (issuer, holder, identifier), so the history of changes of an identifier of a holder is maintained. This can be a good help when it comes to financial ecosystems and KYC concepts.
 
 ![Issue and verify flow](img/EncryptionFlow.drawio.png)
+
+> - In addition to the blockchain there is another virtual chain between the transactions of the same id claim tuple (issuer, holder, identifier), so the change history of a holder's identifier is maintained. This can provide helpful zero-knowledge insight for financial ecosystems to comply with KYC/CDD mandates.
