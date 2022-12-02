@@ -32,25 +32,36 @@ iDi+ has two pillars, **double-encryption** and **blockchain**, each of which is
 ![Context view](img/iDiPlus-Architecure-L1.drawio.png)
 
 ### Container View
-![Context view](img/iDiPlus-Containers.drawio.png)
+![Container view](img/iDiPlus-Containers.drawio.png)
 
 # How it works? (30k feet view)
 
-Each issuer, holder and verifier has a unique Public/Private key pair. Also a 24-byte wallet address is derived from the public key.
+Each issuer, holder and verifier has a unique Public/Private key pair.
 
-**Step 1**
-When an issuer issues identifiers for a subject, it creates an **issue transaction** for each identifier, encrypts them by the holder's public key and then signs with its own private key and pushes them to the blockchain.
+**Issue**
+1. When an issuer issues identifiers for a subject, it creates an **issue transaction** for each identifier, encrypts them by the its own private key and then sends if off to iDi+ network.
+1. The iDi+ witness node receiving the signed transaction will fist verify the issuer by decrypting the signed data with issuer's public key. 
+1. It then extracts the holder public key from the transaction and encrypts the signed data again by the holder's public key.
+1. The double encrypted data will then be stored in the blockchain.
 
-**Step 2**
-When a verifier requests some identifiers of a holder the flow will be:
-1. The verifier reads (e.g. scan) the holder’s public key
-2. The verifier, checks the blockchain for the latest transactions containing the holder’s public key, the subject issuer’s public key and the key of the Identifier(s) of interest
-3. If such transactions are found, the verifier compiles a list of the issue transaction Ids and creates a request QR code which consists of the list plus the verifier’s public key
-4. The holder reads (e.g. scan) the QR code and views the list of requested transactions.
-5. If accepted, the holder fetches the transactions from the blockchain.
-6. For each transaction, the holder decrypts the identifier data with its own private key (data still encrypted by issuer's private key), and encrypts it again with its own private key and then with the verifier's public key and creates a new **consent transaction** per identifier
-7. Verifier fetches the consent transactions from the blockchain, decrypts them with their own private key and then with the holder's public key and then the issuer's public key. If decrypted successfully, the issue transaction Id, holder public key, subject and the identifier key are verified. The verifier can then happily see and use the identifiers.
+**Verify**
 
-> -   To prevent collusion between two holders, the Issue Transaction Id, Holder public key and Identifier key are also signed by the issuer along with the identifier value so that a holder can not compromise its identifier to another holder allowing it to sign fake data for a verifier.  
->-   Signing the issue transaction Id by the issuer also guarantees that a holder can not sign another issue transaction data of itself for a verifier
->- In addition to the blockchain there is another virtual chain between the transactions of the same id tuple (issuer, holder, identifier), so the history of changes of an identifier of a holder is maintained. This can be a good help when it comes to financial ecosystems and KYC concepts.
+To verify an identity claim (or a group of them) the verifier needs to send the subject name, the claim name and the holder's public key (e.g. by scanning a QR) to iDi+ network to lookup the claim. This is called a zero-knowlendge lookup because upon this lookup the verifier can immediately know if such a claim exists without seeing its value. A zero-knowledge lookup can be useful in certain cases for example to verify is a person has a driving license or not wihtout having access to any details of the driving license. If the zero-knowledge lookup matches a claim, the transaction Id of the **last update** of that claim will be returned. In case the verifier needs to see details of that claim, then the holder's consent is required. To get the consent and check the details the following steps are required:
+1. The verifier sends a consent request to iDi+ network.
+2. The network sends the notification of a pending consent to the holder.
+3. The holder opens the app and selects the consent request.
+4. If the request is accepted by holder, the app requests the corresponding issue transaction from the network.
+5. The received issue transaction will be decrypted by holder's private key.
+6. The result will be encrypted again by holder's private key.
+7. The result double encrypted data will be sent back to the network as a **Consent Transaction**.
+8. The network decrypts the consent transaction data by holder's public key.
+9. The network encrypts the data again by verifier's public key.
+10. The network stores the consent transaction in a temporary store and notifies the verifier that the consent transaction is ready.
+11. Verifier can the fetch the consent transaction from the network.
+12. The consent transaction will be deleted right after. In case the verifier never fetches the consent transaction it will be destroyed after a certain period of time.
+
+> - To prevent collusion between two holders, the Issue Transaction Id, Holder public key and Identifier key are also signed by the issuer along with the identifier value so that a holder can not compromise its identifier to another holder allowing it to sign fake data for a verifier.  
+> - Signing the issue transaction Id by the issuer also guarantees that a holder can not sign another issue transaction data of itself for a verifier
+> - In addition to the blockchain there is another virtual chain between the transactions of the same id tuple (issuer, holder, identifier), so the history of changes of an identifier of a holder is maintained. This can be a good help when it comes to financial ecosystems and KYC concepts.
+
+![Issue and verify flow](img/EncryptionFlow.drawio.png)

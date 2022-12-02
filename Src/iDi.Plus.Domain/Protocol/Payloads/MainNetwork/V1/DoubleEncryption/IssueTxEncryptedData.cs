@@ -8,7 +8,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1.DoubleEncryption;
 
 public class IssueTxEncryptedData
 {
-    protected IssueTxEncryptedData(DateTime issueTransactionTimestamp, string issuerPublicKey, string holderPublicKey, string subject, string identifierKey, string value, DateTime expiresOn)
+    private IssueTxEncryptedData(DateTime issueTransactionTimestamp, string issuerPublicKey, string holderPublicKey, string subject, string identifierKey, string value, DateTime expiresOn)
     {
         IssueTransactionTimestamp = issueTransactionTimestamp;
         IssuerPublicKey = issuerPublicKey;
@@ -34,7 +34,7 @@ public class IssueTxEncryptedData
     public DateTime ExpiresOn { get; }
     public string Value { get; }
 
-    protected static IssueTxEncryptedData ExtractData(byte[] rawData)
+    private static IssueTxEncryptedData ExtractData(byte[] rawData)
     {
         var span = new ReadOnlySpan<byte>(rawData);
         var index = 0;

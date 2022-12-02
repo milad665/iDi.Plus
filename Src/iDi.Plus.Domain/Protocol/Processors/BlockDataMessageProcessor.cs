@@ -49,7 +49,6 @@ public class BlockDataMessageProcessor : MessageProcessorBase
 
         var block = payload.ToBlock(_idTransactionFactory);
         _blockchain.AddReceivedBlock(block);
-
         
         BlockchainNodesRepository.ClearVotes();
         _consensusService.VoteForNextNode();
