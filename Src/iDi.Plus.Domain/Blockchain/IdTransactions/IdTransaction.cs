@@ -14,36 +14,28 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
             Subject = subject;
         }
 
-        protected IdTransaction(TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, string subject, string identifierKey, byte[] signedData, HashValue previousTransactionHash)
+        protected IdTransaction(TransactionTypes transactionType, AddressValue issuerAddress, AddressValue holderAddress, string subject, string identifierKey, string valueMimeType, byte[] doubleEncryptedData, HashValue previousTransactionHash)
         {
             TransactionType = transactionType;
             IssuerAddress = issuerAddress;
             HolderAddress = holderAddress;
             IdentifierKey = identifierKey;
-            SignedData = signedData;
             PreviousTransactionHash = previousTransactionHash;
+            ValueMimeType = valueMimeType;
+            DoubleEncryptedData = doubleEncryptedData;
             Subject = subject;
             Timestamp = DateTime.UtcNow;
         }
 
-        [JsonIgnore]
         public HashValue TransactionHash { get; protected set; }
         public TransactionTypes TransactionType { get; private set; }
         public AddressValue IssuerAddress { get; private set; }
         public AddressValue HolderAddress { get; private set; }
         public string Subject { get; private set; }
         public string IdentifierKey { get; private set; }
-        public byte[] SignedData { get; private set; }
+        public string ValueMimeType { get; private set; }
+        public byte[] DoubleEncryptedData { get; private set; }
         public DateTime Timestamp { get; private set; }
         public HashValue PreviousTransactionHash { get; private set; }
-
-        /// <summary>
-        /// Controls whether the transaction data is properly transmitted
-        /// </summary>
-        public void VerifyHash()
-        {
-            if (TransactionHash != HashValue.ComputeHash(this))
-                throw new VerificationFailedException("Invalid transaction hash.");
-        }
     }
 }

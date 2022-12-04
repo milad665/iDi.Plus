@@ -103,9 +103,9 @@ public class BlockchainUpdateService : IBlockchainUpdateService
             foreach (var tx in payload.Transactions)
             {
                 if (tx.TransactionType == TransactionTypes.IssueTransaction)
-                    transactions.Add(IssueIdTransaction.FromTxDataPayload(tx));
+                    transactions.Add(IssueIdTransaction.FromTxDataResponsePayload(tx));
                 else if (tx.TransactionType == TransactionTypes.ConsentTransaction)
-                    transactions.Add(ConsentIdTransaction.FromTxDataPayload(tx));
+                    transactions.Add(ConsentIdTransaction.FromTxDataResponsePayload(tx));
                 else
                     throw new NotSupportedException("Unsupported transaction type.");
             }

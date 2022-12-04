@@ -90,17 +90,17 @@ public class Process
         var bystanderNodes = _blockchainNodesRepository.GetBystanderNodes();
 
         var block = arg2.Block;
-        var transactions = new List<TxDataPayload>();
+        var transactions = new List<TxDataResponsePayload>();
         foreach (var transaction in block.Transactions)
         {
             var verifier = AddressValue.Empty;
             if (transaction is ConsentIdTransaction consentIdTransaction)
                 verifier = consentIdTransaction.VerifierAddress;
 
-            var tx = TxDataPayload.Create(transaction.TransactionHash, transaction.TransactionType,
+            var tx = TxDataResponsePayload.Create(transaction.TransactionHash, transaction.TransactionType,
                 transaction.IssuerAddress, transaction.HolderAddress, verifier, transaction.Subject,
                 transaction.IdentifierKey, transaction.Timestamp, transaction.PreviousTransactionHash,
-                transaction.SignedData);
+                transaction.ValueMimeType, transaction.DoubleEncryptedData);
             transactions.Add(tx);
         }
 

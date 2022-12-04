@@ -16,9 +16,4 @@ public interface ITransaction
     /// Type of the transaction
     /// </summary>
     TransactionTypes TransactionType { get;  }
-
-    /// <summary>
-    /// When implemented, verifies the hash property against the computed hash of the transaction data.
-    /// </summary>
-    void VerifyHash();
 }

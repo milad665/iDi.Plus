@@ -20,7 +20,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             ExtractData(rawData);
         }
 
-        private BlockDataPayload(long index, HashValue hash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce, byte[] rawData) : base(rawData, MessageTypes.BlockData)
+        private BlockDataPayload(long index, HashValue hash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataResponsePayload> transactions, long nonce, byte[] rawData) : base(rawData, MessageTypes.BlockData)
         {
             Index = index;
             Hash = hash;
@@ -30,7 +30,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             Nonce = nonce;
         }
 
-        public static BlockDataPayload Create(long index, HashValue blockHash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataPayload> transactions, long nonce)
+        public static BlockDataPayload Create(long index, HashValue blockHash, HashValue previousHash, DateTime timestamp, IReadOnlyCollection<TxDataResponsePayload> transactions, long nonce)
         {
             if (previousHash == null)
                 previousHash = HashValue.Empty;
@@ -63,11 +63,11 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
         public HashValue PreviousHash { get; private set; }
         public DateTime Timestamp { get; private set; }
         public long Nonce { get; private set; }
-        public IReadOnlyCollection<TxDataPayload> Transactions { get; private set; }
+        public IReadOnlyCollection<TxDataResponsePayload> Transactions { get; private set; }
 
         public Block<IdTransaction> ToBlock(IIdTransactionFactory idTransactionFactory)
         {
-            var transactions = Transactions.Select(idTransactionFactory.CreateFromTxDataPayload).ToList();
+            var transactions = Transactions.Select(idTransactionFactory.CreateFromTxDataResponsePayload).ToList();
 
             return new Block<IdTransaction>(Index, Hash, PreviousHash, Timestamp, transactions, Nonce);
         }
@@ -90,19 +90,19 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             var transactionDataByteLength = BitConverter.ToInt32(span.Slice(index, 4));
             index += 4;
             
-            var lstTransactions = new List<TxDataPayload>();
+            var lstTransactions = new List<TxDataResponsePayload>();
 
             while (transactionDataByteLength > 0)
             {
                 var transactionBytes = span.Slice(index, transactionDataByteLength);
                 index += transactionDataByteLength;
-                var txData = new TxDataPayload(transactionBytes.ToArray());
+                var txData = new TxDataResponsePayload(transactionBytes.ToArray());
                 lstTransactions.Add(txData);
                 transactionDataByteLength = BitConverter.ToInt32(span.Slice(index, 4));
                 index += 4;
             }
 
-            Transactions = new ReadOnlyCollection<TxDataPayload>(lstTransactions);
+            Transactions = new ReadOnlyCollection<TxDataResponsePayload>(lstTransactions);
         }
     }
 }

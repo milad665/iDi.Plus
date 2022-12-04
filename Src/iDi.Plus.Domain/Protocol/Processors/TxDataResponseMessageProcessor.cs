@@ -6,9 +6,9 @@ using iDi.Plus.Domain.Blockchain.IdTransactions;
 
 namespace iDi.Plus.Domain.Protocol.Processors;
 
-public class TxDataMessageProcessor : MessageProcessorBase
+public class TxDataResponseMessageProcessor : MessageProcessorBase
 {
-    public TxDataMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
+    public TxDataResponseMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
         IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(
         blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider,
@@ -16,7 +16,7 @@ public class TxDataMessageProcessor : MessageProcessorBase
     {
     }
 
-    public override MessageTypes MessageType => MessageTypes.TxData;
+    public override MessageTypes MessageType => MessageTypes.TxDataResponse;
     protected override Message ProcessPayload(Message message)
     {
         throw new System.NotImplementedException();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Cryptography;
@@ -67,13 +68,13 @@ public class SampleDataProvider
     }
     public List<IdTransaction> GetSampleIdTransactions() => new()
     {
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Name", _sampleData, HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Photo", _sampleData, HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "ExpirationDate", _sampleData, HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Type", _sampleData, HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Photo", _sampleData, HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", _sampleData, HashValue.Empty),
-        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", _sampleData, HashValue.Empty)
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Name", "text/plain",_sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "Photo", "text/plain",_sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard1.Address, CommonSampleData.IdCard2.Address, "Passport", "ExpirationDate", "text/plain",_sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Type", "text/plain",_sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Photo", "text/plain",_sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "ExpirationDate", "text/plain",_sampleData, HashValue.Empty),
+        new IssueIdTransaction(CommonSampleData.IdCard3.Address, CommonSampleData.IdCard2.Address, "DrivingLicense", "Tickets", "text/plain",_sampleData, HashValue.Empty)
     };
 
 
@@ -154,6 +155,8 @@ public class SampleDataProvider
         lstBytes.AddRange(Encoding.ASCII.GetBytes(identifierKeyPadded));
         lstBytes.AddRange(BitConverter.GetBytes(transactionTestData.Timestamp.Ticks));
         lstBytes.AddRange(transactionTestData.PreviousTransactionHash?.Bytes ?? new byte[HashValue.HashByteLength]);
+        lstBytes.AddRange(StringToByteArray(transactionTestData.ValueMimeType,100));
+
         lstBytes.AddRange(transactionTestData.SignedData);
 
         return lstBytes.ToArray();
@@ -214,8 +217,8 @@ public class SampleDataProvider
     }
     public Message TxDataMessage(TransactionTestData transactionTestData)
     {
-        var payload = new TxDataPayload(TxDataPayloadBytes(transactionTestData));
-        var header = CreateHeader(MessageTypes.TxData, payload, SampleRemoteNodeKeys1);
+        var payload = new TxDataResponsePayload(TxDataPayloadBytes(transactionTestData));
+        var header = CreateHeader(MessageTypes.TxDataResponse, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
 
@@ -232,4 +235,7 @@ public class SampleDataProvider
         var signature = cryptoService.Sign(localKeys.PrivateKey, payload?.RawData);
         return signature;
     }
+    
+    private byte[] StringToByteArray(string input, int fixLength) => input.PadRight(fixLength).Select(c => (byte)c).ToArray();
+
 }

@@ -30,7 +30,8 @@ public class TransactionTestData
         Subject = subject;
         Identifier = identifier;
         SignedData = Encoding.UTF8.GetBytes(signedData);
-
+        ValueMimeType = "text/plain";
+        
         Timestamp = DateTime.UtcNow;
     }
 
@@ -43,5 +44,5 @@ public class TransactionTestData
     public string Identifier { get; set; }
     public byte[] SignedData { get; set; }
     public DateTime Timestamp { get; set; }
-
+    public string ValueMimeType { get; set; }
 }

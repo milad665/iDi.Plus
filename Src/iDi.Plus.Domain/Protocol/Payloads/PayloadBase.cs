@@ -22,7 +22,7 @@ namespace iDi.Plus.Domain.Protocol.Payloads
         public int Checksum { get; }
 
         /// <inheritdoc/>
-        public MessageTypes MessageType { get; }
+        public MessageTypes MessageType { get; protected init; }
         /// <inheritdoc/>
         public short Version { get; }
         /// <inheritdoc/>

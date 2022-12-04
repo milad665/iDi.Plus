@@ -38,8 +38,6 @@ public class IdBlockchain : BlockchainBase<IdTransaction>
     /// <exception cref="VerificationFailedException"></exception>
     public override void VerifyTransaction(IdTransaction transaction)
     {
-        transaction.VerifyHash();
-
         if (_idBlockchainRepository.IsObsolete(transaction.IssuerAddress))
             throw new VerificationFailedException("Issuer address is obsolete and no longer valid.");
 

@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMessageProcessor, GetWitnessNodesMessageProcessor>();
         services.AddScoped<IMessageProcessor, NewBlocksMessageProcessor>();
         services.AddScoped<IMessageProcessor, NewTxsMessageProcessor>();
-        services.AddScoped<IMessageProcessor, TxDataMessageProcessor>();
+        services.AddScoped<IMessageProcessor, TxDataResponseMessageProcessor>();
         services.AddScoped<IMessageProcessor, VoteMessageProcessor>();
         services.AddScoped<IMessageProcessor, WitnessNodesListMessageProcessor>();
 

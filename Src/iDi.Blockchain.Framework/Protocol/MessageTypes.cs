@@ -20,9 +20,14 @@
         GetTx,
         
         /// <summary>
+        /// Contains decrypted data of a specific transaction in a CreateTx request.
+        /// </summary>
+        TxDataRequest,
+        
+        /// <summary>
         /// Send data of a specific verified transaction. (Normally in response to a "GetTx" command)
         /// </summary>
-        TxData,
+        TxDataResponse,
         
         /// <summary>
         /// Request the list of new blocks added after a specific timestamp to the blockchain

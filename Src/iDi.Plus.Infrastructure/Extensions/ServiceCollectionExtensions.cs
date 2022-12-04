@@ -2,6 +2,7 @@
 using iDi.Plus.Domain.Blockchain.IdTransactions;
 using iDi.Plus.Infrastructure.Context;
 using iDi.Plus.Infrastructure.Repositories;
+using iDi.Plus.Infrastructure.VolatileContext;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace iDi.Plus.Infrastructure.Extensions
@@ -10,9 +11,12 @@ namespace iDi.Plus.Infrastructure.Extensions
     {
         public static IServiceCollection AddIdiInfrastructureServices(this IServiceCollection services, string blockchainMongoDatabaseConnectionString)
         {
-            services.AddScoped<IBlockchainContext>((x) => new BlockchainContext(blockchainMongoDatabaseConnectionString));
+            services.AddScoped<IBlockchainContext>(_ => new BlockchainContext(blockchainMongoDatabaseConnectionString));
+            services.AddDbContext<VolatileDbContext>();
+
             services.AddScoped<IIdBlockchainRepository, IdBlockchainRepository>();
             services.AddScoped<IHotPoolRepository<IdTransaction>, HotPoolRepository>();
+            services.AddScoped<IConsentRepository, ConsentRepository>();
 
             return services;
         }

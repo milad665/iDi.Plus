@@ -35,9 +35,9 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
         var block = BlockTestData.SampleBlock1;
 
         var expectedPayloadData = SampleDataProvider.BlockDataPayloadBytes(block);
-        var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
+        var transactionsPayload = block.Transactions.Select(t => TxDataResponsePayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
-            t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
+            t.Identifier, t.Timestamp, t.PreviousTransactionHash,"text/plain", t.SignedData)).ToList();
 
         var target = BlockDataPayload.Create(block.Index, block.Hash, block.PreviousHash, block.TimeStamp, transactionsPayload, block.Nonce);
 
@@ -63,7 +63,7 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
         block.Transactions = null;
         var expectedPayloadData = SampleDataProvider.BlockDataPayloadBytes(block);
 
-        var target = BlockDataPayload.Create(block.Index, block.Hash, block.PreviousHash, block.TimeStamp, new List<TxDataPayload>(), block.Nonce);
+        var target = BlockDataPayload.Create(block.Index, block.Hash, block.PreviousHash, block.TimeStamp, new List<TxDataResponsePayload>(), block.Nonce);
 
         Assert.Equal(expectedPayloadData.ToHexString(), target.RawData.ToHexString(), true);
     }
@@ -73,9 +73,9 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     {
         var block = BlockTestData.SampleBlock1;
 
-        var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
+        var transactionsPayload = block.Transactions.Select(t => TxDataResponsePayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
-            t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
+            t.Identifier, t.Timestamp, t.PreviousTransactionHash,"text/plain", t.SignedData)).ToList();
 
         Assert.Throws<InvalidInputException>(() => BlockDataPayload.Create(block.Index, new HashValue("ab12"), block.PreviousHash, block.TimeStamp, transactionsPayload, block.Nonce));
     }
@@ -85,9 +85,9 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     {
         var block = BlockTestData.SampleBlock1;
 
-        var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
+        var transactionsPayload = block.Transactions.Select(t => TxDataResponsePayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
-            t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
+            t.Identifier, t.Timestamp, t.PreviousTransactionHash,"text/plain", t.SignedData)).ToList();
 
         Assert.Throws<InvalidInputException>(() => BlockDataPayload.Create(block.Index, block.Hash, new HashValue("ab12"), block.TimeStamp, transactionsPayload, block.Nonce));
     }
@@ -97,9 +97,9 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     {
         var block = BlockTestData.SampleBlock1;
 
-        var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
+        var transactionsPayload = block.Transactions.Select(t => TxDataResponsePayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
-            t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
+            t.Identifier, t.Timestamp, t.PreviousTransactionHash,"text/plain", t.SignedData)).ToList();
 
         Assert.Throws<FormatException>(() => BlockDataPayload.Create(block.Index, new HashValue("INVALIDHASH"), block.PreviousHash, block.TimeStamp, transactionsPayload, block.Nonce));
     }
@@ -109,9 +109,9 @@ public class BlockDataPayloadTests : ProtocolsTestBase, IPayloadTest
     {
         var block = BlockTestData.SampleBlock1;
 
-        var transactionsPayload = block.Transactions.Select(t => TxDataPayload.Create(t.TransactionHash,
+        var transactionsPayload = block.Transactions.Select(t => TxDataResponsePayload.Create(t.TransactionHash,
             TransactionTypes.IssueTransaction, t.Issuer.Address, t.Holder.Address, t.Verifier?.Address, t.Subject,
-            t.Identifier, t.Timestamp, t.PreviousTransactionHash, t.SignedData)).ToList();
+            t.Identifier, t.Timestamp, t.PreviousTransactionHash,"text/plain", t.SignedData)).ToList();
 
         Assert.Throws<FormatException>(() => BlockDataPayload.Create(block.Index, block.Hash, new HashValue("INVALIDHASH"), block.TimeStamp, transactionsPayload, block.Nonce));
     }

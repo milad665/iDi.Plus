@@ -14,7 +14,6 @@ public class IdPlusDbContext : DbContext
     public DbSet<Domain.Entities.Node> Nodes { get; set; }
     public DbSet<NodeVote> NodeVotes { get; set; }
     public DbSet<KeyChange> KeyChangeList { get; set; }
-    public DbSet<HotPoolRecord> HotPool { get; set; }
     public DbSet<GlobalVariable> GlobalVariables { get; set; }
 
     public IdPlusDbContext()

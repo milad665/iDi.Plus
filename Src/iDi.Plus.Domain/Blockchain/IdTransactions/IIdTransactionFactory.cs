@@ -1,8 +1,10 @@
-﻿using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
+﻿using iDi.Blockchain.Framework.Cryptography;
+using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
 namespace iDi.Plus.Domain.Blockchain.IdTransactions;
 
 public interface IIdTransactionFactory
 {
-    IdTransaction CreateFromTxDataPayload(TxDataPayload payload);
+    IdTransaction CreateFromTxDataResponsePayload(TxDataResponsePayload responsePayload);
+    IdTransaction CreateFromTxDataRequestPayload(TxDataRequestPayload requestPayload, HashValue previousTransactionHash);
 }
