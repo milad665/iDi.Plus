@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Blockchain;
@@ -37,5 +38,33 @@ namespace iDi.Plus.Domain.Blockchain.IdTransactions
         public byte[] DoubleEncryptedData { get; private set; }
         public DateTime Timestamp { get; private set; }
         public HashValue PreviousTransactionHash { get; private set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+                return false;
+            if (obj.GetType() != GetType())
+                return false;
+            if (GetType().GetProperties().Any(propertyInfo => propertyInfo.GetValue(this) != propertyInfo.GetValue(obj)))
+                return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(TransactionHash);
+            hashCode.Add((int)TransactionType);
+            hashCode.Add(IssuerAddress);
+            hashCode.Add(HolderAddress);
+            hashCode.Add(Subject);
+            hashCode.Add(IdentifierKey);
+            hashCode.Add(ValueMimeType);
+            hashCode.Add(DoubleEncryptedData);
+            hashCode.Add(Timestamp);
+            hashCode.Add(PreviousTransactionHash);
+            return hashCode.ToHashCode();
+        }
     }
 }

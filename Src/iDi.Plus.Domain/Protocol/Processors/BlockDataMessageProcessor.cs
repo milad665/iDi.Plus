@@ -48,20 +48,40 @@ public class BlockDataMessageProcessor : MessageProcessorBase
             throw new VerificationFailedException("Block sender node does not match the current turn.");
 
         var block = payload.ToBlock(_idTransactionFactory);
-        _blockchain.AddReceivedBlock(block);
         
-        BlockchainNodesRepository.ClearVotes();
-        _consensusService.VoteForNextNode();
+        if (LocalNodeContextProvider.IsWitnessNode)
+        {
+            VerifyBlockTransactions(block);
+            HotPoolRepository.RemoveTransactions(block.Transactions);
+        }
+        
+        block.VerifyHash();
+        _blockchain.AddReceivedBlock(block);
 
         if (LocalNodeContextProvider.IsWitnessNode)
         {
-            //If this is a witness nodes, send block to all non-witness nodes
-
+            BlockchainNodesRepository.ClearVotes();
+            _consensusService.VoteForNextNode();
+            
+            //send block to all non-witness nodes
             var bystanderNodes = BlockchainNodesRepository.GetBystanderNodes();
             foreach (var node in bystanderNodes)
                 BlockchainNodeClient.Send(node.VerifiedEndpoint1, message);
         }
 
         return null;
+    }
+
+    private void VerifyBlockTransactions(Block<IdTransaction> block)
+    {
+        foreach (var tx in block.Transactions)
+        {
+            var hotPoolTx = HotPoolRepository.GetTransaction(tx.TransactionHash);
+            if (hotPoolTx == null)
+                throw new VerificationFailedException("Transaction not found in the hot pool");
+            
+            if (!hotPoolTx.Equals(tx))
+                throw new VerificationFailedException("Block tx data does not match hot pool tx");
+        }
     }
 }

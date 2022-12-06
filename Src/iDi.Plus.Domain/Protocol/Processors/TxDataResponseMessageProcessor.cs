@@ -19,6 +19,9 @@ public class TxDataResponseMessageProcessor : MessageProcessorBase
     public override MessageTypes MessageType => MessageTypes.TxDataResponse;
     protected override Message ProcessPayload(Message message)
     {
+        //Verify TX
+        //Add TX to hot pool
+        
         throw new System.NotImplementedException();
     }
 }

@@ -24,7 +24,7 @@ public class ConsensusService : IConsensusService
 
     private const string HotPoolSizeWhenNodeWasSelectedGlobalVariableKey = "HotPoolSizeWhenNodeWasSelected";
 
-    public const int MaximumNumberOfTransactionsInABlock = 1000;
+    public const int MaximumNumberOfTransactionsInABlock = 300;
     public const int HotPoolSizeThreshold = 100;
     public const int MinutesToWaitBeforeCreatingNewBlock = 5;
 
