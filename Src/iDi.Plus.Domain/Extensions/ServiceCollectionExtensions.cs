@@ -20,11 +20,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IMessageProcessor, BlockDataMessageProcessor>();
         services.AddScoped<IMessageProcessor, CreateTxMessageProcessor>();
         services.AddScoped<IMessageProcessor, GetBlockMessageProcessor>();
-        services.AddScoped<IMessageProcessor, GetNewBlocksMessageProcessor>();
+        services.AddScoped<IMessageProcessor, RequestBlockchainUpdateMessageProcessor>();
         services.AddScoped<IMessageProcessor, GetTxMessageProcessor>();
         services.AddScoped<IMessageProcessor, GetWitnessNodesMessageProcessor>();
         services.AddScoped<IMessageProcessor, NewBlocksMessageProcessor>();
-        services.AddScoped<IMessageProcessor, NewTxsMessageProcessor>();
+        services.AddScoped<IMessageProcessor, HotPoolTxsMessageProcessor>();
         services.AddScoped<IMessageProcessor, TxDataResponseMessageProcessor>();
         services.AddScoped<IMessageProcessor, VoteMessageProcessor>();
         services.AddScoped<IMessageProcessor, WitnessNodesListMessageProcessor>();

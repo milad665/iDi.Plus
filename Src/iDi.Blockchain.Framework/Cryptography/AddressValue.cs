@@ -7,7 +7,7 @@ namespace iDi.Blockchain.Framework.Cryptography;
 
 public class AddressValue
 {
-    public const int AddressByteLength = IdCard.PublicKeyByteLength;
+    public const int AddressByteLength = IdCard.PublicKeyLength;
 
     protected AddressValue()
     { }

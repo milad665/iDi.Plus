@@ -10,9 +10,9 @@
         CreateTx,
         
         /// <summary>
-        /// Send list of new verified transaction hashes to other nodes
+        /// Send list of new verified transaction hashes in the hot pool
         /// </summary>
-        NewTxs,
+        HotPoolTxs,
         
         /// <summary>
         /// Request a specific verified transaction data from a node
@@ -32,7 +32,7 @@
         /// <summary>
         /// Request the list of new blocks added after a specific timestamp to the blockchain
         /// </summary>
-        GetNewBlocks,
+        RequestBlockchainUpdate,
         
         /// <summary>
         /// Send list of new blocks to other nodes

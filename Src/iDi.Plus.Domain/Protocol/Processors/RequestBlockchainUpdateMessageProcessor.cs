@@ -8,12 +8,12 @@ using iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
 namespace iDi.Plus.Domain.Protocol.Processors;
 
-public class GetNewBlocksMessageProcessor : MessageProcessorBase
+public class RequestBlockchainUpdateMessageProcessor : MessageProcessorBase
 {
-    protected GetNewBlocksMessageProcessor()
+    protected RequestBlockchainUpdateMessageProcessor()
     {}
     
-    public GetNewBlocksMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
+    public RequestBlockchainUpdateMessageProcessor(IBlockchainNodeClient blockchainNodeClient,
         IIdBlockchainRepository idBlockchainRepository, IHotPoolRepository<IdTransaction> hotPoolRepository,
         ILocalNodeContextProvider localNodeContextProvider, IBlockchainNodesRepository blockchainNodesRepository) : base(
         blockchainNodeClient, idBlockchainRepository, hotPoolRepository, localNodeContextProvider,
@@ -21,11 +21,11 @@ public class GetNewBlocksMessageProcessor : MessageProcessorBase
     {
     }
 
-    public override MessageTypes MessageType => MessageTypes.GetNewBlocks;
+    public override MessageTypes MessageType => MessageTypes.RequestBlockchainUpdate;
 
     protected override Message ProcessPayload(Message message)
     {
-        if (message.Payload is not GetNewBlocksPayload payload)
+        if (message.Payload is not RequestBlockchainUpdatePayload payload)
             throw new InvalidInputException("Payload can not be cast to the target type of this processor.");
 
         var hashes = IdBlockchainRepository.GetHashesOfBlocksCreatedAfter(payload.LastBlockIndex);

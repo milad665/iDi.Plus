@@ -84,6 +84,7 @@ public class Process
         
         RequestWitnessNodeUpdateIfOutdated();
     }
+    
     private void _consensusService_BlockCreated(ConsensusService arg1, BlockCreatedEventArgs arg2)
     {
         var witnessNodes = _blockchainNodesRepository.GetWitnessNodes();

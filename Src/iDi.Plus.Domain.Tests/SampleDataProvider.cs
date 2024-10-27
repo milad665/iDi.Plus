@@ -39,7 +39,7 @@ public class SampleDataProvider
         var networkBytes = BitConverter.GetBytes((int)network);
         var versionBytes = BitConverter.GetBytes(version);
         var nodeIdBytes = senderNodeKeys.PublicKey;
-        var messageTypeBytes = BitConverter.GetBytes((byte)MessageTypes.BlockData)[0];
+        var messageTypeBytes = (byte)MessageTypes.BlockData;
         var payloadLengthBytes = BitConverter.GetBytes(payloadBytes.Length);
 
         var cryptoServiceProvider = new CryptoServiceProvider();
@@ -193,8 +193,8 @@ public class SampleDataProvider
     }
     public Message GetNewBlocksMessage(long lastBlockIndex)
     {
-        var payload = new GetNewBlocksPayload(GetNewBlocksPayloadBytes(lastBlockIndex));
-        var header = CreateHeader(MessageTypes.GetNewBlocks, payload, SampleRemoteNodeKeys1);
+        var payload = new RequestBlockchainUpdatePayload(GetNewBlocksPayloadBytes(lastBlockIndex));
+        var header = CreateHeader(MessageTypes.RequestBlockchainUpdate, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message GetTxMessage(HashValue transactionHash)
@@ -211,8 +211,8 @@ public class SampleDataProvider
     }
     public Message NewTxsMessage(List<HashValue> transactionHashes)
     {
-        var payload = new NewTxsPayload(NewTxsPayloadBytes(transactionHashes));
-        var header = CreateHeader(MessageTypes.NewTxs, payload, SampleRemoteNodeKeys1);
+        var payload = new HotPoolTxsPayload(NewTxsPayloadBytes(transactionHashes));
+        var header = CreateHeader(MessageTypes.HotPoolTxs, payload, SampleRemoteNodeKeys1);
         return Message.Create(header, payload);
     }
     public Message TxDataMessage(TransactionTestData transactionTestData)

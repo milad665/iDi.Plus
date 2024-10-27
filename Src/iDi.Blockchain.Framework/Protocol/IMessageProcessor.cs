@@ -1,6 +1,4 @@
-﻿using iDi.Blockchain.Framework.Protocol;
-
-namespace iDi.Plus.Domain.Protocol.Processors;
+﻿namespace iDi.Blockchain.Framework.Protocol;
 
 public interface IMessageProcessor
 {

@@ -41,8 +41,8 @@ public class CreateTxPayload : MainNetworkV1PayloadBase
     {
         var span = new ReadOnlySpan<byte>(rawData);
         var index = 0;
-        var senderPublicKey = span.Slice(index, IdCard.PublicKeyByteLength).ToArray();
-        index += IdCard.PublicKeyByteLength;
+        var senderPublicKey = span.Slice(index, IdCard.PublicKeyLength).ToArray();
+        index += IdCard.PublicKeyLength;
         var encryptedTransactionData = span.Slice(index).ToArray();
 
         SenderPublicKey = senderPublicKey;

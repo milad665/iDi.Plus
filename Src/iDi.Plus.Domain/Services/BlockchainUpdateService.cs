@@ -126,8 +126,8 @@ public class BlockchainUpdateService : IBlockchainUpdateService
     {
         var node = _blockchainNodesRepository.GetOneRandomWitnessNode();
 
-        var payload = GetNewBlocksPayload.Create(_blockchainRepository.GetLastBlockIndex());
-        var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.GetNewBlocks,
+        var payload = RequestBlockchainUpdatePayload.Create(_blockchainRepository.GetLastBlockIndex());
+        var header = Header.Create(Networks.Main, 1, _localNodeContextProvider.LocalNodeId(), MessageTypes.RequestBlockchainUpdate,
             payload.RawData.Length, payload.Sign(_localNodeContextProvider.LocalKeys.PrivateKey));
         var updateMessage = Message.Create(header, payload);
 

@@ -58,6 +58,10 @@ namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
             return new BlockDataPayload(index, blockHash, previousHash, timestamp, transactions, nonce, lstBytes.ToArray());
         }
 
+        public static BlockDataPayload FromBlock(Block<IdTransaction> block) => Create(block.Index, block.Hash,
+            block.PreviousHash, block.Timestamp,
+            block.Transactions.Select(TxDataResponsePayload.FromIdTransaction).ToList(), block.Nonce);
+
         public long Index { get; private set; }
         public HashValue Hash { get; private set; }
         public HashValue PreviousHash { get; private set; }

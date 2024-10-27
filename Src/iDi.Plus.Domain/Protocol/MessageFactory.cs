@@ -35,16 +35,16 @@ namespace iDi.Plus.Domain.Protocol
                     return new Payloads.MainNetwork.V1.CreateTxPayload(payloadData);
                 case MessageTypes.GetBlock:
                     return new Payloads.MainNetwork.V1.GetBlockPayload(payloadData);
-                case MessageTypes.GetNewBlocks:
-                    return new Payloads.MainNetwork.V1.GetNewBlocksPayload(payloadData);
+                case MessageTypes.RequestBlockchainUpdate:
+                    return new Payloads.MainNetwork.V1.RequestBlockchainUpdatePayload(payloadData);
                 case MessageTypes.GetTx:
                     return new Payloads.MainNetwork.V1.GetTxPayload(payloadData);
                 case MessageTypes.GetWitnessNodes:
                     return new Payloads.MainNetwork.V1.GetWitnessNodesPayload(payloadData);
                 case MessageTypes.NewBlocks:
                     return new Payloads.MainNetwork.V1.NewBlocksPayload(payloadData);
-                case MessageTypes.NewTxs:
-                    return new Payloads.MainNetwork.V1.NewTxsPayload(payloadData);
+                case MessageTypes.HotPoolTxs:
+                    return new Payloads.MainNetwork.V1.HotPoolTxsPayload(payloadData);
                 case MessageTypes.TxDataRequest:
                     return new Payloads.MainNetwork.V1.TxDataRequestPayload(payloadData);
                 case MessageTypes.TxDataResponse:

@@ -16,7 +16,7 @@ public class GetNewBlocksPayloadTests : ProtocolsTestBase
     public void MessageCreatedSuccessfullyFromByteArray(long lastBlockIndex)
     {
         var bytes = SampleDataProvider.GetNewBlocksPayloadBytes(lastBlockIndex);
-        var target = new GetNewBlocksPayload(bytes);
+        var target = new RequestBlockchainUpdatePayload(bytes);
 
         Assert.Equal(lastBlockIndex, target.LastBlockIndex);
     }
@@ -29,7 +29,7 @@ public class GetNewBlocksPayloadTests : ProtocolsTestBase
     public void RawDataCreatedSuccessfully(long lastBlockIndex)
     {
         var bytes = SampleDataProvider.GetNewBlocksPayloadBytes(lastBlockIndex);
-        var target = GetNewBlocksPayload.Create(lastBlockIndex);
+        var target = RequestBlockchainUpdatePayload.Create(lastBlockIndex);
 
         Assert.Equal(bytes.ToHexString(), target.RawData.ToHexString(),true);
     }
@@ -38,7 +38,7 @@ public class GetNewBlocksPayloadTests : ProtocolsTestBase
     public void ThrowsError_WhenLastBlockIndexIsNegative()
     {
         var lastBlockIndex = -1;
-        Assert.Throws<InvalidInputException>(() => GetNewBlocksPayload.Create(lastBlockIndex));
+        Assert.Throws<InvalidInputException>(() => RequestBlockchainUpdatePayload.Create(lastBlockIndex));
     }
 
     [Fact]
@@ -46,13 +46,13 @@ public class GetNewBlocksPayloadTests : ProtocolsTestBase
     {
         var lastBlockIndex = -1;
         var bytes = SampleDataProvider.GetNewBlocksPayloadBytes(lastBlockIndex);
-        Assert.Throws<InvalidInputException>(() => new GetNewBlocksPayload(bytes));
+        Assert.Throws<InvalidInputException>(() => new RequestBlockchainUpdatePayload(bytes));
     }
 
     [Fact]
     public void ThrowsError_WhenRawDataLengthIsIncorrect()
     {
         var bytes = BitConverter.GetBytes(1); //int = 4 bytes
-        Assert.Throws<InvalidInputException>(() => new GetNewBlocksPayload(bytes));
+        Assert.Throws<InvalidInputException>(() => new RequestBlockchainUpdatePayload(bytes));
     }
 }

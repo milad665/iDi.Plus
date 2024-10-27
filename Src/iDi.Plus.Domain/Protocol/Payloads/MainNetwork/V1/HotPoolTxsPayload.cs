@@ -6,25 +6,25 @@ using iDi.Blockchain.Framework.Protocol.Exceptions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1
 {
-    public class NewTxsPayload : MainNetworkV1PayloadBase
+    public class HotPoolTxsPayload : MainNetworkV1PayloadBase
     {
-        public NewTxsPayload(byte[] rawData) : base(rawData, MessageTypes.NewTxs)
+        public HotPoolTxsPayload(byte[] rawData) : base(rawData, MessageTypes.HotPoolTxs)
         {
             Transactions = GetTransactions(rawData);
         }
 
-        protected NewTxsPayload(byte[] rawData, List<HashValue> transactions) : base(rawData, MessageTypes.NewTxs)
+        private HotPoolTxsPayload(byte[] rawData, List<HashValue> transactions) : base(rawData, MessageTypes.HotPoolTxs)
         {
             Transactions = transactions;
         }
 
-        public static NewTxsPayload Create(List<HashValue> newBlocksHashes)
+        public static HotPoolTxsPayload Create(List<HashValue> newBlocksHashes)
         {
             var bytes = new List<byte>();
             foreach (var hash in newBlocksHashes)
                 bytes.AddRange(hash.Bytes);
 
-            return new NewTxsPayload(bytes.ToArray(), newBlocksHashes);
+            return new HotPoolTxsPayload(bytes.ToArray(), newBlocksHashes);
         }
 
         /// <summary>

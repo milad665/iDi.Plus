@@ -40,10 +40,10 @@ public class IssueTxEncryptedData
         var index = 0;
         var issueTxTimestamp = DateTime.FromBinary(BitConverter.ToInt64(span.Slice(index, 8)));
         index += 8;
-        var issuerAddress = span.Slice(index, IdCard.PublicKeyByteLength).ToHexString();
-        index += IdCard.PublicKeyByteLength;
-        var holderAddress = span.Slice(index, IdCard.PublicKeyByteLength).ToHexString();
-        index += IdCard.PublicKeyByteLength;
+        var issuerAddress = span.Slice(index, IdCard.PublicKeyLength).ToHexString();
+        index += IdCard.PublicKeyLength;
+        var holderAddress = span.Slice(index, IdCard.PublicKeyLength).ToHexString();
+        index += IdCard.PublicKeyLength;
 
         var subject = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.SubjectByteLength)).Trim();
         index += FrameworkEnvironment.SubjectByteLength;

@@ -97,14 +97,14 @@ public class TxDataRequestPayload : MainNetworkV1PayloadBase
         index += HashValue.HashByteLength;
         TransactionType = (TransactionTypes) span.Slice(index, 1)[0];
         index++;
-        IssuerAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyByteLength).ToArray());
-        index += IdCard.PublicKeyByteLength;
-        HolderAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyByteLength).ToArray());
-        index += IdCard.PublicKeyByteLength;
-        var verifierAddressBytes = span.Slice(index, IdCard.PublicKeyByteLength).ToArray();
+        IssuerAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyLength).ToArray());
+        index += IdCard.PublicKeyLength;
+        HolderAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyLength).ToArray());
+        index += IdCard.PublicKeyLength;
+        var verifierAddressBytes = span.Slice(index, IdCard.PublicKeyLength).ToArray();
         VerifierAddress = verifierAddressBytes.Any(b => b != 0) ? new AddressValue(verifierAddressBytes) : AddressValue.Empty;
 
-        index += IdCard.PublicKeyByteLength;
+        index += IdCard.PublicKeyLength;
         Subject = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.SubjectByteLength)).Trim();
         index += FrameworkEnvironment.SubjectByteLength;
         IdentifierKey = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.IdentifierByteLength)).Trim();

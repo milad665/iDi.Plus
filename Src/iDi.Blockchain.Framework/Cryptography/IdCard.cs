@@ -14,8 +14,8 @@ namespace iDi.Blockchain.Framework.Cryptography
         //public const int IdiCardAddressByteLengthExcludingPrefix = 21;
         //public const string IdCardAddressPrefix = "IDI";
 
-        public const int PrivateKeyByteLength = 1793;
-        public const int PublicKeyByteLength = 422;
+        public const int PrivateKeyLength = 1793;
+        public const int PublicKeyLength = 422;
         public const int RsaKeyStrength = 3072;
 
 

@@ -6,6 +6,7 @@ using iDi.Blockchain.Framework;
 using iDi.Blockchain.Framework.Cryptography;
 using iDi.Blockchain.Framework.Protocol;
 using iDi.Blockchain.Framework.Protocol.Exceptions;
+using iDi.Plus.Domain.Blockchain.IdTransactions;
 
 namespace iDi.Plus.Domain.Protocol.Payloads.MainNetwork.V1;
 
@@ -70,6 +71,11 @@ public class TxDataResponsePayload : TxDataRequestPayload
             subject, identifierKey, timestamp, previousTransactionHash, mimeType, value, lstBytes.ToArray());
     }
 
+    public static TxDataResponsePayload FromIdTransaction(IdTransaction tx) => Create(tx.TransactionHash,
+        tx.TransactionType, tx.IssuerAddress, tx.HolderAddress,
+        tx is ConsentIdTransaction ctx ? ctx.VerifierAddress : null, tx.Subject, tx.IdentifierKey, tx.Timestamp,
+        tx.PreviousTransactionHash, tx.ValueMimeType, tx.DoubleEncryptedData);
+
     public DateTime Timestamp { get; private set; }
     public HashValue PreviousTransactionHash { get; private set; }
         
@@ -81,14 +87,14 @@ public class TxDataResponsePayload : TxDataRequestPayload
         index += HashValue.HashByteLength;
         TransactionType = (TransactionTypes) span.Slice(index, 1)[0];
         index++;
-        IssuerAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyByteLength).ToArray());
-        index += IdCard.PublicKeyByteLength;
-        HolderAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyByteLength).ToArray());
-        index += IdCard.PublicKeyByteLength;
-        var verifierAddressBytes = span.Slice(index, IdCard.PublicKeyByteLength).ToArray();
+        IssuerAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyLength).ToArray());
+        index += IdCard.PublicKeyLength;
+        HolderAddress = new AddressValue(span.Slice(index, IdCard.PublicKeyLength).ToArray());
+        index += IdCard.PublicKeyLength;
+        var verifierAddressBytes = span.Slice(index, IdCard.PublicKeyLength).ToArray();
         VerifierAddress = verifierAddressBytes.Any(b => b != 0) ? new AddressValue(verifierAddressBytes) : AddressValue.Empty;
 
-        index += IdCard.PublicKeyByteLength;
+        index += IdCard.PublicKeyLength;
         Subject = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.SubjectByteLength)).Trim();
         index += FrameworkEnvironment.SubjectByteLength;
         IdentifierKey = Encoding.ASCII.GetString(span.Slice(index, FrameworkEnvironment.IdentifierByteLength)).Trim();

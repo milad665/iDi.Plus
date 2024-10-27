@@ -41,7 +41,7 @@ public class NewTxPayloadTests : ProtocolsTestBase, IPayloadTest
         };
 
         var bytes = SampleDataProvider.NewTxsPayloadBytes(transactionHashes);
-        var target = NewTxsPayload.Create(transactionHashes);
+        var target = HotPoolTxsPayload.Create(transactionHashes);
 
         Assert.Equal(bytes.ToHexString(), target.RawData.ToHexString(), true);
     }

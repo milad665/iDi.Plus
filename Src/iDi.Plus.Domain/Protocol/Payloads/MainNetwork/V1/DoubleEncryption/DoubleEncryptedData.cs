@@ -27,8 +27,8 @@ public class DoubleEncryptedData
     {
         var span = new ReadOnlySpan<byte>(rawData);
         var index = 0;
-        var issuerPublicKey = span.Slice(index, IdCard.PublicKeyByteLength).ToArray();
-        index += IdCard.PublicKeyByteLength;
+        var issuerPublicKey = span.Slice(index, IdCard.PublicKeyLength).ToArray();
+        index += IdCard.PublicKeyLength;
 
         var issueTxRawData = span.Slice(index).ToArray();
 
